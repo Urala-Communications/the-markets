@@ -1,0 +1,128 @@
+[
+  {
+    "name": "analysis",
+    "path": "/analysis",
+    "component": "/Users/alan/Documents/Web/the-markets/pages/analysis.vue",
+    "chunkName": "pages/analysis"
+  },
+  {
+    "name": "bonds",
+    "path": "/bonds",
+    "component": "/Users/alan/Documents/Web/the-markets/pages/bonds/index.vue",
+    "chunkName": "pages/bonds/index"
+  },
+  {
+    "name": "commodities",
+    "path": "/commodities",
+    "component": "/Users/alan/Documents/Web/the-markets/pages/commodities/index.vue",
+    "chunkName": "pages/commodities/index"
+  },
+  {
+    "name": "cryptocurrency",
+    "path": "/cryptocurrency",
+    "component": "/Users/alan/Documents/Web/the-markets/pages/cryptocurrency/index.vue",
+    "chunkName": "pages/cryptocurrency/index"
+  },
+  {
+    "name": "currencies",
+    "path": "/currencies",
+    "component": "/Users/alan/Documents/Web/the-markets/pages/currencies/index.vue",
+    "chunkName": "pages/currencies/index"
+  },
+  {
+    "name": "indices",
+    "path": "/indices",
+    "component": "/Users/alan/Documents/Web/the-markets/pages/indices/index.vue",
+    "chunkName": "pages/indices/index"
+  },
+  {
+    "name": "magazine",
+    "path": "/magazine",
+    "component": "/Users/alan/Documents/Web/the-markets/pages/magazine/index.vue",
+    "chunkName": "pages/magazine/index"
+  },
+  {
+    "name": "movers",
+    "path": "/movers",
+    "component": "/Users/alan/Documents/Web/the-markets/pages/movers.vue",
+    "chunkName": "pages/movers"
+  },
+  {
+    "name": "personal-finance",
+    "path": "/personal-finance",
+    "component": "/Users/alan/Documents/Web/the-markets/pages/personal-finance.vue",
+    "chunkName": "pages/personal-finance"
+  },
+  {
+    "name": "privacy-policy",
+    "path": "/privacy-policy",
+    "component": "/Users/alan/Documents/Web/the-markets/pages/privacy-policy.vue",
+    "chunkName": "pages/privacy-policy"
+  },
+  {
+    "name": "stocks",
+    "path": "/stocks",
+    "component": "/Users/alan/Documents/Web/the-markets/pages/stocks/index.vue",
+    "chunkName": "pages/stocks/index"
+  },
+  {
+    "name": "terms-and-conditions",
+    "path": "/terms-and-conditions",
+    "component": "/Users/alan/Documents/Web/the-markets/pages/terms-and-conditions.vue",
+    "chunkName": "pages/terms-and-conditions"
+  },
+  {
+    "name": "trading-101",
+    "path": "/trading-101",
+    "component": "/Users/alan/Documents/Web/the-markets/pages/trading-101.vue",
+    "chunkName": "pages/trading-101"
+  },
+  {
+    "name": "bonds-symbol",
+    "path": "/bonds/:symbol",
+    "component": "/Users/alan/Documents/Web/the-markets/pages/bonds/_symbol.vue",
+    "chunkName": "pages/bonds/_symbol"
+  },
+  {
+    "name": "commodities-symbol",
+    "path": "/commodities/:symbol",
+    "component": "/Users/alan/Documents/Web/the-markets/pages/commodities/_symbol.vue",
+    "chunkName": "pages/commodities/_symbol"
+  },
+  {
+    "name": "cryptocurrency-symbol",
+    "path": "/cryptocurrency/:symbol",
+    "component": "/Users/alan/Documents/Web/the-markets/pages/cryptocurrency/_symbol.vue",
+    "chunkName": "pages/cryptocurrency/_symbol"
+  },
+  {
+    "name": "currencies-symbol",
+    "path": "/currencies/:symbol",
+    "component": "/Users/alan/Documents/Web/the-markets/pages/currencies/_symbol.vue",
+    "chunkName": "pages/currencies/_symbol"
+  },
+  {
+    "name": "indices-symbol",
+    "path": "/indices/:symbol",
+    "component": "/Users/alan/Documents/Web/the-markets/pages/indices/_symbol.vue",
+    "chunkName": "pages/indices/_symbol"
+  },
+  {
+    "name": "magazine-article",
+    "path": "/magazine/:article",
+    "component": "/Users/alan/Documents/Web/the-markets/pages/magazine/_article.vue",
+    "chunkName": "pages/magazine/_article"
+  },
+  {
+    "name": "stocks-symbol",
+    "path": "/stocks/:symbol",
+    "component": "/Users/alan/Documents/Web/the-markets/pages/stocks/_symbol.vue",
+    "chunkName": "pages/stocks/_symbol"
+  },
+  {
+    "name": "index",
+    "path": "/",
+    "component": "/Users/alan/Documents/Web/the-markets/pages/index.vue",
+    "chunkName": "pages/index"
+  }
+]

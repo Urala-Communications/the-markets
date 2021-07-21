@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="36px" height="36px" viewBox="0 0 36 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Logos/Shadow/Commodities/Carbon</title>
+    <defs>
+        <filter id="filter-1">
+            <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 1.000000 0 0 0 0 1.000000 0 0 0 0 1.000000 0 0 0 1.000000 0"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Logos/Shadow/Commodities/Carbon" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group">
+            <circle id="Oval" fill="#191919" cx="18" cy="18" r="18"></circle>
+            <g filter="url(#filter-1)" id="cloud">
+                <g transform="translate(7.000000, 11.000000)">
+                    <path d="M18.6884414,5.24632333 C18.3995195,3.38138667 16.7963555,1.95 14.8671875,1.95 C14.1414453,1.95 13.4440625,2.15249667 12.8391914,2.53019 C11.9189727,0.970536667 10.2623125,0 8.421875,0 C5.57876172,0 3.265625,2.33276333 3.265625,5.2 C3.265625,5.21776667 3.265625,5.23618333 3.26626953,5.25395 C1.43902344,5.56434667 0,7.17093 0,9.1 C0,11.25059 1.77766016,13 3.91015625,13 L18.0898438,13 C20.2223398,13 22,11.25059 22,9.1 C22,7.15446333 20.5376875,5.53769667 18.6884414,5.24632333 Z" id="Path" fill="#000000" fill-rule="nonzero"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

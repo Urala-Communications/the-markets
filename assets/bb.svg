@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="44" height="44" viewBox="0 0 44 44">
+    <defs>
+        <filter id="0b3hrwlzjb" width="109.1%" height="118.2%" x="-4.5%" y="-4.5%" filterUnits="objectBoundingBox">
+            <feMorphology in="SourceAlpha" radius="1.5" result="shadowSpreadOuter1"/>
+            <feOffset dy="4" in="shadowSpreadOuter1" result="shadowOffsetOuter1"/>
+            <feGaussianBlur in="shadowOffsetOuter1" result="shadowBlurOuter1" stdDeviation="1.5"/>
+            <feColorMatrix in="shadowBlurOuter1" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.402184973 0"/>
+        </filter>
+        <path id="nklzgcp1aa" d="M22 44c12.15 0 22-9.85 22-22S34.15 0 22 0 0 9.85 0 22s9.85 22 22 22z"/>
+    </defs>
+    <g fill="none" fill-rule="evenodd">
+        <g>
+            <g transform="translate(-569 -92) translate(569 92)">
+                <mask id="1dt7jmph9c" fill="#fff">
+                    <use xlink:href="#nklzgcp1aa"/>
+                </mask>
+                <g>
+                    <use fill="#000" filter="url(#0b3hrwlzjb)" xlink:href="#nklzgcp1aa"/>
+                    <use fill="#F3F3F3" xlink:href="#nklzgcp1aa"/>
+                </g>
+                <circle cx="22" cy="22" r="21.95" stroke="#90A4BE" stroke-opacity=".6" stroke-width=".1" mask="url(#1dt7jmph9c)"/>
+                <g fill-rule="nonzero" mask="url(#1dt7jmph9c)">
+                    <g transform="translate(9.778 9.642)">
+                        <circle cx="12.222" cy="12.222" r="12.222" fill="#000"/>
+                        <path fill="#FFF" d="M18.865 12.072h-2.341l.638-2.953h2.25c1.458 0 1.804.717 1.804 1.285 0 .803-.52 1.668-2.35 1.668zm1.48 2.54c0 .803-.52 1.668-2.351 1.668h-2.342l.639-2.955h2.247c1.459 0 1.806.721 1.806 1.287zm-6.93-5.183h-2.34l.638-2.953h2.245c1.461 0 1.809.717 1.809 1.285 0 .803-.522 1.668-2.353 1.668zm1.538 2.778c0 .803-.52 1.668-2.35 1.668h-2.34l.637-2.951h2.248c1.46 0 1.805.715 1.805 1.283zm-.87 4.63c0 .805-.519 1.668-2.346 1.668H9.393l.638-2.956h2.249c1.458 0 1.803.72 1.803 1.288zM7.15 9.429H4.811l.635-2.953h2.249c1.459 0 1.808.717 1.808 1.285 0 .803-.523 1.668-2.354 1.668zm1.542 2.778c0 .803-.523 1.668-2.35 1.668H3.997l.639-2.951h2.247c1.46 0 1.808.715 1.808 1.283z"/>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

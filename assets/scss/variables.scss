@@ -1,0 +1,23 @@
+$blue: #0899ae;
+// $green: #3ed7ab;
+$green: #1ecd93;
+// $red: #DC0D56;
+$red: #e35460;
+$yellow: #c8e00c;
+
+$primary: $blue;
+$danger: $red;
+$warning: $yellow;
+$success: $green;
+
+@mixin number-font {font-family: 'メイリオ',"ヒラギノ角ゴ Pro W3", sans-serif; font-size: 90%;}
+.number-font {@include number-font()}
+@mixin main-font { font-family: 'DM Sans', sans-serif}
+.main-font {@include main-font()}
+@mixin title-font { font-family: 'DM Serif Display', serif;}
+.title-font {@include title-font()}
+
+.blue {color: $blue}
+.green {color: $green}
+.red {color: $red}
+.yellow {color: $yellow}
