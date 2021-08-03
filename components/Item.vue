@@ -8,7 +8,7 @@
         </NuxtLink>
       </div> -->
       <div class="row justify-content-center">
-        <div class="col-lg-8 col-12">
+        <div class="col-12">
           <div class="hero">
             <div class="title row mb-3">
               <div class="col-12 d-flex justify-content-between">
@@ -65,8 +65,6 @@
                 <p v-if="profile.employees"><strong>Number of employees:</strong> {{ profile.employees }}</p>
                 <p v-if="profile.exchange"><strong>Exchange:</strong> {{ profile.exchange }}</p>
               </div>
-            </div>
-            <div v-if="open" class="col-12 col-lg-6 pr-0">
               <div class="white-well col-12">
                 <h5>Statistics</h5>
                 <div class="d-flex flex-column">
@@ -88,6 +86,12 @@
                 </div>
               </div>
             </div>
+            <div v-if="open" class="col-12 col-lg-6 pr-0">
+              <div v-if="news.length > 0" class="col-12">
+                <h5>News</h5>
+                <News :newsData="news"/>
+              </div>
+            </div>
             <!-- <div class="col-12 col-lg-4">
               <div>
                 <h5>Rating</h5>
@@ -98,10 +102,6 @@
               </div>
             </div> -->
           </div>
-        </div>
-        <div v-if="news.length > 0" class="col-12 col-lg-4">
-          <h5>News</h5>
-          <News :newsData="news"/>
         </div>
       </div>
     </div>
@@ -285,8 +285,8 @@ export default {
   }
   .graph {
     /* display: flex; */
-    flex-direction: column;
-    justify-content: flex-end;
+    /* flex-direction: column; */
+    /* justify-content: flex-end; */
     margin-bottom: 35px;
     overflow: hidden;
     &.up h2.price{
@@ -384,6 +384,11 @@ export default {
       flex-wrap: wrap;
     }
   }
+}
+
+.highcharts-container {
+    width:100% !important;
+    height:100% !important;
 }
 
 </style>

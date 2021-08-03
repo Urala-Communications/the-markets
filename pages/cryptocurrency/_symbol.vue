@@ -24,6 +24,9 @@
 </template>
 
 <script>
+let date = new Date();
+date.setDate(date.getDate() - 1826);
+let fiveYearsAgo = date.toLocaleDateString("fr-CA");
 import {cryptocurrency} from "../../market.js";
 import Item from '~/components/Item.vue'
 export default {
@@ -52,7 +55,8 @@ export default {
       cryptocurrency,
       chartData: [],
       chartOptions: null,
-      yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA")
+      // yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA")
+      today: new Date(Date.now()).toLocaleDateString("fr-CA")
     }
   },
   head() {
@@ -110,12 +114,12 @@ export default {
     },
     fetchAggregates(){
       let i = this.cryptocurrency.find( item => item.name.toLowerCase() === this.symbol);
-      this.$axios.$get(`https://api.finage.co.uk/agg/crypto/${i.symbol}/1/day/2016-07-01/${this.yesterday}?limit=1825&apikey=${process.env.FINAGE_API_KEY}`)
-      // this.$axios.$get(`https://api.finage.co.uk/agg/crypto/${i.symbol}/1/hour/2021-07-01/${this.yesterday}?limit=5000&apikey=${process.env.FINAGE_API_KEY}`)
+      // this.$axios.$get(`https://api.finage.co.uk/agg/crypto/${i.symbol}/1/day/${fiveYearsAgo}/${this.today}?limit=5000&apikey=${process.env.FINAGE_API_KEY}`)
+      this.$axios.$get(`https://api.finage.co.uk/agg/crypto/${i.symbol}/1/week/${fiveYearsAgo}/${this.today}?limit=5000&apikey=${process.env.FINAGE_API_KEY}`)
         .then(response => {
           console.log("Aggregates")
-          // console.log(response.results)
-          this.chartData = response.results.map(i => i.h);
+          console.log(response.results)
+          this.chartData = response.results.map(i => i.c);
           let last = response.results.pop();
           this.open = last.o;
           this.high = last.h;

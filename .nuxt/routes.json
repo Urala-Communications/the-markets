@@ -2,127 +2,169 @@
   {
     "name": "analysis",
     "path": "/analysis",
-    "component": "/Users/alan/Documents/Web/the-markets/pages/analysis.vue",
-    "chunkName": "pages/analysis"
+    "component": "/Users/alan/Documents/Web/the-markets/pages/analysis/index.vue",
+    "chunkName": "pages/analysis/index",
+    "_name": "_0a723382"
   },
   {
     "name": "bonds",
     "path": "/bonds",
     "component": "/Users/alan/Documents/Web/the-markets/pages/bonds/index.vue",
-    "chunkName": "pages/bonds/index"
+    "chunkName": "pages/bonds/index",
+    "_name": "_496c86e3"
   },
   {
     "name": "commodities",
     "path": "/commodities",
     "component": "/Users/alan/Documents/Web/the-markets/pages/commodities/index.vue",
-    "chunkName": "pages/commodities/index"
+    "chunkName": "pages/commodities/index",
+    "_name": "_a96f1cc4"
   },
   {
     "name": "cryptocurrency",
     "path": "/cryptocurrency",
     "component": "/Users/alan/Documents/Web/the-markets/pages/cryptocurrency/index.vue",
-    "chunkName": "pages/cryptocurrency/index"
+    "chunkName": "pages/cryptocurrency/index",
+    "_name": "_df091c96"
   },
   {
     "name": "currencies",
     "path": "/currencies",
     "component": "/Users/alan/Documents/Web/the-markets/pages/currencies/index.vue",
-    "chunkName": "pages/currencies/index"
+    "chunkName": "pages/currencies/index",
+    "_name": "_3aa333dc"
   },
   {
     "name": "indices",
     "path": "/indices",
     "component": "/Users/alan/Documents/Web/the-markets/pages/indices/index.vue",
-    "chunkName": "pages/indices/index"
+    "chunkName": "pages/indices/index",
+    "_name": "_0c7bd5ba"
   },
   {
     "name": "magazine",
     "path": "/magazine",
     "component": "/Users/alan/Documents/Web/the-markets/pages/magazine/index.vue",
-    "chunkName": "pages/magazine/index"
+    "chunkName": "pages/magazine/index",
+    "_name": "_18b0d8f7"
   },
   {
     "name": "movers",
     "path": "/movers",
     "component": "/Users/alan/Documents/Web/the-markets/pages/movers.vue",
-    "chunkName": "pages/movers"
+    "chunkName": "pages/movers",
+    "_name": "_de70ea9c"
   },
   {
     "name": "personal-finance",
     "path": "/personal-finance",
-    "component": "/Users/alan/Documents/Web/the-markets/pages/personal-finance.vue",
-    "chunkName": "pages/personal-finance"
+    "component": "/Users/alan/Documents/Web/the-markets/pages/personal-finance/index.vue",
+    "chunkName": "pages/personal-finance/index",
+    "_name": "_ab892920"
   },
   {
     "name": "privacy-policy",
     "path": "/privacy-policy",
     "component": "/Users/alan/Documents/Web/the-markets/pages/privacy-policy.vue",
-    "chunkName": "pages/privacy-policy"
+    "chunkName": "pages/privacy-policy",
+    "_name": "_93593d12"
   },
   {
     "name": "stocks",
     "path": "/stocks",
     "component": "/Users/alan/Documents/Web/the-markets/pages/stocks/index.vue",
-    "chunkName": "pages/stocks/index"
+    "chunkName": "pages/stocks/index",
+    "_name": "_621bf440"
   },
   {
     "name": "terms-and-conditions",
     "path": "/terms-and-conditions",
     "component": "/Users/alan/Documents/Web/the-markets/pages/terms-and-conditions.vue",
-    "chunkName": "pages/terms-and-conditions"
+    "chunkName": "pages/terms-and-conditions",
+    "_name": "_6e10b958"
   },
   {
     "name": "trading-101",
     "path": "/trading-101",
-    "component": "/Users/alan/Documents/Web/the-markets/pages/trading-101.vue",
-    "chunkName": "pages/trading-101"
+    "component": "/Users/alan/Documents/Web/the-markets/pages/trading-101/index.vue",
+    "chunkName": "pages/trading-101/index",
+    "_name": "_174fb299"
+  },
+  {
+    "name": "analysis-article",
+    "path": "/analysis/:article",
+    "component": "/Users/alan/Documents/Web/the-markets/pages/analysis/_article.vue",
+    "chunkName": "pages/analysis/_article",
+    "_name": "_2b0ca2da"
   },
   {
     "name": "bonds-symbol",
     "path": "/bonds/:symbol",
     "component": "/Users/alan/Documents/Web/the-markets/pages/bonds/_symbol.vue",
-    "chunkName": "pages/bonds/_symbol"
+    "chunkName": "pages/bonds/_symbol",
+    "_name": "_3ffbc7f0"
   },
   {
     "name": "commodities-symbol",
     "path": "/commodities/:symbol",
     "component": "/Users/alan/Documents/Web/the-markets/pages/commodities/_symbol.vue",
-    "chunkName": "pages/commodities/_symbol"
+    "chunkName": "pages/commodities/_symbol",
+    "_name": "_3a8e4403"
   },
   {
     "name": "cryptocurrency-symbol",
     "path": "/cryptocurrency/:symbol",
     "component": "/Users/alan/Documents/Web/the-markets/pages/cryptocurrency/_symbol.vue",
-    "chunkName": "pages/cryptocurrency/_symbol"
+    "chunkName": "pages/cryptocurrency/_symbol",
+    "_name": "_c1fccb4c"
   },
   {
     "name": "currencies-symbol",
     "path": "/currencies/:symbol",
     "component": "/Users/alan/Documents/Web/the-markets/pages/currencies/_symbol.vue",
-    "chunkName": "pages/currencies/_symbol"
+    "chunkName": "pages/currencies/_symbol",
+    "_name": "_3048eb77"
   },
   {
     "name": "indices-symbol",
     "path": "/indices/:symbol",
     "component": "/Users/alan/Documents/Web/the-markets/pages/indices/_symbol.vue",
-    "chunkName": "pages/indices/_symbol"
+    "chunkName": "pages/indices/_symbol",
+    "_name": "_1c79111f"
   },
   {
     "name": "magazine-article",
     "path": "/magazine/:article",
     "component": "/Users/alan/Documents/Web/the-markets/pages/magazine/_article.vue",
-    "chunkName": "pages/magazine/_article"
+    "chunkName": "pages/magazine/_article",
+    "_name": "_46d91522"
+  },
+  {
+    "name": "personal-finance-article",
+    "path": "/personal-finance/:article?",
+    "component": "/Users/alan/Documents/Web/the-markets/pages/personal-finance/_article.vue",
+    "chunkName": "pages/personal-finance/_article",
+    "_name": "_13a44409"
   },
   {
     "name": "stocks-symbol",
     "path": "/stocks/:symbol",
     "component": "/Users/alan/Documents/Web/the-markets/pages/stocks/_symbol.vue",
-    "chunkName": "pages/stocks/_symbol"
+    "chunkName": "pages/stocks/_symbol",
+    "_name": "_eae8b3b6"
+  },
+  {
+    "name": "trading-101-article",
+    "path": "/trading-101/:article?",
+    "component": "/Users/alan/Documents/Web/the-markets/pages/trading-101/_article.vue",
+    "chunkName": "pages/trading-101/_article",
+    "_name": "_832d7f80"
   },
   {
     "name": "index",
     "path": "/",
     "component": "/Users/alan/Documents/Web/the-markets/pages/index.vue",
-    "chunkName": "pages/index"
+    "chunkName": "pages/index",
+    "_name": "_f98abbbc"
   }
 ]

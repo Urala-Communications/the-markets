@@ -110,7 +110,7 @@ export default {
             this.low = today.l;
             this.close = today.c;
             this.volume = today.v;
-            this.chartData = response.results.map(i => i.h);
+            this.chartData = response.results.map(i => i.c);
           })
           .catch(error => {
             console.log(error);

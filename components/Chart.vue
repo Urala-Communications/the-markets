@@ -1,16 +1,14 @@
 <template>
-  <div>
-    <highcharts :constructor-type="'stockChart'" :options="chartOptions"></highcharts>
-  </div>
+  <highcharts ref="highcharts" :constructor-type="'stockChart'" :options="chartOptions"></highcharts>
 </template>
 
 <script>
 let date = new Date();
 date.setDate(date.getDate() - 1826);
-let fiveYearsAgoYesterday = date.toLocaleDateString("fr-CA").split('-');
-let y = parseInt(fiveYearsAgoYesterday[0])
-let m = parseInt(fiveYearsAgoYesterday[1])
-let d = parseInt(fiveYearsAgoYesterday[2])
+let fiveYearsAgo = date.toLocaleDateString("fr-CA").split('-');
+let y = parseInt(fiveYearsAgo[0])
+let m = parseInt(fiveYearsAgo[1]) - 1
+let d = parseInt(fiveYearsAgo[2])
 export default {
   props: {
     data: {
@@ -25,18 +23,20 @@ export default {
     return {
       chartOptions: {
         series: [{
-            name: 'Price',
-            type: 'area',
-            data: this.data,
-            color: '#fff',
-            pointStart: Date.UTC(y, m, d),
-            pointInterval: 24 * 3600 * 1000 // one day
+          name: 'Price',
+          type: 'area',
+          data: this.data,
+          color: '#fff',
+          pointStart: Date.UTC(y, m, d),
+          // pointStart: Date.UTC(2021, 1, 5), // jan is 0 not 1
+          // pointInterval: 86400000 // one day
+          pointInterval: 6.048e+8 // one week
         }],
         chart: {
-            backgroundColor: '#fff',
-            marginLeft: 0,
-            marginRight: 0,
-            marginTop: 0,
+          backgroundColor: '#fff',
+          marginLeft: 0,
+          marginRight: 0,
+          marginTop: 0,
         },
         plotOptions: {
             area: {
@@ -59,13 +59,38 @@ export default {
         },
         rangeSelector : {
             allButtonsEnabled: true,
-            selected: 5,
+            selected: 1,
             inputEnabled: true,
             buttonPosition: {
                 x: 10,
                 y: 5
             },
             // buttons: [{
+            //     type: 'month',
+            //     count: 3,
+            //     text: 'Day',
+            //     dataGrouping: {
+            //         forced: true,
+            //         units: [['day', [1]]]
+            //     }
+            // }, {
+            //     type: 'year',
+            //     count: 1,
+            //     text: 'Week',
+            //     dataGrouping: {
+            //         forced: true,
+            //         units: [['week', [1]]]
+            //     }
+            // }, {
+            //     type: 'all',
+            //     text: 'Month',
+            //     dataGrouping: {
+            //         forced: true,
+            //         units: [['month', [1]]]
+            //     }
+            // }],
+            buttons: [
+            //   {
             //     type: 'hour',
             //     count: 1,
             //     text: '1 hr',
@@ -80,35 +105,51 @@ export default {
             //     count: 1,
             //     text: '1 day',
             //     title: 'View 1 day'
-            // }, {
-            //     type: 'month',
-            //     count: 1,
-            //     text: '1m',
-            //     title: 'View 1 month'
-            // }, {
-            //     type: 'month',
-            //     count: 3,
-            //     text: '3m',
-            //     title: 'View 3 months'
-            // }, {
-            //     type: 'month',
-            //     count: 6,
-            //     text: '6m',
-            //     title: 'View 6 months'
-            // }, {
-            //     type: 'ytd',
-            //     text: 'YTD',
-            //     title: 'View year to date'
-            // }, {
-            //     type: 'year',
-            //     count: 1,
-            //     text: '1y',
-            //     title: 'View 1 year'
-            // }, {
-            //     type: 'all',
-            //     text: 'All',
-            //     title: 'View all'
-            // }],
+            // },
+            {
+                type: 'week',
+                count: 1,
+                text: '1w',
+                title: 'View 1 week',
+                dataGrouping: {
+                    forced: true,
+                    units: [['week', [1]]]
+                },
+                events: {
+                    click: function() {
+                        // console.log('Clicked button');
+                        // we could use this function to switch data series between 1 hour / 1 day / 1 week and also emit event bus action to fetch different data from finage
+                    }
+                }
+            },{
+                type: 'month',
+                count: 1,
+                text: '1m',
+                title: 'View 1 month'
+            }, {
+                type: 'month',
+                count: 3,
+                text: '3m',
+                title: 'View 3 months'
+            }, {
+                type: 'month',
+                count: 6,
+                text: '6m',
+                title: 'View 6 months'
+            }, {
+                type: 'ytd',
+                text: 'YTD',
+                title: 'View year to date'
+            }, {
+                type: 'year',
+                count: 1,
+                text: '1y',
+                title: 'View 1 year'
+            }, {
+                type: 'all',
+                text: 'All',
+                title: 'View all'
+            }],
             buttonTheme: {
                 fill: 'none',
                 stroke: 'none',
@@ -131,7 +172,7 @@ export default {
             },
         },
         navigator: {
-            enabled: false,
+            // enabled: false,
             height: 30,
             handles: {
                 backgroundColor: '#fff',
@@ -140,16 +181,18 @@ export default {
             maskFill: 'rgba(220,220,220,0.4)'
         },
         credits: {
-            enabled: false
+          enabled: false
         },
         scrollbar: {
-            enabled: false
+          // enabled: false
         },
       }
     };
   },
   mounted(){
-    // console.log(this.fiveYearsBack.replace(/-/g,','))
+    this.$nextTick(() => {
+      this.$refs.highcharts.chart.reflow();
+    });
     // console.log(this.chartColour)
   }
 };

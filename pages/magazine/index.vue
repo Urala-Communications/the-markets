@@ -7,9 +7,6 @@
           <li>
             <NuxtLink to="/magazine/top-100-richest-people">Top 100 richest people</NuxtLink>
           </li>
-          <li>
-            <NuxtLink to="/magazine/has-elon-musk-lost-his-mind">Has Elon Musk lost his mind?</NuxtLink>
-          </li>
         </ul>
       </div>
     </div>

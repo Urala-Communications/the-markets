@@ -71,7 +71,7 @@ export default {
       }
       .diff, .change{
         @include number-font;
-        font-size: 10px;
+        font-size: 11px;
       }
       /* &.bitcoin {
         strong{width: 56px;}
