@@ -18,8 +18,11 @@
     :yearHigh="yearHigh"
     :yearLow="yearLow"
     :chartData="chartData"
+    :initData="initData"
     :chartOptions="chartOptions"
     :marketStatus="marketStatus"
+    :c_symbol="c_symbol"
+    ref="Item"
   />
 </template>
 
@@ -54,8 +57,12 @@ export default {
       marketStatus: '',
       cryptocurrency,
       chartData: [],
+      initData:[],
+      tickData: [],
+      livegroupData: [],
       chartOptions: null,
-      // yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA")
+      c_symbol: '',
+      yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
       today: new Date(Date.now()).toLocaleDateString("fr-CA")
     }
   },
@@ -115,11 +122,16 @@ export default {
     fetchAggregates(){
       let i = this.cryptocurrency.find( item => item.name.toLowerCase() === this.symbol);
       // this.$axios.$get(`https://api.finage.co.uk/agg/crypto/${i.symbol}/1/day/${fiveYearsAgo}/${this.today}?limit=5000&apikey=${process.env.FINAGE_API_KEY}`)
-      this.$axios.$get(`https://api.finage.co.uk/agg/crypto/${i.symbol}/1/week/${fiveYearsAgo}/${this.today}?limit=5000&apikey=${process.env.FINAGE_API_KEY}`)
+      this.$axios.$get(`https://api.finage.co.uk/agg/crypto/${i.symbol}/1/day/${fiveYearsAgo}/${this.today}?limit=5000&apikey=${process.env.FINAGE_API_KEY}`)
         .then(response => {
           console.log("Aggregates")
           console.log(response.results)
-          this.chartData = response.results.map(i => i.c);
+          this.chartData = response.results.map(i => { return [ i.t ,i.c ]});
+          //console.log("chartData: ",this.chartData)
+          //console.log(i.symbol);
+          this.c_symbol = i.symbol;
+          localStorage.setItem(i.symbol+"-all", JSON.stringify(this.chartData));
+          this.initData = this.chartData;
           let last = response.results.pop();
           this.open = last.o;
           this.high = last.h;
@@ -131,6 +143,77 @@ export default {
         .catch(error => {
           console.log(error);
         })
+    },
+    changeChartData(range, interval='day') {
+      let i = this.cryptocurrency.find( item => item.name.toLowerCase() === this.symbol);
+      let minDate = fiveYearsAgo;
+      let limit=500;
+      switch (range) {
+        case '1h':
+          minDate = (new Date((new Date() ).getTime() - 24 * 1000 * 60 * 60)).toLocaleDateString("fr-CA");  
+          interval='minute';
+          limit=3000;
+          break;
+        case '2h':
+          minDate = (new Date((new Date()).getTime() - 24 * 1000 * 60 * 60)).toLocaleDateString("fr-CA");
+          interval='minute';
+          limit=3000;
+          break;
+        case '4h': 
+          minDate = (new Date((new Date()).getTime() - 24 * 1000 * 60 * 60)).toLocaleDateString("fr-CA");
+          interval='minute';
+          limit=3000;
+          break;
+        case '1d': 
+          minDate = (new Date((new Date()).getTime() - 24 * 1000 * 60 * 60)).toLocaleDateString("fr-CA");
+          interval='minute';
+          limit=3000;
+          break;
+        case '1w': 
+          minDate = (new Date((new Date()).getTime() - 7 * 24 * 1000 * 60 * 60)).toLocaleDateString("fr-CA");
+          interval='hour';
+          break;
+        default:
+          interval='day';
+          break;
+      }
+
+      console.log("change chart data: ", [i.symbol, interval, minDate ] )
+
+      this.$axios.$get(`https://api.finage.co.uk/agg/crypto/${i.symbol}/1/${interval}/${minDate}/${this.today}?&apikey=${process.env.FINAGE_API_KEY}&limit=${limit}`)
+        .then(response => {
+          console.log("Aggregates")
+          console.log(response.results)
+          this.chartData = response.results.map(i => { return [ i.t ,i.c ]});
+           localStorage.setItem(i.symbol+"-"+interval, JSON.stringify(this.chartData));
+        })
+        .catch( error => {
+          console.log(error)
+        })
+    },
+    updateChartSeries(){
+      
+    },
+    setTickData(data){
+                     
+    },
+    convertTickData(item){ // calculate avg data grouped in every minutes
+      
+     
+      let group_timedata = new Date(item.time);        
+      group_timedata.setSeconds(0);
+      group_timedata.setMilliseconds(0);
+      let minute = group_timedata.getMinutes();
+
+      
+      const existed  = this.livegroupData.findIndex(liveDat => liveDat.time == group_timedata.getTime());
+      if (existed !== -1) {
+        this.livegroupData[existed].price = item.price;
+      } else {
+        this.livegroupData.push({ time: group_timedata.getTime(), price: item.price });
+      }
+        
+
     },
     fetchNews(){
       let i = this.cryptocurrency.find( item => item.name.toLowerCase() === this.symbol);
@@ -164,8 +247,20 @@ export default {
         this.$set(this.item, 'difference', item.difference);
         this.$set(this.item, 'change', item.change);
         this.$set(this.item, 'icon', item.icon);
+        this.$set(this.item, 'time', item.time);
+        
+
       }
     });
+
+    this.$root.$on('changeRangeCrypto', ([item, range, interval]) => {
+      console.log("received emit data: ",[item, range, interval])
+      if(item.name === this.c_symbol){        
+        this.changeChartData(range, interval);
+      }
+    })
+
+
     this.fetchDetails();
     this.checkMarketStatus();
     this.fetchAggregates();
