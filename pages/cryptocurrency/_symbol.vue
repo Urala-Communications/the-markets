@@ -165,7 +165,7 @@ export default {
                     //console.log(i.symbol);
                     this.c_symbol = i.symbol;
                     localStorage.setItem(
-                        i.symbol + "-all",
+                        i.symbol + "-All",
                         JSON.stringify(this.chartData)
                     );
                     this.initData = this.chartData;
@@ -305,7 +305,7 @@ export default {
                     );
                     interval = "day";
                     break;
-                case "1Y":
+                case "1y":
                     minDate = new Date(
                         new Date().getTime() - 365 * 24 * 1000 * 60 * 60
                     ).toLocaleDateString("fr-CA");
@@ -320,7 +320,7 @@ export default {
                     minDate = fiveYearsAgo;
                     lastinterval.setMinutes(0);
                     lastinterval.setHours(0);
-                    interval = "day";
+                    interval = "All";
                     break;
                 default:
                     lastinterval.setMinutes(0);
@@ -338,7 +338,13 @@ export default {
                     data[data.length - 1][0],
                     lastinterval.getTime(),
                 ]);
-                if (data[data.length - 1][0] < lastinterval.getTime()) {
+                if (interval === "All") {
+                    this.$root.$emit("update-chart-data", {
+                        interval: interval,
+                        range: range,
+                        data: data,
+                    });
+                } else if (data[data.length - 1][0] < lastinterval.getTime()) {
                     this.startUpdateData(
                         i.symbol,
                         range,
@@ -382,9 +388,12 @@ export default {
                     this.$root.$emit("update-chart-data", {
                         interval: interval,
                         range: range,
-                        data: tempdata.filter(
-                            (a) => a[0] >= startPoint.getTime()
-                        ),
+                        data:
+                            range !== "All"
+                                ? tempdata.filter(
+                                      (a) => a[0] >= startPoint.getTime()
+                                  )
+                                : tempdata,
                     });
                     //this.chartData = response.results.map(i => { return [ i.t ,i.c ]});
                     localStorage.setItem(

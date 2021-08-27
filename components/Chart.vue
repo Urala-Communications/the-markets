@@ -686,7 +686,7 @@ export default {
                             this.setState(2);
                             console.log("button All pressed");
 
-                            this.$root.$emit("changeRangeCrypto", [
+                            cChart.$root.$emit("changeRangeCrypto", [
                                 { name: cChart.c_symbol },
                                 "All",
                                 "day",
