@@ -16,6 +16,7 @@ const _93593d12 = () => interopDefault(import('../pages/privacy-policy.vue' /* w
 const _621bf440 = () => interopDefault(import('../pages/stocks/index.vue' /* webpackChunkName: "pages/stocks/index" */))
 const _6e10b958 = () => interopDefault(import('../pages/terms-and-conditions.vue' /* webpackChunkName: "pages/terms-and-conditions" */))
 const _174fb299 = () => interopDefault(import('../pages/trading-101/index.vue' /* webpackChunkName: "pages/trading-101/index" */))
+const _28b43414 = () => interopDefault(import('../pages/personal-finance/article.vue' /* webpackChunkName: "pages/personal-finance/article" */))
 const _2b0ca2da = () => interopDefault(import('../pages/analysis/_article.vue' /* webpackChunkName: "pages/analysis/_article" */))
 const _3ffbc7f0 = () => interopDefault(import('../pages/bonds/_symbol.vue' /* webpackChunkName: "pages/bonds/_symbol" */))
 const _3a8e4403 = () => interopDefault(import('../pages/commodities/_symbol.vue' /* webpackChunkName: "pages/commodities/_symbol" */))
@@ -23,7 +24,7 @@ const _c1fccb4c = () => interopDefault(import('../pages/cryptocurrency/_symbol.v
 const _3048eb77 = () => interopDefault(import('../pages/currencies/_symbol.vue' /* webpackChunkName: "pages/currencies/_symbol" */))
 const _1c79111f = () => interopDefault(import('../pages/indices/_symbol.vue' /* webpackChunkName: "pages/indices/_symbol" */))
 const _46d91522 = () => interopDefault(import('../pages/magazine/_article.vue' /* webpackChunkName: "pages/magazine/_article" */))
-const _13a44409 = () => interopDefault(import('../pages/personal-finance/_article.vue' /* webpackChunkName: "pages/personal-finance/_article" */))
+const _aef66bb0 = () => interopDefault(import('../pages/personal-finance/_slug.vue' /* webpackChunkName: "pages/personal-finance/_slug" */))
 const _eae8b3b6 = () => interopDefault(import('../pages/stocks/_symbol.vue' /* webpackChunkName: "pages/stocks/_symbol" */))
 const _832d7f80 = () => interopDefault(import('../pages/trading-101/_article.vue' /* webpackChunkName: "pages/trading-101/_article" */))
 const _f98abbbc = () => interopDefault(import('../pages/index.vue' /* webpackChunkName: "pages/index" */))
@@ -39,7 +40,7 @@ Vue.use(Router)
 
 export const routerOptions = {
   mode: 'history',
-  base: '/',
+  base: decodeURI('/'),
   linkActiveClass: 'nuxt-link-active',
   linkExactActiveClass: 'nuxt-link-exact-active',
   scrollBehavior,
@@ -97,6 +98,10 @@ export const routerOptions = {
     component: _174fb299,
     name: "trading-101"
   }, {
+    path: "/personal-finance/article",
+    component: _28b43414,
+    name: "personal-finance-article"
+  }, {
     path: "/analysis/:article",
     component: _2b0ca2da,
     name: "analysis-article"
@@ -125,9 +130,9 @@ export const routerOptions = {
     component: _46d91522,
     name: "magazine-article"
   }, {
-    path: "/personal-finance/:article?",
-    component: _13a44409,
-    name: "personal-finance-article"
+    path: "/personal-finance/:slug?",
+    component: _aef66bb0,
+    name: "personal-finance-slug"
   }, {
     path: "/stocks/:symbol",
     component: _eae8b3b6,
@@ -146,16 +151,5 @@ export const routerOptions = {
 }
 
 export function createRouter () {
-  const router = new Router(routerOptions)
-  const resolve = router.resolve.bind(router)
-
-  // encodeURI(decodeURI()) ~> support both encoded and non-encoded urls
-  router.resolve = (to, current, append) => {
-    if (typeof to === 'string') {
-      to = encodeURI(decodeURI(to))
-    }
-    return resolve(to, current, append)
-  }
-
-  return router
+  return new Router(routerOptions)
 }

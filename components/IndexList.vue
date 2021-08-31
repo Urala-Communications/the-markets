@@ -15,7 +15,8 @@
       <div v-if="type === 'rising'" class="movers-grid grid">
         <span>{{ index.symbol }}</span>
         <span>{{ index.company_name }}</span>
-        <span :class="index.change > 0 ? 'up' : 'down'">${{ index.price }}</span>
+        <span v-if="type !== 'indices'">$</span>
+        <span :class="index.change > 0 ? 'up' : 'down'">{{ index.price }}</span>
         <span class="justify-content-center green font-weight-bold">{{ index.change_percentage }}</span>
         <span class="justify-content-center">{{ index.change }}</span>
       </div>
@@ -31,7 +32,7 @@
             <span v-if="index.marketOpen" class="indicator"/>
           </NuxtLink>
         </div>
-        <div class="price ask number-font">${{ index.price }}</div>
+        <div class="price ask number-font"><span v-if="type !== 'indices'">$</span>{{ index.price }}</div>
         <div class="justify-content-center number-font">
           <Price v-if="index.change" :index="index" :difference="index.change" />
         </div>

@@ -24,24 +24,6 @@ export function interopDefault (promise) {
 export function hasFetch(vm) {
   return vm.$options && typeof vm.$options.fetch === 'function' && !vm.$options.fetch.length
 }
-export function purifyData(data) {
-  if (process.env.NODE_ENV === 'production') {
-    return data
-  }
-
-  return Object.entries(data).filter(
-    ([key, value]) => {
-      const valid = !(value instanceof Function) && !(value instanceof Promise)
-      if (!valid) {
-        console.warn(`${key} is not able to be stringified. This will break in a production environment.`)
-      }
-      return valid
-    }
-    ).reduce((obj, [key, value]) => {
-      obj[key] = value
-      return obj
-    }, {})
-}
 export function getChildrenComponentInstancesUsingFetch(vm, instances = []) {
   const children = vm.$children || []
   for (const child of children) {
@@ -161,7 +143,7 @@ export async function setContext (app, context) {
   if (!app.context) {
     app.context = {
       isStatic: process.static,
-      isDev: false,
+      isDev: true,
       isHMR: false,
       app,
 
@@ -245,7 +227,7 @@ export async function setContext (app, context) {
   app.context.next = context.next
   app.context._redirected = false
   app.context._errored = false
-  app.context.isHMR = false
+  app.context.isHMR = Boolean(context.isHMR)
   app.context.params = app.context.route.params || {}
   app.context.query = app.context.route.query || {}
 }
@@ -263,6 +245,9 @@ export function middlewareSeries (promises, appContext) {
 export function promisify (fn, context) {
   let promise
   if (fn.length === 2) {
+      console.warn('Callback-based asyncData, fetch or middleware calls are deprecated. ' +
+        'Please switch to promises or async/await syntax')
+
     // fn(context, callback)
     promise = new Promise((resolve) => {
       fn(context, function (err, data) {
@@ -285,20 +270,15 @@ export function promisify (fn, context) {
 
 // Imported from vue-router
 export function getLocation (base, mode) {
+  let path = decodeURI(window.location.pathname)
   if (mode === 'hash') {
     return window.location.hash.replace(/^#\//, '')
   }
-
-  base = decodeURI(base).slice(0, -1) // consideration is base is normalized with trailing slash
-  let path = decodeURI(window.location.pathname)
-
-  if (base && path.startsWith(base)) {
+  // To get matched with sanitized router.base add trailing slash
+  if (base && (path.endsWith('/') ? path : path + '/').startsWith(base)) {
     path = path.slice(base.length)
   }
-
-  const fullPath = (path || '/') + window.location.search + window.location.hash
-
-  return encodeURI(fullPath)
+  return (path || '/') + window.location.search + window.location.hash
 }
 
 // Imported from path-to-regexp
@@ -640,24 +620,10 @@ export function addLifecycleHook(vm, hook, fn) {
   }
 }
 
-export function urlJoin () {
+export const urlJoin = function urlJoin () {
   return [].slice
     .call(arguments)
     .join('/')
     .replace(/\/+/g, '/')
     .replace(':/', '://')
-}
-
-export function stripTrailingSlash (path) {
-  return path.replace(/\/+$/, '') || '/'
-}
-
-export function isSamePath (p1, p2) {
-  return stripTrailingSlash(p1) === stripTrailingSlash(p2)
-}
-
-export function setScrollRestoration (newVal) {
-  try {
-    window.history.scrollRestoration = newVal;
-  } catch(e) {}
 }

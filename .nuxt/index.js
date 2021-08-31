@@ -1,5 +1,4 @@
 import Vue from 'vue'
-
 import Meta from 'vue-meta'
 import ClientOnly from 'vue-client-only'
 import NoSsr from 'vue-no-ssr'
@@ -45,13 +44,6 @@ Vue.component('NChild', NuxtChild)
 // Component: <Nuxt>
 Vue.component(Nuxt.name, Nuxt)
 
-Object.defineProperty(Vue.prototype, '$nuxt', {
-  get() {
-    return this.$root.$options.$nuxt
-  },
-  configurable: true
-})
-
 Vue.use(Meta, {"keyName":"head","attribute":"data-n-head","ssrAttribute":"data-n-head-ssr","tagIDKeyName":"hid"})
 
 const defaultTransition = {"name":"page","mode":"out-in","appear":true,"appearClass":"appear","appearActiveClass":"appear-active","appearToClass":"appear-to"}
@@ -64,7 +56,7 @@ async function createApp(ssrContext, config = {}) {
   // here we inject the router and store to all child components,
   // making them available everywhere as `this.$router` and `this.$store`.
   const app = {
-    head: {"title":"The Markets","meta":[{"charset":"utf-8"},{"name":"viewport","content":"width=device-width, initial-scale=1"},{"hid":"description","name":"description","content":""}],"link":[{"rel":"icon","type":"image\u002Fx-icon","href":"\u002Ffavicon.ico"}],"style":[],"script":[{"hid":"adsbygoogle-script","async":true,"src":"\u002F\u002Fpagead2.googlesyndication.com\u002Fpagead\u002Fjs\u002Fadsbygoogle.js"},{"hid":"adsbygoogle","innerHTML":"if (!window.__abg_called){ (window.adsbygoogle = window.adsbygoogle || []).push({\n    google_ad_client: \"ca-pub-1293135381149415\",\n    enable_page_level_ads: false,\n    overlays: {bottom: false}\n  }); window.__abg_called = true;}"}],"__dangerouslyDisableSanitizersByTagID":{"adsbygoogle":["innerHTML"]}},
+    head: {"title":"The Markets","meta":[{"name":"robots","content":"noindex,noarchive,nofollow"},{"charset":"utf-8"},{"name":"viewport","content":"width=device-width, initial-scale=1"},{"hid":"description","name":"description","content":""}],"link":[{"rel":"icon","type":"image\u002Fx-icon","href":"\u002Ffavicon.ico"}],"style":[],"script":[{"hid":"adsbygoogle-script","async":true,"src":"\u002F\u002Fpagead2.googlesyndication.com\u002Fpagead\u002Fjs\u002Fadsbygoogle.js"},{"hid":"adsbygoogle","innerHTML":"if (!window.__abg_called){ (window.adsbygoogle = window.adsbygoogle || []).push({\n    google_ad_client: \"ca-google\",\n    enable_page_level_ads: false,\n    overlays: {bottom: false}\n  }); window.__abg_called = true;}"}],"__dangerouslyDisableSanitizersByTagID":{"adsbygoogle":["innerHTML"]}},
 
     router,
     nuxt: {
@@ -216,13 +208,9 @@ async function createApp(ssrContext, config = {}) {
   // If server-side, wait for async component to be resolved first
   if (process.server && ssrContext && ssrContext.url) {
     await new Promise((resolve, reject) => {
-      router.push(ssrContext.url, resolve, (err) => {
-        // https://github.com/vuejs/vue-router/blob/v3.4.3/src/util/errors.js
-        if (!err._isRouter) return reject(err)
-        if (err.type !== 2 /* NavigationFailureType.redirected */) return resolve()
-
+      router.push(ssrContext.url, resolve, () => {
         // navigated to a different route in router guard
-        const unregister = router.afterEach(async (to, from) => {
+        const unregister = router.afterEach(async (to, from, next) => {
           ssrContext.url = to.fullPath
           app.context.route = await getRouteData(to)
           app.context.params = to.params || {}

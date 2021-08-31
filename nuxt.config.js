@@ -52,6 +52,8 @@ export default {
     id: 'ca-pub-1293135381149415'
   },
 
+  serverMiddleware: ['~/api/index'],
+
   styleResources: {
     scss: [
         '~/assets/scss/variables.scss',
@@ -90,7 +92,18 @@ export default {
       }
     },
     babel: {
-      compact: true
+      compact: true,
+      presets(env, [preset, options]) {
+        return [["@babel/preset-env", {}]];
+      },
+      plugins: [
+        [
+          "@babel/plugin-transform-runtime",
+          {
+            regenerator: true
+          }
+        ]
+      ]
     }
   },
 }

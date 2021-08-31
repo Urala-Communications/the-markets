@@ -1,7 +1,8 @@
 import Vue from 'vue'
 
 import { getMatchedComponentsInstances, getChildrenComponentInstancesUsingFetch, promisify, globalHandleError, urlJoin, sanitizeComponent } from './utils'
-import NuxtError from './components/nuxt-error.vue'
+
+import NuxtBuildIndicator from './components/nuxt-build-indicator'
 
 import '../node_modules/bootstrap/dist/css/bootstrap.css'
 
@@ -44,6 +45,7 @@ export default {
       }
     }, [
 
+      h(NuxtBuildIndicator),
       transitionEl
     ])
   },
@@ -62,8 +64,7 @@ export default {
   },
   created () {
     // Add this.$nuxt in child instances
-    this.$root.$options.$nuxt = this
-
+    Vue.prototype.$nuxt = this
     if (process.client) {
       // add to window so we can listen when ready
       window.$nuxt = this
@@ -79,10 +80,6 @@ export default {
     this.context = this.$options.context
   },
 
-  watch: {
-    'nuxt.err': 'errorChanged'
-  },
-
   computed: {
     isOffline () {
       return !this.isOnline
@@ -90,10 +87,6 @@ export default {
 
     isFetching () {
       return this.nbFetching > 0
-    },
-
-    isPreview () {
-      return Boolean(this.$options.previewData)
     },
   },
 
@@ -154,19 +147,12 @@ export default {
         this.error(error)
       }
     },
-    errorChanged () {
-      if (this.nuxt.err) {
-        let errorLayout = (NuxtError.options || NuxtError).layout;
-
-        if (typeof errorLayout === 'function') {
-          errorLayout = errorLayout(this.context)
-        }
-
-        this.setLayout(errorLayout)
-      }
-    },
 
     setLayout (layout) {
+      if(layout && typeof layout !== 'string') {
+        throw new Error('[nuxt] Avoid using non-string value as layout property.')
+      }
+
       if (!layout || !layouts['_' + layout]) {
         layout = 'default'
       }

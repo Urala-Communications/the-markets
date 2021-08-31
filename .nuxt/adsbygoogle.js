@@ -18,7 +18,7 @@ const adsbygoogle = {
           'data-page-url': this.pageUrl ? this.pageUrl : null,
           'data-analytics-uacct': this.analyticsUacct ? this.analyticsUacct : null,
           'data-analytics-domain-name': this.analyticsDomainName ? this.analyticsDomainName : null,
-          'data-adtest': null,
+          'data-adtest': 'on',
           'data-adsbygoogle-status': this.show ? null : '',
           'data-full-width-responsive': this.adFullWidthResponsive || null,
       },
@@ -32,7 +32,7 @@ const adsbygoogle = {
   props: {
     adClient: {
       type: String,
-      default: 'ca-pub-1293135381149415'
+      default: 'ca-google'
     },
     adSlot: {
       type: String

@@ -9,6 +9,9 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
+    "@babel/plugin-transform-runtime": "^7.15.0",
+    "@babel/preset-env": "^7.15.0",
+    "@babel/runtime": "^7.15.3",
     "@nuxtjs/dotenv": "^1.4.1",
     "@nuxtjs/google-adsense": "^1.3.0",
     "bootstrap": "^4.5.2",
@@ -19,7 +22,9 @@
     "highcharts-vue": "^1.3.5",
     "immutability-helper": "^3.1.1",
     "lodash": "^4.17.21",
-    "nuxt": "^2.14.6",
+    "nuxt": "^2.13.3",
+    "vue": "^2.6.14",
+    "vue-server-renderer": "^2.6.14",
     "vue-snip": "^1.2.0"
   },
   "devDependencies": {
@@ -28,6 +33,8 @@
     "@nuxtjs/fontawesome": "^1.1.2",
     "@nuxtjs/proxy": "^2.1.0",
     "@nuxtjs/style-resources": "^1.0.0",
+    "consola": "^2.15.3",
+    "esm": "^3.2.25",
     "fibers": "^5.0.0",
     "sass": "^1.29.0",
     "sass-loader": "^10.1.0"

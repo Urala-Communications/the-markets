@@ -11,6 +11,12 @@
   "LazyChart": {
     "description": "Auto imported from components/Chart.vue"
   },
+  "Comparison": {
+    "description": "Auto imported from components/Comparison.vue"
+  },
+  "LazyComparison": {
+    "description": "Auto imported from components/Comparison.vue"
+  },
   "Footer": {
     "description": "Auto imported from components/Footer.vue"
   },
