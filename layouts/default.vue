@@ -103,6 +103,7 @@ export default {
           item.price = Number(data['p']).toLocaleFixed(2);
           item.difference = Number(data['dd']).toLocaleFixed(2);
           item.change = Number(data['dc']).toLocaleFixed(2);
+          item.time = data['t'];
           item.marketOpen = true;
           this.$root.$emit('updateCrypto', item);
         }

@@ -44,6 +44,11 @@
               :data="chartData"
               :options="chartOptions"
               :chartColour="item.change > 0 ? 'up' : 'down'"
+              :c_symbol="c_symbol"
+              :new="item"
+              ref="Chart"
+
+
             />
           </div>
           <div v-if="profile.description" class="info row">
@@ -165,8 +170,17 @@ export default {
     },
     marketStatus: {
       type: String
+    },
+    c_symbol: {
+      type: String
     }
+
   },
+  methods: {
+    getchart() {
+      return this.$refs.Chart
+    }
+  }
 }
 </script>
 
