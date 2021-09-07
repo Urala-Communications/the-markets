@@ -133,18 +133,15 @@ export default {
                         0, // y
                         function () {
                             // callback function
-                            console.log("button 1min pressed");
-                            console.time("btn1minpressed");
-
+                            console.log("button 1min pressed");                            
                             customButtonRange.map((btn) => btn.setState(0));
                             this.setState(2);
                             grouping = "second";
-
-                            /* cChart.$root.$emit("changeRangeCrypto", [
+                            cChart.$root.$emit("changeRangeCrypto", [
                                 { name: cChart.c_symbol },
-                                "1min",
+                                "1m",
                                 "second",
-                            ]); */
+                            ]);
                         },
                         {
                             // theme
@@ -185,17 +182,14 @@ export default {
                         function () {
                             // callback function
                             console.log("button 5 min pressed");
-                            console.time("btn5minpressed");
-
                             customButtonRange.map((btn) => btn.setState(0));
                             this.setState(2);
                             grouping = "second";
-
-                            /* cChart.$root.$emit("changeRangeCrypto", [
+                            cChart.$root.$emit("changeRangeCrypto", [
                                 { name: cChart.c_symbol },
-                                "5min",
+                                "5m",
                                 "second",
-                            ]); */
+                            ]);
                         },
                         {
                             // theme
@@ -232,17 +226,14 @@ export default {
                         function () {
                             // callback function
                             console.log("button 10min pressed");
-                            console.time("btn10minpressed");
-
                             customButtonRange.map((btn) => btn.setState(0));
                             this.setState(2);
                             grouping = "second";
-
-                            /* cChart.$root.$emit("changeRangeCrypto", [
+                            cChart.$root.$emit("changeRangeCrypto", [
                                 { name: cChart.c_symbol },
-                                "10min",
+                                "10m",
                                 "second",
-                            ]); */
+                            ]);
                         },
                         {
                             // theme
@@ -279,15 +270,12 @@ export default {
                         function () {
                             // callback function
                             console.log("button 30mn pressed");
-                            console.time("btn30minpressed");
-
                             customButtonRange.map((btn) => btn.setState(0));
                             this.setState(2);
                             grouping = "second";
-
                             cChart.$root.$emit("changeRangeCrypto", [
                                 { name: cChart.c_symbol },
-                                "30min",
+                                "30m",
                                 "second",
                             ]);
                         },
@@ -326,12 +314,9 @@ export default {
                         function () {
                             // callback function
                             console.log("button 1h pressed");
-                            console.time("btn1hpressed");
-
                             customButtonRange.map((btn) => btn.setState(0));
                             this.setState(2);
                             grouping = "minute";
-
                             cChart.$root.$emit("changeRangeCrypto", [
                                 { name: cChart.c_symbol },
                                 "1h",
@@ -685,7 +670,6 @@ export default {
                             customButtonRange.map((btn) => btn.setState(0));
                             this.setState(2);
                             console.log("button All pressed");
-
                             cChart.$root.$emit("changeRangeCrypto", [
                                 { name: cChart.c_symbol },
                                 "All",
@@ -762,19 +746,13 @@ export default {
             if (data.symbol === cChart.c_symbol) {
                 if (hchart != null) {
                     let group_timedata = new Date(data.time);
-                    group_timedata.setSeconds(0);
                     group_timedata.setMilliseconds(0);
+                    if (grouping == "minute") {
+                        group_timedata.setSeconds(0);
+                    }
 
                     if (grouping !== "hour" && grouping !== "day") {
-                        /* if (grouping == "hour") {
-                            group_timedata.setMinutes(0);
-                        } else if (grouping == "day") {
-                            group_timedata.setMinutes(0);
-                            group_timedata.setHours(
-                                -(group_timedata.getTimezoneOffset() / 60)
-                            );
-                        } */
-
+                        
                         const price = parseFloat(data.price.replace(",", ""));
                         const time = group_timedata.getTime();
 
@@ -788,30 +766,21 @@ export default {
                             }
                         );
                         if (index === -1) {
-                            tempdat.push([time, price]);
+                            tempdat.push([time, price]);                            
                             series.addPoint([time, price], true, true);
                             console.log("new point added", [time, price]);
-                            if (price < thresholdValue) {
-                                thresholdValue = price;
-                            }
-                            series.threshold = thresholdValue;
                         } else {
                             if (series.points.length > 0) {
                                 if (
                                     series.points[series.points.length - 1]
                                         .y !== price
                                 ) {
-                                    // update point & threshold to prevent chart scale yAxis
-                                    //tempdat[index][1] = price;
+                                    
                                     series.points[
                                         series.points.length - 1
                                     ].update({
                                         y: price,
                                     });
-                                    if (price < thresholdValue) {
-                                        thresholdValue = price;
-                                    }
-                                    series.threshold = thresholdValue;
                                 }
                             }
                         }
@@ -823,11 +792,15 @@ export default {
     created() {
         const self = this;
         this.$root.$on("update-chart-data", (data) => {
-            console.log("received & change new data:", data);
-            console.timeEnd("btn1hpressed");
-            this.chartOptions.series[0].data = data.data;
-            thresholdValue = this.hasMin(data.data)[1];
-            this.chartOptions.series[0].threshold = thresholdValue;
+            console.log("received & change new data:", data);            
+            
+            if (data.data.length) {
+                hchart.series[0].update({
+                    getExtremesFromAll: true,
+                    softThreshold: false,
+                    data: data.data
+                });                
+            }
         });
     },
 };
