@@ -38,7 +38,7 @@ export default {
         },
         c_symbol: {
             type: String,
-        },
+        },        
     },
 
     data() {
@@ -744,7 +744,8 @@ export default {
 
         this.$root.$on("updateCrypto", (data) => {
             if (data.symbol === cChart.c_symbol) {
-                if (hchart != null) {
+                if (self.$refs.highcharts != null) {
+
                     let group_timedata = new Date(data.time);
                     group_timedata.setMilliseconds(0);
                     if (grouping == "minute") {
@@ -755,8 +756,8 @@ export default {
                         
                         const price = parseFloat(data.price.replace(",", ""));
                         const time = group_timedata.getTime();
-
-                        const series = hchart.series[0];
+                        
+                        const series = self.$refs.highcharts.chart.series[0];
 
                         let tempdat = series.options.data;
                         const index = _.findIndex(
@@ -784,6 +785,7 @@ export default {
                                 }
                             }
                         }
+                        
                     }
                 }
             }
@@ -793,9 +795,9 @@ export default {
         const self = this;
         this.$root.$on("update-chart-data", (data) => {
             console.log("received & change new data:", data);            
-            
-            if (data.data.length) {
-                hchart.series[0].update({
+//            self.$refs.highcharts.chart.reflow();
+            if (data.data.length && self.$refs.highcharts) {
+                self.$refs.highcharts.chart.series[0].update({
                     getExtremesFromAll: true,
                     softThreshold: false,
                     data: data.data
