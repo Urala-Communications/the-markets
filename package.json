@@ -1,42 +1,15 @@
 {
-  "name": "TheMarkets",
-  "version": "1.0.0",
+  "name": "market-blog",
   "private": true,
+  "version": "0.0.0",
   "scripts": {
-    "dev": "nuxt",
-    "build": "NODE_ENV=production nuxt build",
-    "start": "nuxt start",
-    "generate": "nuxt generate"
-  },
-  "dependencies": {
-    "@babel/plugin-transform-runtime": "^7.15.0",
-    "@babel/preset-env": "^7.15.0",
-    "@babel/runtime": "^7.15.3",
-    "@nuxtjs/dotenv": "^1.4.1",
-    "@nuxtjs/google-adsense": "^1.3.0",
-    "bootstrap": "^4.5.2",
-    "bootstrap-vue": "^2.17.3",
-    "core-js": "^3.6.5",
-    "gsap": "^3.6.0",
-    "highcharts": "^9.1.0",
-    "highcharts-vue": "^1.3.5",
-    "immutability-helper": "^3.1.1",
-    "lodash": "^4.17.21",
-    "nuxt": "^2.13.3",
-    "vue": "^2.6.14",
-    "vue-server-renderer": "^2.6.14",
-    "vue-snip": "^1.2.0"
+    "develop:backend": "yarn --cwd backend develop",
+    "develop:frontend": "wait-on http://localhost:1337/admin && yarn --cwd frontend develop",
+    "develop": "cross-env FORCE_COLOR=1 npm-run-all -l -p develop:*"
   },
   "devDependencies": {
-    "@fortawesome/free-solid-svg-icons": "^5.15.1",
-    "@nuxtjs/axios": "^5.12.5",
-    "@nuxtjs/fontawesome": "^1.1.2",
-    "@nuxtjs/proxy": "^2.1.0",
-    "@nuxtjs/style-resources": "^1.0.0",
-    "consola": "^2.15.3",
-    "esm": "^3.2.25",
-    "fibers": "^5.0.0",
-    "sass": "^1.29.0",
-    "sass-loader": "^10.1.0"
+    "npm-run-all": "4.1.5",
+    "wait-on": "5.2.1",
+    "cross-env": "7.0.3"
   }
 }
