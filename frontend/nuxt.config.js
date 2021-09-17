@@ -1,6 +1,7 @@
 const finageApiKey = process.env.FINAGE_API_KEY;
 const finageSocketKey = process.env.FINAGE_SOCKET_KEY;
-const strapiBaseUri = process.env.STRAPI_URL || "http://localhost:1337";
+// const strapiBaseUri = process.env.STRAPI_URL || "http://localhost:1337";
+const strapiBaseUri = process.env.NODE_ENV === 'development' ? "http://localhost:1337" : "https://the-markets-cms.herokuapp.com";
 
 export default {
   // Disable server-side rendering (https://go.nuxtjs.dev/ssr-mode)

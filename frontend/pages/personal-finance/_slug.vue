@@ -149,6 +149,9 @@ export default {
       top: -120px;
       visibility: hidden;
     }
+    img {
+        max-width: 270px;
+    }
   }
   p {
       margin-bottom: 0.3rem;
@@ -171,5 +174,13 @@ export default {
   }
   .card {
     max-width: 500px;
+  }
+  @media (max-width: 768px){
+    .article {
+      img {
+        margin: 0 auto;
+        display: block;
+      }
+    }
   }
 </style>

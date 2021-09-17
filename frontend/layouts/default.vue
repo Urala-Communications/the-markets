@@ -151,21 +151,47 @@ export default {
       this.indicesWS.onopen = () => {
         this.loading = true;
         // console.log("INDICES Socket connection established");
-        this.indicesWS.send(JSON.stringify({"action": "subscribe", "symbols": "DJI,GSPC,IXIC,GDAXI,N225,HSI,SSEC,KS11,IBEX,FTSE,XU100,DGS2,DGS5,DGS10,DGS20,DGS30,DXY"}));
+        this.indicesWS.send(JSON.stringify({"action": "subscribe", "symbols": "DJI,GSPC,IXIC,GDAXI,N225,HSI,SSEC,KS11,IBEX,FTSE,XU100"}));
+        this.indicesWS.send(JSON.stringify({"action": "subscribe", "symbols": "DJI,GSPC,IXIC,GDAXI,N225,HSI,SSEC,KS11,IBEX,FTSE,XU100,DGS2,DGS5,DGS10,DGS20,DGS30,DXY", "isCFD": false}));
       }
       this.indicesWS.onmessage = (msg) => {
         let data = JSON.parse(msg.data);
-        if(this.indices.find(index => index.symbol === data['s'])){
-          let item = this.indices.find(index => index.symbol === data['s']);
-          // dc: "0.1301" // dd: "19.7504" // p: 15178.1 // s: "GDAXI" // t: 1620914109
-          item.price = Number(data['p']).toLocaleFixed(2);
-          item.difference = Number(data['dd']).toLocaleFixed(2);
-          item.change = Number(data['dc']).toLocaleFixed(2);
-          // if(this.marketStatus.exchanges.nasdaq){
-            // need asian market indicators
-            item.marketOpen = true;
-          // }
-          this.$root.$emit('updateIndice', item);
+        if(typeof data.p !== 'undefined'){
+          if(this.indices.find(index => index.symbol === data.s)){
+            // console.log('non-CFD')
+            // console.log(data.p)
+            // console.log(data)
+            let item = this.indices.find(index => index.symbol === data.s);
+            item.price = Number(data.p).toLocaleFixed(2);
+            item.difference = Number(data.dd).toLocaleFixed(2);
+            item.change = Number(data.dc).toLocaleFixed(2);
+            // if(this.marketStatus.exchanges.nasdaq){
+              // need asian market indicators
+              // item.marketOpen = true;
+            // }
+            // console.log(item)
+            // console.log("")
+            this.$root.$emit('updateIndice', item);
+          }
+        } else {
+          if(this.indices.find(index => index.cfd && index.symbol === data.s)){
+            // console.log('CFD')
+            // console.log(data.s)
+            // console.log(data)
+            let item = this.indices.find(index => index.cfd && index.symbol === data.s);
+            // console.log('CFD')
+            // console.log(item)
+            // console.log("")
+            item.price = Number(data.a).toLocaleFixed(2); // ask or bid or both?
+            item.difference = Number(data.dd).toLocaleFixed(2);
+            item.change = Number(data.dc).toLocaleFixed(2);
+            item.change = Number(data.dc).toLocaleFixed(2);
+            // if(this.marketStatus.exchanges.nasdaq){
+              // need asian market indicators
+              // item.marketOpen = true;
+            // }
+            this.$root.$emit('updateIndice', item);
+          }
         }
         this.loading = false;
       }
@@ -234,6 +260,11 @@ export default {
       .then(() => {
         this.$axios.$get(`https://api.finage.co.uk/agg/index/${symbol}/1day/2021-01-01/2021-06-01?limit=1825&&apikey=${finageApiKey}`)
         .then(response => {
+          // if(typeof response.p !== 'undefined'){
+          //   let i = this.indices.find( indice => indice.symbol === response.symbol );
+          // } else {
+          //   let i = this.indices.find( indice => indice.symbol === response.symbol && indice.cfd );
+          // }
           let i = this.indices.find( indice => indice.symbol === response.symbol );
           let last = response.results.pop();
           i.difference = i.priceNumber - last.c

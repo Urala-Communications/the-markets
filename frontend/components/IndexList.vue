@@ -9,7 +9,7 @@
     </div>
     <div
       v-for="index in data"
-      :key="index.symbol"
+      :key="index.name"
       class="w-100 grid-wrapper"
     >
       <div v-if="type === 'rising'" class="movers-grid grid">
@@ -55,7 +55,7 @@
   <div v-else class="row mb-3 mx-0 pb-2 justify-content-between w-100">
     <NuxtLink
       v-for="index in data"
-      :key="index.symbol"
+      :key="index.name"
       class="instrument index"
       :class="index.change > 0 ? 'up' : 'down'"
       :to="`/${type}/${index.name.replace(/\s+|[' '\/]/g, '-').toLowerCase()}`"
@@ -146,7 +146,7 @@ export default {
   }
   .indices .index {
     &:nth-of-type(6){border-bottom: 1px solid #e3e3e3;}
-    &:nth-of-type(7){border-bottom: none;}
+    &:nth-of-type(10){border-bottom: none;}
   }
 }
 

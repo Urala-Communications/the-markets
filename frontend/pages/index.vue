@@ -352,7 +352,7 @@ export default {
       display: none;
     }
     .indices{
-      .instrument.index:nth-of-type(n+8){
+      .instrument.index:nth-of-type(n+11){
         display: none;
       }
     }

@@ -6,7 +6,8 @@
     "develop": "nuxt",
     "build": "NODE_ENV=production nuxt build",
     "start": "nuxt start",
-    "generate": "nuxt generate"
+    "generate": "nuxt generate",
+    "heroku-postbuild": "npm run build"
   },
   "dependencies": {
     "@babel/plugin-transform-runtime": "^7.15.0",
