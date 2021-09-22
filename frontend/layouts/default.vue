@@ -43,7 +43,9 @@ export default {
       chartOptions: null,
       newsData: [],
       mobileNavOpen: false,
-      marketStatus: {}
+      marketStatus: {},
+      yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
+      today: new Date(Date.now()).toLocaleDateString("fr-CA"),
     }
   },
   head() {
@@ -74,6 +76,7 @@ export default {
           let item = this.currencies.find(index => index.name === data.s);
           item.difference = Number(data.dd).toLocaleFixed(2);
           item.change = Number(data.dc).toLocaleFixed(2);
+          item.time = data['t'];
           if(item.type === 'commodity'){
             item.price = Number(data.a).toLocaleFixed(2);
             item.marketOpen = true;
@@ -133,6 +136,7 @@ export default {
           item.price = Number(data['a']).toLocaleFixed(2);
           item.difference = Number(data['dd']).toLocaleFixed(2);
           item.change = Number(data['dc']).toLocaleFixed(2);
+          item.time = data['t'];
           if(this.marketStatus.market === 'open'){
             item.marketOpen = true;
           }
@@ -156,6 +160,7 @@ export default {
       }
       this.indicesWS.onmessage = (msg) => {
         let data = JSON.parse(msg.data);
+        
         if(typeof data.p !== 'undefined'){
           if(this.indices.find(index => index.symbol === data.s)){
             // console.log('non-CFD')
@@ -165,6 +170,7 @@ export default {
             item.price = Number(data.p).toLocaleFixed(2);
             item.difference = Number(data.dd).toLocaleFixed(2);
             item.change = Number(data.dc).toLocaleFixed(2);
+            item.time = data.t;
             // if(this.marketStatus.exchanges.nasdaq){
               // need asian market indicators
               // item.marketOpen = true;
@@ -185,7 +191,8 @@ export default {
             item.price = Number(data.a).toLocaleFixed(2); // ask or bid or both?
             item.difference = Number(data.dd).toLocaleFixed(2);
             item.change = Number(data.dc).toLocaleFixed(2);
-            item.change = Number(data.dc).toLocaleFixed(2);
+            item.time = data.t;
+            //item.change = Number(data.dc).toLocaleFixed(2);
             // if(this.marketStatus.exchanges.nasdaq){
               // need asian market indicators
               // item.marketOpen = true;
@@ -214,7 +221,7 @@ export default {
       })
       .then(() => {
         this.stocks.forEach(item => {
-          this.$axios.$get(`https://api.finage.co.uk/agg/stock/${item.symbol}/1/day/2021-01-01/2021-06-01?limit=1825&&apikey=${finageApiKey}`)
+          this.$axios.$get(`https://api.finage.co.uk/agg/stock/${item.symbol}/1/day/2021-01-01/${this.today}?limit=1825&apikey=${finageApiKey}`)
           .then(response => {
             let i = this.stocks.find( stock => stock.symbol === response.symbol );
             let last = response.results.pop();
@@ -254,11 +261,11 @@ export default {
       .then(response => {
         let i = this.indices.find( indice => indice.symbol === response.symbol );
         i.price = response.price.toLocaleFixed(2);
-        i.priceNumber = response.price
+        i.priceNumber = response.price;        
         this.$root.$emit('updateIndice', i);
       })
       .then(() => {
-        this.$axios.$get(`https://api.finage.co.uk/agg/index/${symbol}/1day/2021-01-01/2021-06-01?limit=1825&&apikey=${finageApiKey}`)
+        this.$axios.$get(`https://api.finage.co.uk/agg/index/${symbol}/1day/2021-01-01/${this.today}?limit=1825&apikey=${finageApiKey}`)
         .then(response => {
           // if(typeof response.p !== 'undefined'){
           //   let i = this.indices.find( indice => indice.symbol === response.symbol );
@@ -271,6 +278,7 @@ export default {
           i.difference = i.difference.toFixed(2)
           i.change = (i.priceNumber - last.c) / last.c * 100
           i.change = i.change.toFixed(2)
+          i.price = parseFloat(last.c);
           this.$root.$emit('updateIndice', i);
         })
         .catch(error => {

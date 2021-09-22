@@ -148,12 +148,10 @@ export default {
                 )
                 .then((response) => {
                     console.log("Aggregates");
-                    //console.log(response.results)
+                    
                     this.chartData = response.results.map((i) => {
                         return [i.t, i.c];
-                    });
-                    //console.log("chartData: ",this.chartData)
-                    //console.log(i.symbol);
+                    });                    
                     this.c_symbol = i.symbol;
                     localStorage.setItem(
                         i.symbol + "-All",
@@ -462,7 +460,7 @@ export default {
             }
         });
 
-        this.$root.$on("changeRangeCrypto", ([item, range, interval]) => {
+        this.$root.$on("changeRangeData", ([item, range, interval]) => {
             console.log("received emit data: ", [item, range, interval]);
             console.time("receivedDat");
             if (item.name === this.c_symbol) {
