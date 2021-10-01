@@ -38,7 +38,7 @@ export default {
         },
         c_symbol: {
             type: String,
-        },
+        },        
     },
 
     data() {
@@ -128,166 +128,18 @@ export default {
                 const self = this;
                 const btn1min = chart.renderer
                     .button(
-                        "<div>1mn</div>", // text
+                        "1mn", // text
                         10, // x
                         0, // y
                         function () {
                             // callback function
-                            console.log("button 1min pressed");
-                            console.time("btn1minpressed");
-
+                            console.log("button 1min pressed");                            
                             customButtonRange.map((btn) => btn.setState(0));
                             this.setState(2);
                             grouping = "second";
-
-                            /* cChart.$root.$emit("changeRangeCrypto", [
+                            cChart.$root.$emit("changeRangeData", [
                                 { name: cChart.c_symbol },
-                                "1min",
-                                "second",
-                            ]); */
-                        },
-                        {
-                            // theme
-                            "stroke-width": 1,
-                            stroke: "silver",
-                            fill: "#E0E0E0",
-                            height: 12,
-                            r: 0,
-                            zIndex: 10,
-                        },
-                        {
-                            // hover state
-                            fill: "#bada55",
-                        },
-                        {
-                            // pressed state
-                            fill: "#bada55",
-                        },
-                        null,
-                        null,
-                        true
-                    )
-                    .css({
-                        "font-weight": "bold",
-                    })
-                    .attr({
-                        id: "button-1min",
-                    })
-                    .addClass("btn-1min")
-
-                    .add();
-                customButtonRange.push(btn1min);
-                const btn5min = chart.renderer
-                    .button(
-                        "5mn", // text
-                        60, // x
-                        0, // y
-                        function () {
-                            // callback function
-                            console.log("button 5 min pressed");
-                            console.time("btn5minpressed");
-
-                            customButtonRange.map((btn) => btn.setState(0));
-                            this.setState(2);
-                            grouping = "second";
-
-                            /* cChart.$root.$emit("changeRangeCrypto", [
-                                { name: cChart.c_symbol },
-                                "5min",
-                                "second",
-                            ]); */
-                        },
-                        {
-                            // theme
-                            "stroke-width": 1,
-                            stroke: "silver",
-                            fill: "#E0E0E0",
-                            height: 12,
-                            r: 0,
-                            zIndex: 10,
-                        },
-                        {
-                            // hover state
-                            fill: "#bada55",
-                        },
-                        {
-                            // pressed state
-                            fill: "#bada55",
-                        },
-                        null,
-                        null,
-                        true
-                    )
-                    .css({
-                        "font-weight": "bold",
-                    })
-                    .addClass("btn-5min")
-                    .add();
-                customButtonRange.push(btn5min);
-                const btn10min = chart.renderer
-                    .button(
-                        "10mn", // text
-                        110, // x
-                        0, // y
-                        function () {
-                            // callback function
-                            console.log("button 10min pressed");
-                            console.time("btn10minpressed");
-
-                            customButtonRange.map((btn) => btn.setState(0));
-                            this.setState(2);
-                            grouping = "second";
-
-                            /* cChart.$root.$emit("changeRangeCrypto", [
-                                { name: cChart.c_symbol },
-                                "10min",
-                                "second",
-                            ]); */
-                        },
-                        {
-                            // theme
-                            "stroke-width": 1,
-                            stroke: "silver",
-                            fill: "#E0E0E0",
-                            height: 12,
-                            r: 0,
-                            zIndex: 10,
-                        },
-                        {
-                            // hover state
-                            fill: "#bada55",
-                        },
-                        {
-                            // pressed state
-                            fill: "#bada55",
-                        },
-                        null,
-                        null,
-                        true
-                    )
-                    .css({
-                        "font-weight": "bold",
-                    })
-                    .addClass("btn-10min")
-                    .add();
-                customButtonRange.push(btn10min);
-                const btn30min = chart.renderer
-                    .button(
-                        "30mn", // text
-                        170, // x
-                        0, // y
-                        function () {
-                            // callback function
-                            console.log("button 30mn pressed");
-                            console.time("btn30minpressed");
-
-                            customButtonRange.map((btn) => btn.setState(0));
-                            this.setState(2);
-                            grouping = "second";
-
-                            cChart.$root.$emit("changeRangeCrypto", [
-                                { name: cChart.c_symbol },
-                                "30min",
+                                "1m",
                                 "second",
                             ]);
                         },
@@ -310,7 +162,143 @@ export default {
                         },
                         null,
                         null,
-                        true
+                        false
+                    )
+                    .css({
+                        "font-weight": "bold",
+                    })
+                    .attr({
+                        id: "button-1min",
+                    })
+                    .addClass("btn-1min")
+
+                    .add();
+                customButtonRange.push(btn1min);
+                const btn5min = chart.renderer
+                    .button(
+                        "5mn", // text
+                        60, // x
+                        0, // y
+                        function () {
+                            // callback function
+                            console.log("button 5 min pressed");
+                            customButtonRange.map((btn) => btn.setState(0));
+                            this.setState(2);
+                            grouping = "second";
+                            cChart.$root.$emit("changeRangeData", [
+                                { name: cChart.c_symbol },
+                                "5m",
+                                "second",
+                            ]);
+                        },
+                        {
+                            // theme
+                            "stroke-width": 1,
+                            stroke: "silver",
+                            fill: "#E0E0E0",
+                            height: 12,
+                            r: 0,
+                            zIndex: 10,
+                        },
+                        {
+                            // hover state
+                            fill: "#bada55",
+                        },
+                        {
+                            // pressed state
+                            fill: "#bada55",
+                        },
+                        null,
+                        null,
+                        false
+                    )
+                    .css({
+                        "font-weight": "bold",
+                    })
+                    .addClass("btn-5min")
+                    .add();
+                customButtonRange.push(btn5min);
+                const btn10min = chart.renderer
+                    .button(
+                        "10mn", // text
+                        110, // x
+                        0, // y
+                        function () {
+                            // callback function
+                            console.log("button 10min pressed");
+                            customButtonRange.map((btn) => btn.setState(0));
+                            this.setState(2);
+                            grouping = "second";
+                            cChart.$root.$emit("changeRangeData", [
+                                { name: cChart.c_symbol },
+                                "10m",
+                                "second",
+                            ]);
+                        },
+                        {
+                            // theme
+                            "stroke-width": 1,
+                            stroke: "silver",
+                            fill: "#E0E0E0",
+                            height: 12,
+                            r: 0,
+                            zIndex: 10,
+                        },
+                        {
+                            // hover state
+                            fill: "#bada55",
+                        },
+                        {
+                            // pressed state
+                            fill: "#bada55",
+                        },
+                        null,
+                        null,
+                        false
+                    )
+                    .css({
+                        "font-weight": "bold",
+                    })
+                    .addClass("btn-10min")
+                    .add();
+                customButtonRange.push(btn10min);
+                const btn30min = chart.renderer
+                    .button(
+                        "30mn", // text
+                        170, // x
+                        0, // y
+                        function () {
+                            // callback function
+                            console.log("button 30mn pressed");
+                            customButtonRange.map((btn) => btn.setState(0));
+                            this.setState(2);
+                            grouping = "second";
+                            cChart.$root.$emit("changeRangeData", [
+                                { name: cChart.c_symbol },
+                                "30m",
+                                "second",
+                            ]);
+                        },
+                        {
+                            // theme
+                            "stroke-width": 1,
+                            stroke: "silver",
+                            fill: "#E0E0E0",
+                            height: 12,
+                            r: 0,
+                            zIndex: 10,
+                        },
+                        {
+                            // hover state
+                            fill: "#bada55",
+                        },
+                        {
+                            // pressed state
+                            fill: "#bada55",
+                        },
+                        null,
+                        null,
+                        false
                     )
                     .css({
                         "font-weight": "bold",
@@ -326,13 +314,10 @@ export default {
                         function () {
                             // callback function
                             console.log("button 1h pressed");
-                            console.time("btn1hpressed");
-
                             customButtonRange.map((btn) => btn.setState(0));
                             this.setState(2);
                             grouping = "minute";
-
-                            cChart.$root.$emit("changeRangeCrypto", [
+                            cChart.$root.$emit("changeRangeData", [
                                 { name: cChart.c_symbol },
                                 "1h",
                                 "minute",
@@ -357,7 +342,7 @@ export default {
                         },
                         null,
                         null,
-                        true
+                        false
                     )
                     .css({
                         "font-weight": "bold",
@@ -377,7 +362,7 @@ export default {
                             this.setState(2);
                             grouping = "minute";
                             console.log("button 4h pressed");
-                            cChart.$root.$emit("changeRangeCrypto", [
+                            cChart.$root.$emit("changeRangeData", [
                                 { name: cChart.c_symbol },
                                 "4h",
                                 "minute",
@@ -402,7 +387,7 @@ export default {
                         },
                         null,
                         null,
-                        true
+                        false
                     )
                     .css({
                         "font-weight": "bold",
@@ -421,7 +406,7 @@ export default {
                             customButtonRange.map((btn) => btn.setState(0));
                             this.setState(2);
                             console.log("button 1d pressed");
-                            cChart.$root.$emit("changeRangeCrypto", [
+                            cChart.$root.$emit("changeRangeData", [
                                 { name: cChart.c_symbol },
                                 "1d",
                                 "hour",
@@ -446,7 +431,7 @@ export default {
                         },
                         null,
                         null,
-                        true
+                        false
                     )
                     .css({
                         "font-weight": "bold",
@@ -465,7 +450,7 @@ export default {
                             customButtonRange.map((btn) => btn.setState(0));
                             this.setState(2);
                             console.log("button 1w pressed");
-                            cChart.$root.$emit("changeRangeCrypto", [
+                            cChart.$root.$emit("changeRangeData", [
                                 { name: cChart.c_symbol },
                                 "1w",
                                 "hour",
@@ -490,7 +475,7 @@ export default {
                         },
                         null,
                         null,
-                        true
+                        false
                     )
                     .css({
                         "font-weight": "bold",
@@ -509,7 +494,7 @@ export default {
                             customButtonRange.map((btn) => btn.setState(0));
                             this.setState(2);
                             console.log("button 1M pressed");
-                            cChart.$root.$emit("changeRangeCrypto", [
+                            cChart.$root.$emit("changeRangeData", [
                                 { name: cChart.c_symbol },
                                 "1M",
                                 "hour",
@@ -534,7 +519,7 @@ export default {
                         },
                         null,
                         null,
-                        true
+                        false
                     )
                     .css({
                         "font-weight": "bold",
@@ -553,7 +538,7 @@ export default {
                             customButtonRange.map((btn) => btn.setState(0));
                             this.setState(2);
                             console.log("button 3M pressed");
-                            cChart.$root.$emit("changeRangeCrypto", [
+                            cChart.$root.$emit("changeRangeData", [
                                 { name: cChart.c_symbol },
                                 "3M",
                                 "day",
@@ -578,7 +563,7 @@ export default {
                         },
                         null,
                         null,
-                        true
+                        false
                     )
                     .css({
                         "font-weight": "bold",
@@ -597,7 +582,7 @@ export default {
                             customButtonRange.map((btn) => btn.setState(0));
                             this.setState(2);
                             console.log("button 6M pressed");
-                            cChart.$root.$emit("changeRangeCrypto", [
+                            cChart.$root.$emit("changeRangeData", [
                                 { name: cChart.c_symbol },
                                 "6M",
                                 "day",
@@ -622,7 +607,7 @@ export default {
                         },
                         null,
                         null,
-                        true
+                        false
                     )
                     .css({
                         "font-weight": "bold",
@@ -641,7 +626,7 @@ export default {
                             customButtonRange.map((btn) => btn.setState(0));
                             this.setState(2);
                             console.log("button 1y pressed");
-                            cChart.$root.$emit("changeRangeCrypto", [
+                            cChart.$root.$emit("changeRangeData", [
                                 { name: cChart.c_symbol },
                                 "1y",
                                 "day",
@@ -666,7 +651,7 @@ export default {
                         },
                         null,
                         null,
-                        true
+                        false
                     )
                     .css({
                         "font-weight": "bold",
@@ -685,8 +670,7 @@ export default {
                             customButtonRange.map((btn) => btn.setState(0));
                             this.setState(2);
                             console.log("button All pressed");
-
-                            cChart.$root.$emit("changeRangeCrypto", [
+                            cChart.$root.$emit("changeRangeData", [
                                 { name: cChart.c_symbol },
                                 "All",
                                 "day",
@@ -711,7 +695,7 @@ export default {
                         },
                         null,
                         null,
-                        true
+                        false
                     )
                     .css({
                         "font-weight": "bold",
@@ -760,25 +744,20 @@ export default {
 
         this.$root.$on("updateCrypto", (data) => {
             if (data.symbol === cChart.c_symbol) {
-                if (hchart != null) {
+                if (self.$refs.highcharts != null) {
+
                     let group_timedata = new Date(data.time);
-                    group_timedata.setSeconds(0);
                     group_timedata.setMilliseconds(0);
+                    if (grouping == "minute") {
+                        group_timedata.setSeconds(0);
+                    }
 
                     if (grouping !== "hour" && grouping !== "day") {
-                        /* if (grouping == "hour") {
-                            group_timedata.setMinutes(0);
-                        } else if (grouping == "day") {
-                            group_timedata.setMinutes(0);
-                            group_timedata.setHours(
-                                -(group_timedata.getTimezoneOffset() / 60)
-                            );
-                        } */
-
+                        
                         const price = parseFloat(data.price.replace(",", ""));
                         const time = group_timedata.getTime();
-
-                        const series = hchart.series[0];
+                        
+                        const series = self.$refs.highcharts.chart.series[0];
 
                         let tempdat = series.options.data;
                         const index = _.findIndex(
@@ -788,46 +767,91 @@ export default {
                             }
                         );
                         if (index === -1) {
-                            tempdat.push([time, price]);
+                            tempdat.push([time, price]);                            
                             series.addPoint([time, price], true, true);
                             console.log("new point added", [time, price]);
-                            if (price < thresholdValue) {
-                                thresholdValue = price;
-                            }
-                            series.threshold = thresholdValue;
                         } else {
                             if (series.points.length > 0) {
                                 if (
                                     series.points[series.points.length - 1]
                                         .y !== price
                                 ) {
-                                    // update point & threshold to prevent chart scale yAxis
-                                    //tempdat[index][1] = price;
+                                    
                                     series.points[
                                         series.points.length - 1
                                     ].update({
                                         y: price,
                                     });
-                                    if (price < thresholdValue) {
-                                        thresholdValue = price;
-                                    }
-                                    series.threshold = thresholdValue;
                                 }
                             }
                         }
+                        
                     }
                 }
             }
         });
+        this.$root.$on("updateCurrency", (data) => {
+            if (data.symbol === cChart.c_symbol) {
+                if (self.$refs.highcharts != null) {
+
+                    let group_timedata = new Date(data.time);
+                    group_timedata.setMilliseconds(0);
+                    if (grouping == "minute") {
+                        group_timedata.setSeconds(0);
+                    }
+
+                    if (grouping !== "hour" && grouping !== "day") {
+                        
+                        const price = parseFloat(data.price.replace(",", ""));
+                        const time = group_timedata.getTime();
+                        
+                        const series = self.$refs.highcharts.chart.series[0];
+
+                        let tempdat = series.options.data;
+                        const index = _.findIndex(
+                            series.options.data,
+                            function (el) {
+                                return el[0] == time;
+                            }
+                        );
+                        if (index === -1) {
+                            tempdat.push([time, price]);                            
+                            series.addPoint([time, price], true, true);
+                            console.log("new point added", [time, price]);
+                        } else {
+                            if (series.points.length > 0) {
+                                if (
+                                    series.points[series.points.length - 1]
+                                        .y !== price
+                                ) {
+                                    
+                                    series.points[
+                                        series.points.length - 1
+                                    ].update({
+                                        y: price,
+                                    });
+                                }
+                            }
+                        }
+                        
+                    }
+                }
+            }
+        });
+        
     },
     created() {
         const self = this;
         this.$root.$on("update-chart-data", (data) => {
-            console.log("received & change new data:", data);
-            console.timeEnd("btn1hpressed");
-            this.chartOptions.series[0].data = data.data;
-            thresholdValue = this.hasMin(data.data)[1];
-            this.chartOptions.series[0].threshold = thresholdValue;
+            console.log("received & change new data:", data);            
+//            self.$refs.highcharts.chart.reflow();
+            if (data.data.length && self.$refs.highcharts) {
+                self.$refs.highcharts.chart.series[0].update({
+                    getExtremesFromAll: true,
+                    softThreshold: false,
+                    data: data.data
+                });                
+            }
         });
     },
 };

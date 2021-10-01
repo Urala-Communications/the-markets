@@ -1,16 +1,6 @@
 <template>
     <div v-if="loading">
-        <div
-            class="
-                container
-                d-flex
-                justify-content-around
-                w-50
-                pt-5
-                vh-100
-                text-center
-            "
-        >
+        <div class="container d-flex justify-content-around w-50 pt-5 vh-100 text-center">
             <div class="loading-logo mt-5" role="status" />
         </div>
     </div>
@@ -158,12 +148,10 @@ export default {
                 )
                 .then((response) => {
                     console.log("Aggregates");
-                    //console.log(response.results)
+                    
                     this.chartData = response.results.map((i) => {
                         return [i.t, i.c];
-                    });
-                    //console.log("chartData: ",this.chartData)
-                    //console.log(i.symbol);
+                    });                    
                     this.c_symbol = i.symbol;
                     localStorage.setItem(
                         i.symbol + "-All",
@@ -193,32 +181,32 @@ export default {
             lastinterval.setSeconds(0);
             let limit = 500;
             switch (range) {
-                case "1min":
+                case "1m":
                     minDate = new Date(
                         new Date().getTime() - 24 * 1000 * 60 * 60
                     ).toLocaleDateString("fr-CA");
                     interval = "second";
                     limit = 100;
                     break;
-                case "5min":
+                case "5m":
                     minDate = new Date(
                         new Date().getTime() - 24 * 1000 * 60 * 60
                     ).toLocaleDateString("fr-CA");
                     interval = "second";
                     limit = 3000;
                     break;
-                case "10min":
+                case "10m":
                     minDate = new Date(
                         new Date().getTime() - 24 * 1000 * 60 * 60
                     ).toLocaleDateString("fr-CA");
                     interval = "second";
                     limit = 3000;
                     break;
-                case "30min":
+                case "30m":
                     minDate = new Date(
                         new Date().getTime() - 24 * 1000 * 60 * 60
                     ).toLocaleDateString("fr-CA");
-                    interval = "minute";
+                    interval = "second";
                     startPoint.setTime(
                         new Date(new Date().getTime() - 1000 * 60 * 30)
                     );
@@ -332,6 +320,7 @@ export default {
             let data = localStorage.getItem(i.symbol + "-" + interval);
             console.timeEnd("receivedDat");
             console.log(i.symbol + "-" + interval);
+            if (interval !== "second") {
             // remove old data and add the new one
             if (data !== null) {
                 data = JSON.parse(data);
@@ -372,9 +361,30 @@ export default {
                     startPoint
                 );
             }
+            } else {
+                let url = `https://api.thedice.com/api/${range}/${i.symbol}/1`;
+                
+                this.$axios
+                .$get(
+                    url
+                )
+                .then((response) => {
+                    let tempdata = response.map((i) => {
+                        return [Date.parse(i._stop), i._value];
+                    });
+                    this.$root.$emit("update-chart-data", {
+                        interval: interval,
+                        range: range,
+                        data: tempdata,
+                    });
+                })
+
+            }
         },
         startUpdateData(symbol, range, limit, interval, minDate, startPoint) {
             console.log("change chart data: ", [symbol, interval, minDate]);
+            let url = `https://api.finage.co.uk/agg/crypto/${symbol}/1/${interval}/${minDate}/${this.today}?&apikey=${process.env.FINAGE_API_KEY}&limit=${limit}`;
+           
             this.$axios
                 .$get(
                     `https://api.finage.co.uk/agg/crypto/${symbol}/1/${interval}/${minDate}/${this.today}?&apikey=${this.finageApiKey}&limit=${limit}`
@@ -450,7 +460,7 @@ export default {
             }
         });
 
-        this.$root.$on("changeRangeCrypto", ([item, range, interval]) => {
+        this.$root.$on("changeRangeData", ([item, range, interval]) => {
             console.log("received emit data: ", [item, range, interval]);
             console.time("receivedDat");
             if (item.name === this.c_symbol) {
