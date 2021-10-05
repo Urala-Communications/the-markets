@@ -254,7 +254,7 @@ export default {
                     break;
                 case "1w":
                     minDate = new Date(
-                        new Date().getTime() - 7 * 24 * 1000 * 60 * 60
+                        new Date().getTime() - 30 * 24 * 1000 * 60 * 60
                     ).toLocaleDateString("fr-CA");
                     lastinterval.setMinutes(0);
                     startPoint = new Date(
@@ -274,7 +274,7 @@ export default {
                     break;
                 case "3M":
                     minDate = new Date(
-                        new Date().getTime() - 90 * 24 * 1000 * 60 * 60
+                        new Date().getTime() - 365 * 24 * 1000 * 60 * 60
                     ).toLocaleDateString("fr-CA");
                     lastinterval.setMinutes(0);
                     lastinterval.setHours(0);
@@ -285,7 +285,7 @@ export default {
                     break;
                 case "6M":
                     minDate = new Date(
-                        new Date().getTime() - 180 * 24 * 1000 * 60 * 60
+                        new Date().getTime() - 365 * 24 * 1000 * 60 * 60
                     ).toLocaleDateString("fr-CA");
                     lastinterval.setMinutes(0);
                     lastinterval.setHours(0);
@@ -344,6 +344,7 @@ export default {
                         startPoint
                     );
                 } else {
+                    
                     this.$root.$emit("update-chart-data", {
                         interval: interval,
                         range: range,

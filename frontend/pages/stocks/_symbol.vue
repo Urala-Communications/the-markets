@@ -186,7 +186,7 @@ export default {
                   break;
               case "1h":
                   minDate = new Date(
-                      new Date().getTime() - 24 * 1000 * 60 * 60
+                      new Date().getTime() - 30 * 24 * 1000 * 60 * 60
                   ).toLocaleDateString("fr-CA");
                   interval = "minute";
                   startPoint = 1000 * 60 * 60;
@@ -194,7 +194,7 @@ export default {
                   break;
               case "2h":
                   minDate = new Date(
-                      new Date().getTime() - 24 * 1000 * 60 * 60
+                      new Date().getTime() - 30 * 24 * 1000 * 60 * 60
                   ).toLocaleDateString("fr-CA");
                   interval = "minute";
                   startPoint = 2 * 60 * 60 * 1000;
@@ -202,7 +202,7 @@ export default {
                   break;
               case "4h":
                   minDate = new Date(
-                      new Date().getTime() - 24 * 1000 * 60 * 60
+                      new Date().getTime() - 30 * 24 * 1000 * 60 * 60
                   ).toLocaleDateString("fr-CA");
                   interval = "minute";
                   startPoint = 4 * 60 * 60 * 1000;
@@ -210,7 +210,7 @@ export default {
                   break;
               case "1d":
                   minDate = new Date(
-                      new Date().getTime() - 24 * 1000 * 60 * 60
+                      new Date().getTime() - 30 * 24 * 1000 * 60 * 60
                   ).toLocaleDateString("fr-CA");
                   interval = "minute";
                   startPoint = 24 * 1000 * 60 * 60;
@@ -218,7 +218,7 @@ export default {
                   break;
               case "1w":
                   minDate = new Date(
-                      new Date().getTime() - 7 * 24 * 1000 * 60 * 60
+                      new Date().getTime() - 30 * 24 * 1000 * 60 * 60
                   ).toLocaleDateString("fr-CA");
                   lastinterval.setMinutes(0);
                   startPoint = 7 * 24 * 1000 * 60 * 60;
@@ -234,7 +234,7 @@ export default {
                   break;
               case "3M":
                   minDate = new Date(
-                      new Date().getTime() - 90 * 24 * 1000 * 60 * 60
+                      new Date().getTime() - 365 * 24 * 1000 * 60 * 60
                   ).toLocaleDateString("fr-CA");
                   lastinterval.setMinutes(0);
                   lastinterval.setHours(0);
@@ -243,7 +243,7 @@ export default {
                   break;
               case "6M":
                   minDate = new Date(
-                      new Date().getTime() - 180 * 24 * 1000 * 60 * 60
+                      new Date().getTime() - 365 * 24 * 1000 * 60 * 60
                   ).toLocaleDateString("fr-CA");
                   lastinterval.setMinutes(0);
                   lastinterval.setHours(0);
@@ -381,7 +381,7 @@ export default {
           this.$set(this.item, 'icon', item.icon);
         }
       });
-       this.$root.$on("changeRangeData", ([item, range, interval]) => {
+      this.$root.$on("changeRangeData", ([item, range, interval]) => {
           console.log("received emit data: ", [item, range, interval]);
           console.time("receivedDat");
           if (item.name === this.c_symbol) {
