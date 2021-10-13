@@ -17,6 +17,7 @@
     :chartData="chartData"
     :chartOptions="chartOptions"
     :marketStatus="marketStatus"
+    :c_symbol="c_symbol"
   />
 </template>
 
@@ -47,7 +48,9 @@ export default {
         commodities,
         chartData: [],
         chartOptions: null,
-        yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA")
+        c_symbol: "",
+        yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
+        today: new Date(Date.now()).toLocaleDateString("fr-CA"),
       }
     },
     head() {
@@ -131,7 +134,235 @@ export default {
         .catch(error => {
           console.log(error);
         })
-      }
+      },
+      changeChartData(range, interval = "day") {
+          let i = this.commodities.find(
+              (item) => item.name.toLowerCase() === this.symbol
+          );
+          let minDate = "2021-01-01";
+          let date = new Date();
+          let startPoint = date;
+          let lastinterval = new Date();
+          lastinterval.setMilliseconds(0);
+          lastinterval.setSeconds(0);
+          let limit = 500;
+          switch (range) {
+              case "1m":
+                  minDate = new Date(
+                      new Date().getTime() - 24 * 1000 * 60 * 60
+                  ).toLocaleDateString("fr-CA");
+                  interval = "second";
+                  limit = 100;
+                  break;
+              case "5m":
+                  minDate = new Date(
+                      new Date().getTime() - 24 * 1000 * 60 * 60
+                  ).toLocaleDateString("fr-CA");
+                  interval = "second";
+                  limit = 3000;
+                  break;
+              case "10m":
+                  minDate = new Date(
+                      new Date().getTime() - 24 * 1000 * 60 * 60
+                  ).toLocaleDateString("fr-CA");
+                  interval = "second";
+                  limit = 3000;
+                  break;
+              case "30m":
+                  minDate = new Date(
+                      new Date().getTime() - 24 * 1000 * 60 * 60
+                  ).toLocaleDateString("fr-CA");
+                  interval = "second";
+                  startPoint.setTime(
+                      new Date(new Date().getTime() - 1000 * 60 * 30)
+                  );
+                  limit = 3000;
+                  break;
+              case "1h":
+                  minDate = new Date(
+                      new Date().getTime() - 30 * 24 * 1000 * 60 * 60
+                  ).toLocaleDateString("fr-CA");
+                  interval = "minute";
+                  startPoint = 1000 * 60 * 60;
+                  limit = 3000;
+                  break;
+              case "2h":
+                  minDate = new Date(
+                      new Date().getTime() - 30 * 24 * 1000 * 60 * 60
+                  ).toLocaleDateString("fr-CA");
+                  interval = "minute";
+                  startPoint = 2 * 60 * 60 * 1000;
+                  limit = 3000;
+                  break;
+              case "4h":
+                  minDate = new Date(
+                      new Date().getTime() - 30 * 24 * 1000 * 60 * 60
+                  ).toLocaleDateString("fr-CA");
+                  interval = "minute";
+                  startPoint = 4 * 60 * 60 * 1000;
+                  limit = 3000;
+                  break;
+              case "1d":
+                  minDate = new Date(
+                      new Date().getTime() - 30 * 24 * 1000 * 60 * 60
+                  ).toLocaleDateString("fr-CA");
+                  interval = "minute";
+                  startPoint = 24 * 1000 * 60 * 60;
+                  limit = 3000;
+                  break;
+              case "1w":
+                  minDate = new Date(
+                      new Date().getTime() - 30 * 24 * 1000 * 60 * 60
+                  ).toLocaleDateString("fr-CA");
+                  lastinterval.setMinutes(0);
+                  startPoint = 7 * 24 * 1000 * 60 * 60;
+                  interval = "minute";
+                  break;
+              case "1M":
+                  minDate = new Date(
+                      new Date().getTime() - 30 * 24 * 1000 * 60 * 60
+                  ).toLocaleDateString("fr-CA");
+                  lastinterval.setMinutes(0);
+                  startPoint = 30 * 24 * 1000 * 60 * 60;
+                  interval = "minute";
+                  break;
+              case "3M":
+                  minDate = new Date(
+                      new Date().getTime() - 365 * 24 * 1000 * 60 * 60
+                  ).toLocaleDateString("fr-CA");
+                  lastinterval.setMinutes(0);
+                  lastinterval.setHours(0);
+                  startPoint =  90 * 24 * 1000 * 60 * 60;
+                  interval = "day";
+                  break;
+              case "6M":
+                  minDate = new Date(
+                      new Date().getTime() - 365 * 24 * 1000 * 60 * 60
+                  ).toLocaleDateString("fr-CA");
+                  lastinterval.setMinutes(0);
+                  lastinterval.setHours(0);
+                  startPoint =  180 * 24 * 1000 * 60 * 60;
+                  interval = "day";
+                  break;
+              case "1y":
+                  minDate = new Date(
+                      new Date().getTime() - 365 * 24 * 1000 * 60 * 60
+                  ).toLocaleDateString("fr-CA");
+                  lastinterval.setMinutes(0);
+                  lastinterval.setHours(0);
+                  startPoint =  365 * 24 * 1000 * 60 * 60;
+                  interval = "day";
+                  break;
+              case "All":
+                  //minDate = fiveYearsAgo;
+                  lastinterval.setMinutes(0);
+                  lastinterval.setHours(0);
+                  interval = "All";
+                  break;
+              default:
+                  lastinterval.setMinutes(0);
+                  lastinterval.setHours(0);
+                  interval = "day";
+                  break;
+          }
+          let data = localStorage.getItem(i.symbol + "-" + range);
+          console.timeEnd("receivedDat");
+          console.log(i.symbol + "-" + interval);
+          if (interval !== "second") {
+          // remove old data and add the new one
+          if (data !== null) {
+              data = JSON.parse(data);
+              console.log("debug time compare: ", [
+                  data[data.length - 1][0],
+                  lastinterval.getTime(),
+              ]);
+              if (interval === "All") {
+                  this.$root.$emit("update-chart-data", {
+                      interval: interval,
+                      range: range,
+                      data: data,
+                  });
+              } else if (data[data.length - 1][0] < lastinterval.getTime()) {
+                  this.startUpdateData(
+                      i.symbol,
+                      range,
+                      limit,
+                      interval,
+                      minDate,
+                      startPoint
+                  );
+              } else {
+                  this.$root.$emit("update-chart-data", {
+                      interval: interval,
+                      range: range,
+                      data: data.filter((a) => a[0] >= (new Date(data[data.length-1]).getTime() - startPoint) ),
+                  });
+                  //this.chartData = data;
+              }
+          } else {
+              this.startUpdateData(
+                  i.symbol,
+                  range,
+                  limit,
+                  interval,
+                  minDate,
+                  startPoint
+              );
+          }
+          } else {
+              let url = `https://api.thedice.com/api/${range}/${i.symbol}/1`;
+              
+              this.$axios
+              .$get(
+                  url
+              )
+              .then((response) => {
+                  let tempdata = response.map((i) => {
+                      return [Date.parse(i._stop), i._value];
+                  });
+                  this.$root.$emit("update-chart-data", {
+                      interval: interval,
+                      range: range,
+                      data: tempdata,
+                  });
+              })
+
+          }
+      },
+      startUpdateData(symbol, range, limit, interval, minDate, startPoint) {
+          console.log("change chart data: ", [symbol, interval, minDate]);
+          let url = `https://api.finage.co.uk/agg/forex/${symbol}/1/${interval}/${minDate}/${this.today}?&apikey=${process.env.FINAGE_API_KEY}&limit=${limit}`;
+          
+          this.$axios
+              .$get(
+                  `https://api.finage.co.uk/agg/forex/${symbol}/1/${interval}/${minDate}/${this.today}?&apikey=${this.finageApiKey}&limit=${limit}`
+              )
+              .then((response) => {
+                  console.log("Aggregates");
+                  //console.log(response.results);
+                  let tempdata = response.results.map((i) => {
+                      return [i.t, i.c];
+                  });
+                  console.log(new Date(tempdata[tempdata.length-1][0]).getTime() - startPoint );
+                  this.$root.$emit("update-chart-data", {
+                      interval: interval,
+                      range: range,
+                      data: range !== "All"
+                                ? tempdata.filter(
+                                      (a) => a[0] >= ( new Date(tempdata[tempdata.length-1][0]).getTime() - startPoint)
+                                  )
+                                : tempdata,
+                  });
+                  //this.chartData = response.results.map(i => { return [ i.t ,i.c ]});
+                  localStorage.setItem(
+                      symbol + "-" + range,
+                      JSON.stringify(tempdata)
+                  );
+              })
+              .catch((error) => {
+                  console.log(error);
+              });
+      },
     },
     created() {
       this.$root.$on('updateCommodity', (item) => {
@@ -144,6 +375,13 @@ export default {
           this.$set(this.item, 'icon', item.icon);
           this.loading = false;
         }
+      });
+      this.$root.$on("changeRangeData", ([item, range, interval]) => {
+          console.log("received emit data: ", [item, range, interval]);
+          console.time("receivedDat");
+          if (item.name === this.c_symbol) {
+              this.changeChartData(range, interval);
+          }
       });
       this.fetchDetails();
       this.fetchPrice();

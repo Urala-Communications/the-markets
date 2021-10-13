@@ -32,7 +32,7 @@ export default {
       default: () => {}
     },
     price: {
-      type: String
+      type: [ String, Number ]
     },
     change: {
       type: String
