@@ -2,11 +2,12 @@
   <div class="article-container">
     <div>
       <div class="article bg-white">
-        <b-jumbotron class="text-center" text-variant="white" :style="{backgroundImage:`url(${getStrapiMedia(article.image.url)})`}">
+        <b-jumbotron class="text-center" text-variant="white">
+          <div class="background" :style="{backgroundImage:`url(${getStrapiMedia(article.image.url)})`}"/>
           <p>Personal Finance</p>
           <h1>{{ article.title }}</h1>
           <!-- <p>By Rebecca Hey</p> -->
-          <span class="credit">© GETTY IMAGES / VANNI BASSETT</span>
+          <!-- <span class="credit">© GETTY IMAGES / VANNI BASSETT</span> -->
         </b-jumbotron>
         <div class="container content buffer pb-5">
           <div class="row d-flex justify-content-center">
@@ -58,7 +59,7 @@ export default {
     getStrapiMedia,
   },
   head() {
-    const { defaultSeo, favicon, siteName } = this.global;
+    const { defaultSeo, siteName } = this.global;
     // console.log(this.article.content)
     // Merge default and article-specific SEO data
     const fullSeo = {
@@ -72,12 +73,12 @@ export default {
       titleTemplate: `%s | ${siteName}`,
       title: fullSeo.metaTitle,
       meta: getMetaTags(fullSeo),
-      link: [
-        {
-          rel: "favicon",
-          href: getStrapiMedia(favicon.url),
-        },
-      ],
+      // link: [
+      //   {
+      //     rel: "favicon",
+      //     href: getStrapiMedia(favicon.url),
+      //   },
+      // ],
     };
   },
 };
@@ -113,12 +114,36 @@ export default {
     background-size: cover;
     position: relative;
     border-radius: 0;
+    z-index: 1;
+    .background {
+      width: 100%;
+      /* max-height: 810px; */
+      height: 74vh;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: -1;
+      filter: blur(3px);
+    }
     @include title-font();
     .credit{
       position: absolute;
       bottom: 5px;
       left: 5px;
       font-size: 12px;
+    }
+    &:after{
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 74vh;
+      background: rgb(0 0 0 / 50%);
+      left: 0;
+      top: 0;
+      z-index: -1;
     }
   }
   .article {

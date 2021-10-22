@@ -1,5 +1,5 @@
 <template>
-  <div v-if="indexPage && !mobileScreen" class="row mb-3 mx-0 pb-2 justify-content-between w-100">
+  <div v-if="indexPage && !mobileScreen" class="row mx-0 justify-content-between w-100">
     <div class="grid">
       <div class="pb-3"><strong>Symbol</strong></div>
       <div class="pb-3"><strong>Name</strong></div>
@@ -15,8 +15,7 @@
       <div v-if="type === 'rising'" class="movers-grid grid">
         <span>{{ index.symbol }}</span>
         <span>{{ index.company_name }}</span>
-        <span v-if="type !== 'indices'">$</span>
-        <span :class="index.change > 0 ? 'up' : 'down'">{{ index.price }}</span>
+        <span :class="index.change > 0 ? 'up' : 'down'"><span v-if="type !== 'indices'">$</span>{{ index.price }}</span>
         <span class="justify-content-center green font-weight-bold">{{ index.change_percentage }}</span>
         <span class="justify-content-center">{{ index.change }}</span>
       </div>
@@ -42,7 +41,7 @@
       </div>
     </div>
   </div>
-  <div v-else-if="type === 'rising'" class="movers-list row mb-3 mx-0 pb-2 justify-content-between w-100">
+  <div v-else-if="type === 'rising'" class="movers-list row mx-0 justify-content-between w-100">
     <div
       v-for="index in data"
       :key="index.symbol"
@@ -52,7 +51,7 @@
       <Price :index="index" :price="index.price" class="mover-price"/>
     </div>
   </div>
-  <div v-else class="row mb-3 mx-0 pb-2 justify-content-between w-100">
+  <div v-else class="row mx-0 justify-content-between w-100">
     <NuxtLink
       v-for="index in data"
       :key="index.name"
@@ -142,19 +141,19 @@ export default {
 .home {
   .index {
     &:first-of-type{padding-top: 0;}
-    &:last-of-type, &:nth-of-type(6){border-bottom: none;}
+    /* &:last-of-type, &:nth-of-type(6){border-bottom: none;} */
   }
   .indices .index {
-    &:nth-of-type(6){border-bottom: 1px solid #e3e3e3;}
-    &:nth-of-type(10){border-bottom: none;}
+    /* &:nth-of-type(6){border-bottom: 1px solid #e3e3e3;} */
+    /* &:nth-of-type(10){border-bottom: none;} */
   }
 }
 
-.list-page {
+/* .list-page {
   h2{
     font-size: 24px;
   }
-}
+} */
 
 .grid {
   display: grid;
@@ -179,7 +178,7 @@ export default {
   }
   &.up{
     .ask.price {
-      color: #1ecd93;
+      color: $green;
     }
   }
   &.up .flash {
@@ -189,7 +188,7 @@ export default {
   }
   &.down {
     .ask.price {
-      color: #FF433D;
+      color: $red;
     }
   }
   &.down .flash {
@@ -223,7 +222,7 @@ export default {
   width: 100%;
   padding: 8px 0;
   font-size: 14px;
-  border-bottom: 1px solid #e3e3e3;
+  /* border-bottom: 1px solid #e3e3e3; */
   transition: 0.2s ease-in-out;
   h4 {
     display: inline-flex;
@@ -232,7 +231,7 @@ export default {
     align-items: center;
     margin-bottom: 0;
     position: relative;
-    font-weight: 500;
+    font-weight: 600;
     line-height: 24px;
   }
   .price {
@@ -260,7 +259,7 @@ export default {
     border-radius: 4px;
     /* @include number-font; */
     animation: none;
-    color: #000;
+    color: rgba(1, 3, 78, 0.9);
   }
   .icon{
     display: inline-block;
@@ -281,7 +280,7 @@ export default {
   }
   &.up{
     .percent {
-      color: #18BB5C;
+      color: $green;
       background: rgb(24 187 92 / 0.2);
     }
   }
@@ -292,7 +291,7 @@ export default {
   }
   &.down {
     .percent {
-      color: #FF433D;
+      color: $red;
       background: rgb(254 67 61 / 0.2);
     }
   }
@@ -308,10 +307,8 @@ export default {
     background: none;
   }
   50%, 70% {
-    background: $green;
-    color: #fff;
-    color: #1ecd93;
-    background: #e9f9ec;
+    background: #e7e7fc;
+    color: $green;
   }
 }
 
@@ -320,10 +317,8 @@ export default {
     background: none;
   }
   50%, 70% {
-    background: #f9e9e9;
-    color: #e35460;
-    /* background: $red; */
-    /* color: #fff; */
+    background: #fff3ef;
+    color: $red;
   }
 }
 
@@ -446,7 +441,7 @@ export default {
 
 @media(max-width:768px){
   .content.container{
-    .col-lg-6, .col-lg-12{
+    .col-lg-6, .col-lg-12:not(.white-well){
       padding: 0;
     }
     .index{
@@ -455,8 +450,18 @@ export default {
         font-size: 12px;
       }
     }
+    .index-list{
+      background-position: 100% 20% !important;
+      background-size: 70% !important;
+    }
     h2{
       font-size: 28px;
+      &:after{bottom: 0;}
+    }
+    .news-section {
+      h2 {
+        padding: 20px 26px 0;
+      }
     }
   }
   .content.container.grid{
@@ -470,11 +475,11 @@ export default {
 }
 
 @media(max-width: 400px){
-  .content.container{
+  /* .content.container{
     h2{
       font-size: 22px;
       margin-bottom: 0.5rem;
     }
-  }
+  } */
 }
 </style>

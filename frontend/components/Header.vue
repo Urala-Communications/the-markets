@@ -8,17 +8,16 @@
     <b-navbar-brand>
       <NuxtLink to="/">
         <h1 class="title">
-          <img src="./../assets/logo-white.svg" alt="The Markets Logo">
-          The Markets
+          <img src="./../assets/logo.png" alt="The Markets Logo">
         </h1>
       </NuxtLink>
     </b-navbar-brand>
     <b-sidebar id="sidebar" backdrop shadow>
       <div class="sidebar-inner">
         <b-navbar-nav>
-          <NuxtLink class="nav-link" to="/indices">
+          <!-- <NuxtLink class="nav-link" to="/indices">
             Indices
-          </NuxtLink>
+          </NuxtLink> -->
           <NuxtLink class="nav-link" to="/movers">
             Movers
           </NuxtLink>
@@ -37,18 +36,18 @@
           <NuxtLink class="nav-link" to="/cryptocurrency">
             Crypto
           </NuxtLink>
-          <NuxtLink class="nav-link" to="/analysis">
+          <!-- <NuxtLink class="nav-link" to="/analysis">
             Analysis
           </NuxtLink>
           <NuxtLink class="nav-link" to="/trading-101">
             Trading 101
-          </NuxtLink>
+          </NuxtLink> -->
           <NuxtLink class="nav-link" to="/personal-finance">
             Personal Finance
           </NuxtLink>
-          <NuxtLink class="nav-link" to="/magazine">
+          <!-- <NuxtLink class="nav-link" to="/magazine">
             Magazine
-          </NuxtLink>
+          </NuxtLink> -->
           <NuxtLink class="nav-link font-weight-light" to="/privacy-policy">
             Privacy Policy
           </NuxtLink>
@@ -79,9 +78,9 @@
     <b-collapse id="nav-text-collapse" is-nav class="justify-content-end collapse">
       <b-navbar-nav>
         <b-navbar-toggle target="nav-text-collapse mobile" ></b-navbar-toggle>
-        <NuxtLink class="nav-link" to="/indices">
+        <!-- <NuxtLink class="nav-link" to="/indices">
           Indices
-        </NuxtLink>
+        </NuxtLink> -->
         <NuxtLink class="nav-link" to="/movers">
           Movers
         </NuxtLink>
@@ -100,18 +99,18 @@
         <NuxtLink class="nav-link" to="/cryptocurrency">
           Crypto
         </NuxtLink>
-        <NuxtLink class="nav-link" to="/analysis">
+        <!-- <NuxtLink class="nav-link" to="/analysis">
           Analysis
         </NuxtLink>
         <NuxtLink class="nav-link" to="/trading-101">
           Trading 101
-        </NuxtLink>
+        </NuxtLink> -->
         <NuxtLink class="nav-link" to="/personal-finance">
           Personal Finance
         </NuxtLink>
-        <NuxtLink class="nav-link" to="/magazine">
+        <!-- <NuxtLink class="nav-link" to="/magazine">
           Magazine
-        </NuxtLink>
+        </NuxtLink> -->
       </b-navbar-nav>
     </b-collapse>
     <Ticker :tickerItems="tickerItems" />
@@ -253,43 +252,49 @@ export default {
 .navbar {
   /* background: $blue; */
   /* background: #242424; */
-  background: #222222;
+  background: #fff;
   padding: 1rem 0 0;
   margin-bottom: 0;
   flex-wrap: wrap;
   @include title-font();
+  font-weight: 800;
+  box-shadow: 0px 5.5px 12px 0 rgb(188 188 221 / 35%);
   .navbar-brand {
     padding: 0 1rem 0 2rem;
     margin-right: 0;
+    border-right: 1px solid rgb(0 0 0 / 20%);
     .title {
+      @include main-font();
       display: flex;
       align-items: center;
       font-size: 24px;
       letter-spacing: -1px;
       margin-bottom: 0;
+      font-weight: 800;
     }
     a {
-      color: #fff;
+      color: #01034e;
       &:hover {
-        color: #fff;
+        color: #222;
       }
     }
     img {
-      width: 33px;
+      width: 150px;
       margin-right: 10px;
     }
   }
   .navbar-nav{
     padding-right: 2rem;
     a.nav-link {
-      color: #f2f2f2;
+      color: #01034e;
       font-size: 14px;
+      padding: 0.25rem 1rem;
       &:hover {
         text-decoration: none;
-        color: #fff;
+        color: $red;
       }
       &.nuxt-link-active{
-        color: $blue;
+        color: $red;
       }
     }
   }
@@ -302,7 +307,7 @@ export default {
     max-width: 100vw;
     padding: 0;
     .sidebar-toggler {
-      color: #fff;
+      color: #222;
       border: none;
       z-index: 1024;
       outline: none;
@@ -311,7 +316,7 @@ export default {
       width: 25px;
       height: 20px;
       background-size: cover;
-      background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'><path stroke='white' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg>");
+      background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'><path stroke='black' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg>");
     }
     .b-sidebar{
       max-width: 85% !important;
@@ -334,6 +339,7 @@ export default {
     }
     .navbar-nav{
       padding-right: 0;
+      @include main-font();
       a.nav-link{
         color: #000;
         font-size: 22px;
@@ -343,19 +349,19 @@ export default {
           color: #222;
         }
         &.nuxt-link-exact-active{
-          color: $blue;
+          color: $red;
         }
       }
     }
     .navbar-brand{
       position: absolute;
-      top: 0.85rem;
+      top: 0.5rem;
       left: 0;
       right: 0;
       margin: auto;
+      border: none;
       img {
         margin: 0 0.5rem 0 0;
-        width: 30px;
       }
       h1.title{
         justify-content: center;

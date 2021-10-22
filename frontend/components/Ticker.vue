@@ -31,14 +31,11 @@ export default {
 <style lang="scss">
 
 .ticker{
-  padding: 0.5rem 1rem;
   width: 100%;
   margin-top: 1rem;
-  /* border-top: 1px solid rgba(255,255,255,0.3); */
-  /* border-bottom: 1px solid rgba(255,255,255,0.3); */
-  /* background: #fff; */
-  /* background: #343434; */
-  background: #000000;
+  /* border-top: 1px solid rgb(0 0 0 / 20%); */
+  padding: 10px 30px;
+  background-color: #f3f3ff;
   justify-content: space-between;
   @include main-font();
   .ticker-wrap{
@@ -53,16 +50,17 @@ export default {
     justify-content: center;
     align-items: center;
     text-transform: uppercase;
-    color: #fff;
+    color:#1c1e53;
     &:first-of-type{
       border-left: none;
     }
     h3{
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
       margin-bottom: 0;
       display: inline-block;
     }
+
     .info {
       line-height: 1.1;
       strong, p {
@@ -82,7 +80,7 @@ export default {
     }
     p, strong{
       font-size: 12px;
-      font-weight: 400;
+      font-weight: 800;
       display: inline-block;
       /* @include number-font; */
     }
@@ -108,13 +106,13 @@ export default {
   min-width: 34px;
   height: 34px;
   /* border: #f2f2f2 5px solid; */
-  border: #fff 4px solid;
+  /* border: #fff 4px solid; */
   background-repeat: no-repeat;
   /* background-color: #f2f2f2; */
   background-color: #fff;
   background-size: cover;
   background-position: center;
-  box-shadow: rgb(51 51 51 / 30%) 1px 1px 3px 0px;
+  /* box-shadow: rgb(51 51 51 / 30%) 1px 1px 3px 0px; */
   border-radius: 50%;
   margin-right: 10px;
   &.usa {

@@ -22,59 +22,59 @@
         />
       </div> -->
       <div class="row">
-        <div class="col-12 col-lg-8">
+        <div class="col-12 col-lg-8 pr-lg-0">
           <div class="row m-0 justify-content-between main-content">
             <div class="col-lg-6">
-              <div class="col-12 white-well indices">
+              <!-- <div class="col-12 white-well indices">
                 <h2>Indices
-                  <NuxtLink class="index-link" to="/indices">View all <span>></span></NuxtLink>
+                  <NuxtLink class="index-link" to="/indices">View all</NuxtLink>
                 </h2>
                 <IndexList :data="indices" type="indices" />
-              </div>
+              </div> -->
               <div class="col-12 white-well">
                 <h2>Currencies
-                  <NuxtLink class="index-link" to="/currencies">View all <span>></span></NuxtLink>
+                  <NuxtLink class="index-link" to="/currencies">View all</NuxtLink>
                 </h2>
                 <IndexList :data="currencies" type="currencies" />
               </div>
               <div class="col-12 white-well">
                 <h2>Cryptocurrencies
-                  <NuxtLink class="index-link" to="/cryptocurrency">View all <span>></span></NuxtLink>
+                  <NuxtLink class="index-link" to="/cryptocurrency">View all</NuxtLink>
                 </h2>
                 <IndexList :data="cryptocurrency" type="cryptocurrency" />
+              </div>
+              <div class="col-12 white-well">
+                <h2>Commodities
+                  <NuxtLink class="index-link" to="/commodities">View all</NuxtLink>
+                </h2>
+                <IndexList :data="commodities" type="commodities" />
               </div>
             </div>
             <div class="col-lg-6">
               <div class="col-12 white-well">
                 <h2>Movers
-                  <NuxtLink class="index-link" to="/movers">View all <span>></span></NuxtLink>
+                  <NuxtLink class="index-link" to="/movers">View all</NuxtLink>
                 </h2>
                 <IndexList :data="rising" type="rising" />
               </div>
               <div class="col-12 white-well">
                 <h2>Bonds
-                  <NuxtLink class="index-link" to="/bonds">View all <span>></span></NuxtLink>
+                  <NuxtLink class="index-link" to="/bonds">View all</NuxtLink>
                 </h2>
                 <IndexList :data="bonds" type="bonds" />
               </div>
               <div class="col-12 white-well">
                 <h2>Stocks
-                  <NuxtLink class="index-link" to="/stocks">View all <span>></span></NuxtLink>
+                  <NuxtLink class="index-link" to="/stocks">View all</NuxtLink>
                 </h2>
                 <IndexList :data="stocks" type="stocks" />
-              </div>
-              <div class="col-12 white-well">
-                <h2>Commodities
-                  <NuxtLink class="index-link" to="/commodities">View all <span>></span></NuxtLink>
-                </h2>
-                <IndexList :data="commodities" type="commodities" />
               </div>
             </div>
           </div>
         </div>
-        <div class="col-12 col-lg-4">
+        <div class="col-12 col-lg-4 mb-5 news-section">
           <div class="row m-0 justify-content-between">
-            <div class="col-lg-12 border-left-grey">
+            <div class="col-lg-12 white-well">
               <h2 class="mt-0">News</h2>
               <News :newsData="stockNews"/>
               <Ad feedAd/>
@@ -90,11 +90,11 @@
 
 <script>
 import {cryptocurrency, currencies, stocks, indices, bonds, rising, commodities} from "./../market.js";
-import IndexList from '../components/IndexList.vue';
+// import IndexList from '../components/IndexList.vue';
 import Ad from "./../components/Ad.vue";
 export default {
     components: {
-      IndexList,
+      IndexList: () => import('./../components/IndexList'),
       Ad
     },
     data() {
@@ -379,8 +379,9 @@ export default {
 
 .white-well {
   background: #ffffff;
-  border-radius: 1rem;
-  box-shadow: 1px 1px 3px #ddd;
+  padding: 20px 26px 24px;
+  border-radius: 18px;
+  box-shadow: 0px 2.5px 9px 0 rgba(218, 226, 239, 0.5);
 }
 
 .main-content{
@@ -426,9 +427,9 @@ export default {
 .btn {max-width: 100%;}
 
 h2 {
-  font-family: 'DM Serif Display', serif;
+  font-family: 'Nunito', serif;
   font-size: 20px;
-  font-weight: 400;
+  font-weight: 800;
   margin-bottom: 1rem;
   display: flex;
   justify-content: space-between;
@@ -440,11 +441,13 @@ h2 {
   align-items: center;
   font-size: 12px;
   @include main-font();
-  text-transform: uppercase;
+  color: #fff;
   font-weight: 700;
-  span{
-    padding-left: 3px;
-    font-size: 15px;
+  padding: 5px 10px;
+  border-radius: 12px;
+  background-color: #4647ff;
+  &:hover {
+    color: #fff;
   }
 }
 

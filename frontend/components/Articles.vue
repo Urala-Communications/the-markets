@@ -1,23 +1,10 @@
 <template>
-  <div>
-    <div class="uk-child-width-1-2" uk-grid>
-      <div>
-        <ArticleCard
-          v-for="article in leftArticles"
-          :key="article.id"
-          :article="article"
-        />
-      </div>
-      <div>
-        <div class="uk-child-width-1-2@m uk-grid-match" uk-grid>
-          <ArticleCard
-            v-for="article in rightArticles"
-            :key="article.id"
-            :article="article"
-          />
-        </div>
-      </div>
-    </div>
+  <div class="articles">
+    <ArticleCard
+      v-for="article in articles"
+      :key="article.id"
+      :article="article"
+    />
   </div>
 </template>
 
@@ -34,16 +21,19 @@ export default {
       default: () => [],
     },
   },
-  computed: {
-    leftArticlesCount() {
-      return Math.ceil(this.articles.length / 5);
-    },
-    leftArticles() {
-      return this.articles.slice(0, this.leftArticlesCount);
-    },
-    rightArticles() {
-      return this.articles.slice(this.leftArticlesCount, this.articles.length);
-    },
-  },
 };
 </script>
+
+<style lang="scss">
+
+  .articles {
+    .card {
+      padding: 15px 0;
+      margin: 0 auto;
+      .card-body .card-title{font-size: 20px;}
+      /* border-radius: 18px; */
+      /* box-shadow: 0px 2.5px 9px 0 rgb(218 226 239 / 50%); */
+    }
+  }
+
+</style>

@@ -316,7 +316,7 @@ export default {
             }
           } else {
               let url = `https://api.thedice.com/api/${range}/${i.symbol}/1`;
-              
+
               this.$axios
               .$get(
                   url
@@ -337,7 +337,7 @@ export default {
       startUpdateData(symbol, range, limit, interval, minDate, startPoint) {
           console.log("change chart data: ", [symbol, interval, minDate]);
           let url = `https://api.finage.co.uk/agg/index/${symbol}/${interval}/${minDate}/${this.today}?&apikey=${process.env.FINAGE_API_KEY}&limit=${limit}`;
-          
+
           this.$axios
               .$get(
                   `https://api.finage.co.uk/agg/index/${symbol}/${interval}/${minDate}/${this.today}?&apikey=${this.finageApiKey}&limit=${limit}`

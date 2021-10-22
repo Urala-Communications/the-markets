@@ -9,7 +9,7 @@
       class="content container container-fluid w-100 buffer"
       :class="view"
     >
-      <div class="row m-0">
+      <div class="row m-0 index-list" id="currencies">
         <h2 class="col-12">Currencies</h2>
         <!-- <div class="toggle col-12">
           <button
@@ -23,13 +23,16 @@
             @click="showList()"
           />
         </div> -->
-        <div class="col-lg-8">
+        <div class="col-12 col-lg-7 offset-lg-5">
           <div class="col-12 white-well pt-2">
             <IndexList :data="filteredCurrencies" indexPage type="currencies" />
           </div>
         </div>
-        <div class="col-lg-4">
-          <News :newsData="newsData"/>
+        <div class="col-12 col-lg-7 offset-lg-5">
+          <div class="col-lg-12 mt-4 white-well">
+            <News :newsData="newsData"/>
+            <Ad feedAd/>
+          </div>
         </div>
       </div>
     </div>
@@ -46,7 +49,7 @@ export default {
     data() {
       return {
         finageApiKey: process.env.finageApiKey,
-        loading: true,
+        loading: false,
         currencies,
         filteredCurrencies: [],
         view: 'list',
@@ -60,16 +63,18 @@ export default {
       fetchNews(symbol){
         this.$axios.$get(`https://api.finage.co.uk/news/forex/${symbol}?apikey=${this.finageApiKey}`)
         .then(response => {
-          console.log('News')
+          // console.log('News')
           console.log(response.news)
           if(typeof response.news[0] !== 'undefined'){
             let index = this.newsData.findIndex(x => x.title === response.news[0].title);
             let newsItem = response.news[0]
+            let newsItem2 = response.news[1]
             this.loading = false;
             if(index === -1){
               // newsItem.symbol = symbol
               // newsItem.type = 'currencies'
               this.newsData.push(newsItem)
+              this.newsData.push(newsItem2)
             }
             if(this.newsData.length > 17){
               this.newsData.pop()
@@ -118,5 +123,51 @@ export default {
 </script>
 
 <style lang="scss">
-
+  .index-list {
+    background-repeat: no-repeat;
+    background-position: 16px 120px;
+    background-size: 55%;
+    &#commodities{
+      background-image: url('./../../assets/commodities.png');
+      background-position: 16px 60px;
+      background-size: 45%;
+    }
+    &#currencies{background-image: url('./../../assets/currencies.png');}
+    &#indices{background-image: url('./../../assets/indices.png');}
+    &#movers{background-image: url('./../../assets/movers.png');}
+    &#personal-finance{background-image: url('./../../assets/personal-finance.png');}
+    &#crypto{
+      background-image: url('./../../assets/crypto.png');
+      background-position: 16px 40px;
+      background-size: 50%;
+    }
+    &#stocks{background-image: url('./../../assets/stocks.png'); background-size: 50%;}
+    &#bonds{background-image: url('./../../assets/bonds.png'); background-size: 50%; background-position: 16px 100px}
+    h2{
+      @include main-font();
+      font-size: 37px;
+      font-weight: 900;
+      color: rgba(1, 3, 78, 0.9);
+      position: relative;
+      max-width: fit-content;
+      padding: 0;
+      margin-left: 1rem;
+      &:after{
+        content: '';
+        position: absolute;
+        height: 17px;
+        width: 100%;
+        left: 0;
+        bottom: 4px;
+        z-index: -1;
+        background-color: #bcd0fa;
+      }
+    }
+    .white-well {
+      background: rgb(255 255 255 / 90%)
+    }
+    .card {
+      background: none;
+    }
+  }
 </style>

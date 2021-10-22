@@ -8,8 +8,8 @@
 </template>
 
 <script>
-import Header from "./../components/Header.vue";
-import Footer from "./../components/Footer.vue";
+// import Header from "./../components/Header.vue";
+// import Footer from "./../components/Footer.vue";
 import Ad from "./../components/Ad.vue";
 import {cryptocurrency, currencies, stocks, indices, bonds, rising, commodities} from "./../market.js";
 // import { gsap } from "gsap";
@@ -20,8 +20,8 @@ const finageApiKey = process.env.finageApiKey,
 
 export default {
   components: {
-    Header,
-    Footer,
+    Header: () => import('./../components/Header'),
+    Footer: () => import('./../components/Footer'),
     Ad
   },
   data() {
@@ -160,7 +160,7 @@ export default {
       }
       this.indicesWS.onmessage = (msg) => {
         let data = JSON.parse(msg.data);
-        
+
         if(typeof data.p !== 'undefined'){
           if(this.indices.find(index => index.symbol === data.s)){
             // console.log('non-CFD')
@@ -261,7 +261,7 @@ export default {
       .then(response => {
         let i = this.indices.find( indice => indice.symbol === response.symbol );
         i.price = response.price.toLocaleFixed(2);
-        i.priceNumber = response.price;        
+        i.priceNumber = response.price;
         this.$root.$emit('updateIndice', i);
       })
       .then(() => {
@@ -401,9 +401,10 @@ export default {
 </script>
 
 <style lang="scss">
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=Nunito:wght@400;800&display=swap');
 html, body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Archivo', sans-serif;
   font-size: 16px;
   word-spacing: 1px;
   overflow-x: hidden;
@@ -412,11 +413,12 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
+  color: rgba(1, 3, 78, 0.9);
 }
 
 body{
   margin-top: 104px;
-  background: #f5f3f1;
+  background: #f7faff;
 }
 @media(max-width: 1200px){
   body{
@@ -437,11 +439,11 @@ body{
 }
 
 a {
-  color: #222;
+  color: rgba(1, 3, 78, 0.9);
   transition: 0.3s ease-in-out;
   &:hover {
     text-decoration: none;
-    color: $blue;
+    color: $red;
   }
 }
 

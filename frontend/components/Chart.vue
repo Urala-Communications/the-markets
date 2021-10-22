@@ -23,6 +23,42 @@ var cChart = null;
 let grouping = "day";
 let customButtonRange = [];
 let thresholdValue = 0;
+
+const buttonTheme = [
+    {
+        // theme
+        "stroke-width": 0,
+        stroke: "#fff",
+        fill: "#fff",
+        height: 9,
+        r: 4,
+        zIndex: 10,
+        style: {
+            "color": "#8182a8",
+            "filter": "none",
+            "margin-top": "5px"
+        },
+    },
+    {
+        // hover state
+        fill: "#fff",
+        stroke: "#fff",
+        style: {
+            "filter": "drop-shadow(1px 3px 3px rgb(218 226 239 / 90%))",
+            "color": "#ff7d4a"
+        }
+    },
+    {
+        // pressed state
+        fill: "#fff",
+        stroke: "#fff",
+        style: {
+            "filter": "drop-shadow(1px 3px 3px rgb(218 226 239 / 90%))",
+            "color": "#ff7d4a"
+        }
+    },
+]
+
 export default {
     props: {
         data: {
@@ -38,7 +74,7 @@ export default {
         },
         c_symbol: {
             type: String,
-        },        
+        },
     },
 
     data() {
@@ -106,7 +142,7 @@ export default {
                 },
                 rangeSelector: {
                     enabled: false,
-                    inputEnabled: false,
+                    inputEnabled: false
                 },
                 navigator: {
                     enabled: false,
@@ -133,7 +169,7 @@ export default {
                         0, // y
                         function () {
                             // callback function
-                            console.log("button 1min pressed");                            
+                            console.log("button 1min pressed");
                             customButtonRange.map((btn) => btn.setState(0));
                             this.setState(2);
                             grouping = "second";
@@ -143,36 +179,22 @@ export default {
                                 "second",
                             ]);
                         },
-                        {
-                            // theme
-                            "stroke-width": 1,
-                            stroke: "silver",
-                            fill: "#E0E0E0",
-                            height: 12,
-                            r: 0,
-                            zIndex: 10,
-                        },
-                        {
-                            // hover state
-                            fill: "#bada55",
-                        },
-                        {
-                            // pressed state
-                            fill: "#bada55",
-                        },
+                        buttonTheme[0],
+                        buttonTheme[1],
+                        buttonTheme[2],
                         null,
                         null,
                         false
                     )
                     .css({
-                        "font-weight": "bold",
+                        "font-weight": "bold"
                     })
                     .attr({
                         id: "button-1min",
                     })
                     .addClass("btn-1min")
-
                     .add();
+
                 customButtonRange.push(btn1min);
                 const btn5min = chart.renderer
                     .button(
@@ -191,23 +213,9 @@ export default {
                                 "second",
                             ]);
                         },
-                        {
-                            // theme
-                            "stroke-width": 1,
-                            stroke: "silver",
-                            fill: "#E0E0E0",
-                            height: 12,
-                            r: 0,
-                            zIndex: 10,
-                        },
-                        {
-                            // hover state
-                            fill: "#bada55",
-                        },
-                        {
-                            // pressed state
-                            fill: "#bada55",
-                        },
+                        buttonTheme[0],
+                        buttonTheme[1],
+                        buttonTheme[2],
                         null,
                         null,
                         false
@@ -235,23 +243,9 @@ export default {
                                 "second",
                             ]);
                         },
-                        {
-                            // theme
-                            "stroke-width": 1,
-                            stroke: "silver",
-                            fill: "#E0E0E0",
-                            height: 12,
-                            r: 0,
-                            zIndex: 10,
-                        },
-                        {
-                            // hover state
-                            fill: "#bada55",
-                        },
-                        {
-                            // pressed state
-                            fill: "#bada55",
-                        },
+                        buttonTheme[0],
+                        buttonTheme[1],
+                        buttonTheme[2],
                         null,
                         null,
                         false
@@ -279,23 +273,9 @@ export default {
                                 "second",
                             ]);
                         },
-                        {
-                            // theme
-                            "stroke-width": 1,
-                            stroke: "silver",
-                            fill: "#E0E0E0",
-                            height: 12,
-                            r: 0,
-                            zIndex: 10,
-                        },
-                        {
-                            // hover state
-                            fill: "#bada55",
-                        },
-                        {
-                            // pressed state
-                            fill: "#bada55",
-                        },
+                        buttonTheme[0],
+                        buttonTheme[1],
+                        buttonTheme[2],
                         null,
                         null,
                         false
@@ -323,23 +303,9 @@ export default {
                                 "minute",
                             ]);
                         },
-                        {
-                            // theme
-                            "stroke-width": 1,
-                            stroke: "silver",
-                            fill: "#E0E0E0",
-                            height: 12,
-                            r: 0,
-                            zIndex: 10,
-                        },
-                        {
-                            // hover state
-                            fill: "#bada55",
-                        },
-                        {
-                            // pressed state
-                            fill: "#bada55",
-                        },
+                        buttonTheme[0],
+                        buttonTheme[1],
+                        buttonTheme[2],
                         null,
                         null,
                         false
@@ -368,23 +334,9 @@ export default {
                                 "minute",
                             ]);
                         },
-                        {
-                            // theme
-                            "stroke-width": 1,
-                            stroke: "silver",
-                            fill: "#E0E0E0",
-                            height: 12,
-                            r: 0,
-                            zIndex: 10,
-                        },
-                        {
-                            // hover state
-                            fill: "#bada55",
-                        },
-                        {
-                            // pressed state
-                            fill: "#bada55",
-                        },
+                        buttonTheme[0],
+                        buttonTheme[1],
+                        buttonTheme[2],
                         null,
                         null,
                         false
@@ -412,23 +364,9 @@ export default {
                                 "hour",
                             ]);
                         },
-                        {
-                            // theme
-                            "stroke-width": 1,
-                            stroke: "silver",
-                            fill: "#E0E0E0",
-                            height: 12,
-                            r: 0,
-                            zIndex: 10,
-                        },
-                        {
-                            // hover state
-                            fill: "#bada55",
-                        },
-                        {
-                            // pressed state
-                            fill: "#bada55",
-                        },
+                        buttonTheme[0],
+                        buttonTheme[1],
+                        buttonTheme[2],
                         null,
                         null,
                         false
@@ -456,23 +394,9 @@ export default {
                                 "hour",
                             ]);
                         },
-                        {
-                            // theme
-                            "stroke-width": 1,
-                            stroke: "silver",
-                            fill: "#E0E0E0",
-                            height: 12,
-                            r: 0,
-                            zIndex: 10,
-                        },
-                        {
-                            // hover state
-                            fill: "#bada55",
-                        },
-                        {
-                            // pressed state
-                            fill: "#bada55",
-                        },
+                        buttonTheme[0],
+                        buttonTheme[1],
+                        buttonTheme[2],
                         null,
                         null,
                         false
@@ -500,23 +424,9 @@ export default {
                                 "hour",
                             ]);
                         },
-                        {
-                            // theme
-                            "stroke-width": 1,
-                            stroke: "silver",
-                            fill: "#E0E0E0",
-                            height: 12,
-                            r: 0,
-                            zIndex: 10,
-                        },
-                        {
-                            // hover state
-                            fill: "#bada55",
-                        },
-                        {
-                            // pressed state
-                            fill: "#bada55",
-                        },
+                        buttonTheme[0],
+                        buttonTheme[1],
+                        buttonTheme[2],
                         null,
                         null,
                         false
@@ -544,23 +454,9 @@ export default {
                                 "day",
                             ]);
                         },
-                        {
-                            // theme
-                            "stroke-width": 1,
-                            stroke: "silver",
-                            fill: "#E0E0E0",
-                            height: 12,
-                            r: 0,
-                            zIndex: 10,
-                        },
-                        {
-                            // hover state
-                            fill: "#bada55",
-                        },
-                        {
-                            // pressed state
-                            fill: "#bada55",
-                        },
+                        buttonTheme[0],
+                        buttonTheme[1],
+                        buttonTheme[2],
                         null,
                         null,
                         false
@@ -588,23 +484,9 @@ export default {
                                 "day",
                             ]);
                         },
-                        {
-                            // theme
-                            "stroke-width": 1,
-                            stroke: "silver",
-                            fill: "#E0E0E0",
-                            height: 12,
-                            r: 0,
-                            zIndex: 10,
-                        },
-                        {
-                            // hover state
-                            fill: "#bada55",
-                        },
-                        {
-                            // pressed state
-                            fill: "#bada55",
-                        },
+                        buttonTheme[0],
+                        buttonTheme[1],
+                        buttonTheme[2],
                         null,
                         null,
                         false
@@ -632,23 +514,9 @@ export default {
                                 "day",
                             ]);
                         },
-                        {
-                            // theme
-                            "stroke-width": 1,
-                            stroke: "silver",
-                            fill: "#E0E0E0",
-                            height: 12,
-                            r: 0,
-                            zIndex: 10,
-                        },
-                        {
-                            // hover state
-                            fill: "#bada55",
-                        },
-                        {
-                            // pressed state
-                            fill: "#bada55",
-                        },
+                        buttonTheme[0],
+                        buttonTheme[1],
+                        buttonTheme[2],
                         null,
                         null,
                         false
@@ -676,23 +544,9 @@ export default {
                                 "day",
                             ]);
                         },
-                        {
-                            // theme
-                            "stroke-width": 1,
-                            stroke: "silver",
-                            fill: "#E0E0E0",
-                            height: 12,
-                            r: 0,
-                            zIndex: 10,
-                        },
-                        {
-                            // hover state
-                            fill: "#bada55",
-                        },
-                        {
-                            // pressed state
-                            fill: "#bada55",
-                        },
+                        buttonTheme[0],
+                        buttonTheme[1],
+                        buttonTheme[2],
                         null,
                         null,
                         false
@@ -753,10 +607,10 @@ export default {
                     }
 
                     if (grouping !== "hour" && grouping !== "day") {
-                        
+
                         const price = parseFloat(data.price.replace(",", ""));
                         const time = group_timedata.getTime();
-                        
+
                         const series = self.$refs.highcharts.chart.series[0];
 
                         let tempdat = series.options.data;
@@ -767,7 +621,7 @@ export default {
                             }
                         );
                         if (index === -1) {
-                            tempdat.push([time, price]);                            
+                            tempdat.push([time, price]);
                             series.addPoint([time, price], true, true);
                             console.log("new point added", [time, price]);
                         } else {
@@ -776,7 +630,7 @@ export default {
                                     series.points[series.points.length - 1]
                                         .y !== price
                                 ) {
-                                    
+
                                     series.points[
                                         series.points.length - 1
                                     ].update({
@@ -785,7 +639,7 @@ export default {
                                 }
                             }
                         }
-                        
+
                     }
                 }
             }
@@ -801,10 +655,10 @@ export default {
                     }
 
                     if (grouping !== "hour" && grouping !== "day") {
-                        
+
                         const price = parseFloat(data.price.replace(",", ""));
                         const time = group_timedata.getTime();
-                        
+
                         const series = self.$refs.highcharts.chart.series[0];
 
                         let tempdat = series.options.data;
@@ -815,7 +669,7 @@ export default {
                             }
                         );
                         if (index === -1) {
-                            tempdat.push([time, price]);                            
+                            tempdat.push([time, price]);
                             series.addPoint([time, price], true, true);
                             console.log("new point added", [time, price]);
                         } else {
@@ -824,7 +678,7 @@ export default {
                                     series.points[series.points.length - 1]
                                         .y !== price
                                 ) {
-                                    
+
                                     series.points[
                                         series.points.length - 1
                                     ].update({
@@ -833,24 +687,24 @@ export default {
                                 }
                             }
                         }
-                        
+
                     }
                 }
             }
         });
-        
+
     },
     created() {
         const self = this;
         this.$root.$on("update-chart-data", (data) => {
-            console.log("received & change new data:", data);            
+            console.log("received & change new data:", data);
 //            self.$refs.highcharts.chart.reflow();
             if (data.data.length && self.$refs.highcharts) {
                 self.$refs.highcharts.chart.series[0].update({
                     getExtremesFromAll: true,
                     softThreshold: false,
                     data: data.data
-                });                
+                });
             }
         });
     },

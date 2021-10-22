@@ -1,7 +1,8 @@
 const finageApiKey = process.env.FINAGE_API_KEY;
 const finageSocketKey = process.env.FINAGE_SOCKET_KEY;
 // const strapiBaseUri = process.env.STRAPI_URL || "http://localhost:1337";
-const strapiBaseUri = process.env.NODE_ENV === 'development' ? "http://localhost:1337" : "https://the-markets-cms.herokuapp.com";
+// const strapiBaseUri = process.env.NODE_ENV === 'development' ? "http://localhost:1337" : "https://the-markets-cms.herokuapp.com";
+const strapiBaseUri = "https://the-markets-cms.herokuapp.com";
 
 export default {
   // Disable server-side rendering (https://go.nuxtjs.dev/ssr-mode)
@@ -41,9 +42,19 @@ export default {
 
   // Modules for dev and build (recommended) (https://go.nuxtjs.dev/config-modules)
   buildModules: [
+    '@nuxtjs/google-analytics'
     // '@nuxtjs/dotenv',
     // '@nuxtjs/fontawesome'
   ],
+
+  googleAnalytics: {
+    id: 'G-2K1382J0CJ', // Use as fallback if no runtime config is provided
+  },
+  publicRuntimeConfig: {
+    googleAnalytics: {
+      id: 'G-2K1382J0CJ'
+    }
+  },
 
   dev: process.env.NODE_ENV !== 'production',
 
@@ -58,7 +69,7 @@ export default {
   },
 
   'google-adsense': {
-    id: 'ca-pub-1293135381149415'
+    id: 'ca-pub-7227085508439540'
   },
 
   serverMiddleware: ['~/api/index'],
@@ -114,6 +125,9 @@ export default {
   build: {
     extractCSS: true,
     optimizeCSS: true,
+    // splitChunks: {
+    //   layouts: true
+    // },
     quiet: true,
     html:{
       minify:{
@@ -144,6 +158,11 @@ export default {
           }
         ]
       ]
-    }
+    },
+    // loaders:  {
+    //   vue: {
+    //     prettify: false
+    //   }
+    // },
   },
 }

@@ -21,9 +21,9 @@
           @click="showList()"
         />
       </div> -->
-      <div class="row m-0">
+      <div class="row m-0 index-list" id="indices">
         <h2 class="col-12">Indices</h2>
-        <div class="col-lg-12">
+        <div class="col-lg-7 offset-lg-5">
           <div class="col-12 white-well pt-2">
             <IndexList :data="filteredIndices" indexPage type="indices" />
           </div>
