@@ -129,24 +129,24 @@ export default {
     return {
       open: false,
       tickerItems: [
-        {
-          name: 'DOW JONES',
-          icon: 'usa',
-          type: 'indices',
-          symbol: 'DJI'
-        },
-        {
-          name: 'S&P 500',
-          icon: 'usa',
-          type: 'indices',
-          symbol: 'GSPC'
-        },
-        {
-          name: 'NASDAQ',
-          icon: 'usa',
-          type: 'indices',
-          symbol: 'IXIC'
-        },
+        // {
+        //   name: 'DOW JONES',
+        //   icon: 'usa',
+        //   type: 'indices',
+        //   symbol: 'DJI'
+        // },
+        // {
+        //   name: 'S&P 500',
+        //   icon: 'usa',
+        //   type: 'indices',
+        //   symbol: 'GSPC'
+        // },
+        // {
+        //   name: 'NASDAQ',
+        //   icon: 'usa',
+        //   type: 'indices',
+        //   symbol: 'IXIC'
+        // },
         {
           name: 'US 10 Year Bond',
           abbreviated: 'US 10Y',
@@ -161,6 +161,12 @@ export default {
           symbol: 'BTC/USD'
         },
         {
+          name: 'Ethereum',
+          icon: 'eth',
+          type: 'cryptocurrency',
+          symbol: 'ETH/USD'
+        },
+        {
           name: 'Gold',
           icon: 'gold',
           type: 'commodities',
@@ -171,6 +177,12 @@ export default {
           icon: 'crude-oil',
           type: 'commodities',
           symbol: 'WTI/USD'
+        },
+        {
+          name: 'Tesla',
+          icon: 'tesla',
+          type: 'stocks',
+          symbol: 'TSLA/USD'
         },
         {
           name: 'Dollar Index',
@@ -189,10 +201,16 @@ export default {
   created() {
     this.$root.$on('updateCrypto', (item) => {
       const btc = this.tickerItems.find(item => item.name === 'Bitcoin');
+      const eth = this.tickerItems.find(item => item.name === 'Ethereum');
       if(item.name === btc.name){
         this.$set(btc, 'price', item.price);
         this.$set(btc, 'difference', item.difference);
         this.$set(btc, 'change', item.change);
+      }
+      if(item.name === eth.name){
+        this.$set(eth, 'price', item.price);
+        this.$set(eth, 'difference', item.difference);
+        this.$set(eth, 'change', item.change);
       }
     });
     this.$root.$on('updateCommodity', (item) => {
@@ -210,25 +228,25 @@ export default {
       }
     });
     this.$root.$on('updateIndice', (item) => {
-      const dow = this.tickerItems.find(item => item.symbol === 'DJI');
-      const sp500 = this.tickerItems.find(item => item.symbol === 'GSPC');
-      const nasdaq = this.tickerItems.find(item => item.symbol === 'IXIC');
+      // const dow = this.tickerItems.find(item => item.symbol === 'DJI');
+      // const sp500 = this.tickerItems.find(item => item.symbol === 'GSPC');
+      // const nasdaq = this.tickerItems.find(item => item.symbol === 'IXIC');
       const dxy = this.tickerItems.find(item => item.symbol === 'DXY');
-      if(item.symbol === dow.symbol){
-        this.$set(dow, 'price', item.price);
-        this.$set(dow, 'difference', item.difference);
-        this.$set(dow, 'change', item.change);
-      }
-      if(item.symbol === sp500.symbol){
-        this.$set(sp500, 'price', item.price);
-        this.$set(sp500, 'difference', item.difference);
-        this.$set(sp500, 'change', item.change);
-      }
-      if(item.symbol === nasdaq.symbol){
-        this.$set(nasdaq, 'price', item.price);
-        this.$set(nasdaq, 'difference', item.difference);
-        this.$set(nasdaq, 'change', item.change);
-      }
+      // if(item.symbol === dow.symbol){
+      //   this.$set(dow, 'price', item.price);
+      //   this.$set(dow, 'difference', item.difference);
+      //   this.$set(dow, 'change', item.change);
+      // }
+      // if(item.symbol === sp500.symbol){
+      //   this.$set(sp500, 'price', item.price);
+      //   this.$set(sp500, 'difference', item.difference);
+      //   this.$set(sp500, 'change', item.change);
+      // }
+      // if(item.symbol === nasdaq.symbol){
+      //   this.$set(nasdaq, 'price', item.price);
+      //   this.$set(nasdaq, 'difference', item.difference);
+      //   this.$set(nasdaq, 'change', item.change);
+      // }
       if(item.symbol === dxy.symbol){
         this.$set(dxy, 'price', item.price);
         this.$set(dxy, 'difference', item.difference);
@@ -241,6 +259,14 @@ export default {
         this.$set(us10, 'price', item.price);
         this.$set(us10, 'difference', item.difference);
         this.$set(us10, 'change', item.change);
+      }
+    });
+    this.$root.$on('updateStock', (item) => {
+      const tsla = this.tickerItems.find(item => item.name === 'Tesla');
+      if(item.name === tsla.name){
+        this.$set(tsla, 'price', item.price);
+        this.$set(tsla, 'difference', item.difference);
+        this.$set(tsla, 'change', item.change);
       }
     });
   }

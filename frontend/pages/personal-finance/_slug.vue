@@ -1,7 +1,7 @@
 <template>
   <div class="article-container">
     <div>
-      <div class="article bg-white">
+      <div class="article bg-white" :class="article.cardComparison ? 'card-comparison' : ''">
         <b-jumbotron class="text-center" text-variant="white">
           <div class="background" :style="{backgroundImage:`url(${getStrapiMedia(article.image.url)})`}"/>
           <p>Personal Finance</p>
@@ -87,7 +87,7 @@ export default {
 <style lang="scss">
 
 .article-container {
-  margin-top: -1rem;
+  margin-top: -6rem;
   .container {
     min-height: 100vh;
   }
@@ -175,7 +175,10 @@ export default {
       visibility: hidden;
     }
     img {
-        max-width: 270px;
+      max-width: 100%;
+    }
+    &.card-comparison img{
+      max-width: 270px;
     }
   }
   p {

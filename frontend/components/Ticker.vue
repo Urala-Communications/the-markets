@@ -212,6 +212,31 @@ export default {
   &.polkadot {
     background-image: url('./../assets/polkadot.svg');
   }
+  &.oneinch  {background-image: url('./../assets/oneinch.png')}
+  &.aave  {background-image: url('./../assets/aave.png')}
+  &.algo  {background-image: url('./../assets/algo.png')}
+  &.atom  {background-image: url('./../assets/atom.png')}
+  &.bat  {background-image: url('./../assets/bat.png')}
+  &.bnb  {background-image: url('./../assets/bnb.png')}
+  &.cake  {background-image: url('./../assets/cake.png'); background-size: 90%;}
+  &.comp  {background-image: url('./../assets/comp.png')}
+  &.crv  {background-image: url('./../assets/crv.png')}
+  &.dash  {background-image: url('./../assets/dash.png')}
+  &.enj  {background-image: url('./../assets/enj.png')}
+  &.grt  {background-image: url('./../assets/grt.png')}
+  &.link  {background-image: url('./../assets/link.png')}
+  &.ltc  {background-image: url('./../assets/ltc.png')}
+  &.luna  {background-image: url('./../assets/luna.png')}
+  &.mana  {background-image: url('./../assets/mana.png'); background-size: 130%;}
+  &.matic  {background-image: url('./../assets/matic.png')}
+  &.mkr  {background-image: url('./../assets/mkr.png')}
+  &.neo  {background-image: url('./../assets/neo.png'); background-size: 80%;}
+  &.shiba  {background-image: url('./../assets/shiba.png')}
+  &.sol  {background-image: url('./../assets/sol.png')}
+  &.sushi  {background-image: url('./../assets/sushi.png')}
+  &.uni  {background-image: url('./../assets/uni.png')}
+  &.yfi  {background-image: url('./../assets/yfi.png')}
+  &.zil  {background-image: url('./../assets/zil.png')}
   &.gold {
     background-image: url('./../assets/gold.svg');
   }

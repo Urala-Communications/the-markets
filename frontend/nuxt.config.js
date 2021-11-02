@@ -18,10 +18,13 @@ export default {
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: '' }
+      { hid: 'description', name: 'description', content: 'The Markets - live charts for financial markets & the global community of traders' },
+      { name: 'apple-mobile-web-app-title', content: 'The Markets - live charts for financial markets & the global community of traders' },
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: 'apple-touch-icon', type: 'image/png', href: '/apple-touch-icon.png' },
+      { rel: 'android-chrome', type: 'image/png', href: '/android-chrome-192x192.png' },
     ]
   },
 
@@ -34,6 +37,7 @@ export default {
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [
     '~/plugins/vue-directives',
+    { src: "~/plugins/gtag.js", mode: 'client' },
     { src: "~/plugins/highcharts.js", ssr: true },
   ],
 
@@ -42,19 +46,18 @@ export default {
 
   // Modules for dev and build (recommended) (https://go.nuxtjs.dev/config-modules)
   buildModules: [
-    '@nuxtjs/google-analytics'
     // '@nuxtjs/dotenv',
     // '@nuxtjs/fontawesome'
   ],
 
-  googleAnalytics: {
-    id: 'G-2K1382J0CJ', // Use as fallback if no runtime config is provided
-  },
-  publicRuntimeConfig: {
-    googleAnalytics: {
-      id: 'G-2K1382J0CJ'
-    }
-  },
+  // googleAnalytics: {
+  //   id: 'G-Z7GS99Q7TZ', // Use as fallback if no runtime config is provided
+  // },
+  // publicRuntimeConfig: {
+  //   googleAnalytics: {
+  //     id: 'G-Z7GS99Q7TZ'
+  //   }
+  // },
 
   dev: process.env.NODE_ENV !== 'production',
 

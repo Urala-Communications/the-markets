@@ -28,12 +28,12 @@
             <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
           </div>
         </div>
-        <div class="col-12 col-lg-7 offset-lg-5">
+        <!-- <div class="col-12 col-lg-7 offset-lg-5">
           <div class="col-lg-12 mt-4 white-well">
             <News :newsData="newsData"/>
             <Ad feedAd/>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -64,7 +64,7 @@ export default {
           if(typeof response.news[0] !== 'undefined'){
             let index = this.newsData.findIndex(x => x.title === response.news[0].title);
             let newsItem = response.news[0];
-            this.loading = false;
+            // this.loading = false;
             if(index === -1){
               newsItem.symbol = symbol
               newsItem.type = 'cryptocurrency'
@@ -88,21 +88,28 @@ export default {
 
     },
     created() {
+      this.loading = false; // fix news api bug
       this.$root.$on('updateCrypto', (item) => {
         let i = this.cryptocurrency.findIndex(index => index.name === item.name);
+        // if(item.symbol === 'SHIBUSD'){
+          // this.$set(this.cryptocurrency[i], 'price', (item.price * 1000000).toLocaleFixed(2) );
+          // this.$set(this.cryptocurrency[i], 'change', (item.difference * 1000000).toLocaleFixed(2) );
+        // } else {
+        //   this.$set(this.cryptocurrency[i], 'price', item.price);
+        // }
         this.$set(this.cryptocurrency[i], 'price', item.price);
-        this.$set(this.cryptocurrency[i], 'difference', item.difference);
-        this.$set(this.cryptocurrency[i], 'change', item.change);
+        this.$set(this.cryptocurrency[i], 'difference', item.change);
+        this.$set(this.cryptocurrency[i], 'change', item.difference);
       });
-      this.cryptocurrency.forEach(item => {
-        this.fetchNews(item.icon);
-      });
-      setInterval(() => {
-        this.cryptocurrency.forEach(item => {
-          this.fetchNews(item.icon);
-        });
-        // every 5 minutes
-      }, 300000)
+      // this.cryptocurrency.forEach(item => {
+      //   this.fetchNews(item.icon);
+      // });
+      // setInterval(() => {
+      //   this.cryptocurrency.forEach(item => {
+      //     this.fetchNews(item.icon);
+      //   });
+      //   // every 5 minutes
+      // }, 300000)
     },
   }
 </script>

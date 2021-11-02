@@ -11,7 +11,7 @@
         <div class="col-12">
           <div class="hero">
             <div class="title row mb-3">
-              <div class="col-12 d-flex justify-content-between">
+              <div class="col-12 d-flex justify-content-between title-wrapper">
                 <h1 class="d-inline-flex w-100 text-capitalize mb-3">
                   <div class="icon" :class="item.icon"/>
                   {{ item.name }}
@@ -178,6 +178,7 @@ export default {
   },
   methods: {
     getchart() {
+      console.log(this.item)
       return this.$refs.Chart
     }
   }
@@ -372,9 +373,12 @@ export default {
   }
 
   @media(max-width:768px){
+    .title-wrapper{
+      flex-direction: column;
+    }
     h1{
       /* justify-content: center; */
-      font-size: 36px;
+      font-size: 28px;
       .icon {
         width: 44px;
         height: 44px
@@ -391,18 +395,25 @@ export default {
     }
   }
   @media(max-width:440px){
-    .graph .d-flex.row{
-      flex-direction: column;
-    }
-    .diff{
-      margin-bottom: 5px;
-    }
-    .detail {
-      padding-top: 0;
-      padding-left: 34px;
-      text-align: left !important;
-      flex-direction: row !important;
-      flex-wrap: wrap;
+    .graph {
+      .d-flex.row{
+        flex-direction: column;
+      }
+      .diff{
+        margin-bottom: 5px;
+        padding-left: 1rem;
+      }
+      h2.price {
+        padding-left: 1rem;
+      }
+      .detail {
+        padding-top: 0;
+        /* padding-left: 34px; */
+        padding-left: 1rem;
+        text-align: left !important;
+        flex-direction: row !important;
+        flex-wrap: wrap;
+      }
     }
   }
 }

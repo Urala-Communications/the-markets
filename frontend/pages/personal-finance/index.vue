@@ -44,7 +44,7 @@ export default {
     };
   },
   mounted(){
-    // console.log(this.articles)
+    console.log(this.articles)
   }
 };
 </script>

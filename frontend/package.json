@@ -38,7 +38,6 @@
     "@fortawesome/free-solid-svg-icons": "^5.15.1",
     "@nuxtjs/axios": "^5.12.5",
     "@nuxtjs/fontawesome": "^1.1.2",
-    "@nuxtjs/google-analytics": "^2.4.0",
     "@nuxtjs/proxy": "^2.1.0",
     "@nuxtjs/style-resources": "^1.0.0",
     "babel-eslint": "^10.1.0",
@@ -53,6 +52,7 @@
     "fibers": "^5.0.0",
     "prettier": "^2.1.2",
     "sass": "^1.29.0",
-    "sass-loader": "^10.1.0"
+    "sass-loader": "^10.1.0",
+    "vue-gtag": "^1.16.1"
   }
 }

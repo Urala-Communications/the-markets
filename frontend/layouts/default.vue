@@ -3,6 +3,7 @@
     <Header ref="header"/>
     <Ad headerAd/>
     <Nuxt/>
+    <CookieNotice v-if="showCookieNotice"/>
     <Footer/>
   </div>
 </template>
@@ -22,6 +23,7 @@ export default {
   components: {
     Header: () => import('./../components/Header'),
     Footer: () => import('./../components/Footer'),
+    CookieNotice: () => import('./../components/CookieNotice'),
     Ad
   },
   data() {
@@ -46,6 +48,7 @@ export default {
       marketStatus: {},
       yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
       today: new Date(Date.now()).toLocaleDateString("fr-CA"),
+      showCookieNotice: false
     }
   },
   head() {
@@ -56,6 +59,11 @@ export default {
     }
   },
   methods: {
+    getGDPR() {
+      if (process.browser) {
+        return localStorage.getItem('GDPR:accepted', true);
+      }
+    },
     connectSockets() {
       Number.prototype.toLocaleFixed = function(n) {
         return this.toLocaleString(undefined, {
@@ -100,13 +108,17 @@ export default {
       this.cryptoWS.onopen = () => {
         this.loading = true;
         // console.log("CRYPTO Socket connection established");
-        this.cryptoWS.send(JSON.stringify({"action": "subscribe", "symbols": "BTCUSD,ETHUSD,IOTAUSD,ADAUSD,XRPUSD,DOTUSD,DOGEUSD"}))
+        this.cryptoWS.send(JSON.stringify({"action": "subscribe", "symbols": "BTCUSD,ETHUSD,IOTAUSD,ADAUSD,XRPUSD,DOTUSD,DOGEUSD,1INCHUSD,AAVEUSD,ALGOUSD,ATOMUSD,BATUSD,BNBUSD,CAKEUSD,COMPUSD,CRVUSD,DASHUSD,ENJUSD,GRTUSD,LINKUSD,LTCUSD,LUNAUSD,MANAUSD,MATICUSD,MKRUSD,NEOUSD,SHIBUSD,SOLUSD,SUSHIUSD,UNIUSD,YFIUSD,ZILUSD,"}))
       }
       this.cryptoWS.onmessage = (msg) => {
         let data = JSON.parse(msg.data);
         if(this.cryptocurrency.find(index => index.symbol === data['s'])){
           let item = this.cryptocurrency.find(index => index.symbol === data['s']);
-          item.price = Number(data['p']).toLocaleFixed(2);
+          if(item.symbol === 'SHIBUSD'){
+            item.price = Number(data['p']);
+          } else {
+            item.price = Number(data['p']).toLocaleFixed(2);
+          }
           item.difference = Number(data['dd']).toLocaleFixed(2);
           item.change = Number(data['dc']).toLocaleFixed(2);
           item.time = data['t'];
@@ -380,6 +392,9 @@ export default {
         this.mobileNavOpen = collapsed;
       }
     });
+    if (!this.getGDPR() === true) {
+      this.showCookieNotice = true;
+    }
   },
   beforeDestroy() {
     this.forexWS.close();
@@ -417,12 +432,12 @@ html, body {
 }
 
 body{
-  margin-top: 104px;
+  margin-top: 112px;
   background: #f7faff;
 }
 @media(max-width: 1200px){
   body{
-    margin-top: 92px;
+    margin-top: 95px;
   }
 }
 @media(max-width: 750px){

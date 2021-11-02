@@ -77,9 +77,9 @@
             <div class="col-lg-12 white-well">
               <h2 class="mt-0">News</h2>
               <News :newsData="stockNews"/>
-              <Ad feedAd/>
-              <Ad feedAd/>
-              <News :newsData="cryptoNews"/>
+              <!-- <Ad feedAd/> -->
+              <!-- <Ad feedAd/> -->
+              <!-- <News :newsData="cryptoNews"/> -->
             </div>
           </div>
         </div>
@@ -130,7 +130,7 @@ export default {
               newsItem.type = 'stocks'
               newsfeed.push(newsItem)
             }
-            if(newsfeed.length > 5){
+            if(newsfeed.length > 9){
               newsfeed.pop()
             }
           }
@@ -239,88 +239,30 @@ export default {
           this.fetchNews(item.symbol);
         });
       }, 300000);
-      this.cryptocurrency.forEach(item => {
-        this.fetchCryptoNews(item.icon);
-      });
-      setInterval(() => {
-        this.cryptocurrency.forEach(item => {
-          this.fetchCryptoNews(item.icon);
-        });
-      }, 300000)
-      this.rising.forEach(item => {
-        if(item.symbol === 'DOGEUSD'){
-          this.fetchCryptoNews(item.symbol, 'rising');
-        } else {
-          this.fetchNews(item.symbol, 'rising');
-        }
-      });
-      setInterval(() => {
-        this.rising.forEach(item => {
-          if(item.symbol === 'DOGEUSD'){
-            this.fetchCryptoNews(item.symbol, 'rising');
-          } else {
-            this.fetchNews(item.symbol, 'rising');
-          }
-        });
-      }, 300000)
-      // try {
-      //   // const { userlist } = await fetch('/api/userlist')
-      //   this.chartData = {
-      //     datasets: [{
-      //       data: [
-      //         {x: 0, y: 125},
-      //         {x: 50, y: 140},
-      //         {x: 100, y: 115},
-      //         {x: 150, y: 140},
-      //         {x: 200, y: 90},
-      //         {x: 250, y: 80},
-      //       ],
-      //       borderWidth: 0,
-      //       backgroundColor: '#DC0D56',
-      //       pointRadius: 0
-      //     }]
-      //   };
-      //   this.chartOptions = {
-      //     showLines: true,
-      //     responsive: false,
-      //     legend: {
-      //       display: false
-      //     },
-      //     scales: {
-      //       xAxes: [{
-      //         type: 'linear',
-      //         gridLines: {
-      //           display: false
-      //         },
-      //         ticks: {
-      //           display: false
-      //         }
-      //       }],
-      //       yAxes: [{
-      //         gridLines: {
-      //           display: false
-      //         },
-      //         ticks: {
-      //           display: false
-      //         }
-      //       }],
-      //       // elements: {
-      //       //   point:{
-      //       //     radius: 0
-      //       //   },
-      //       //   arc: {
-      //       //     borderWidth: 0
-      //       //   }
-      //       // }
-      //     },
-      //     layout: {
-      //       padding: 0
-      //     }
+      // this.cryptocurrency.forEach(item => {
+      //   this.fetchCryptoNews(item.icon);
+      // });
+      // setInterval(() => {
+      //   this.cryptocurrency.forEach(item => {
+      //     this.fetchCryptoNews(item.icon);
+      //   });
+      // }, 300000)
+      // this.rising.forEach(item => {
+      //   if(item.symbol === 'DOGEUSD'){
+      //     this.fetchCryptoNews(item.symbol, 'rising');
+      //   } else {
+      //     this.fetchNews(item.symbol, 'rising');
       //   }
-      //   this.loaded = true;
-      // } catch (e) {
-      //   console.error(e)
-      // }
+      // });
+      // setInterval(() => {
+      //   this.rising.forEach(item => {
+      //     if(item.symbol === 'DOGEUSD'){
+      //       this.fetchCryptoNews(item.symbol, 'rising');
+      //     } else {
+      //       this.fetchNews(item.symbol, 'rising');
+      //     }
+      //   });
+      // }, 300000)
     }
   }
 </script>
@@ -454,6 +396,7 @@ h2 {
 @media(max-width:991px){
   .content.container{
     padding: 1rem;
+    &.home {padding-top: 8px;}
   }
   .border-left-grey{
     border-left: none;
