@@ -75,7 +75,7 @@ export default {
                 " $" +
                 this.item.price +
                 " - " +
-                "The Markets",
+                "The Markets - Live Charts for Financial Markets & the Global Community of Traders. Bitcoin, Ethereum, Doge, Shiba, Memes, Crypto, Indices, Stocks, Forex, Bonds, CFDs and more.",
         };
     },
     async asyncData({ params }) {
@@ -90,7 +90,7 @@ export default {
             );
             this.$axios
                 .$get(
-                    `https://api.finage.co.uk/detail/cryptocurrency/${i.symbol}?apikey=${this.finageApiKey}`
+                    `https://api.finage.co.uk/detail/cryptocurrency/${i.icon}?apikey=${this.finageApiKey}`
                 )
                 .then((response) => {
                     // console.log("Details")

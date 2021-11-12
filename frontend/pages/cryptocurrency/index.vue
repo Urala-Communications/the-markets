@@ -58,6 +58,24 @@ export default {
       }
     },
     methods: {
+      // fetchMarketCap(coin) {
+      //   Number.prototype.toLocaleFixed = function (n) {
+      //     return this.toLocaleString(undefined, {
+      //         minimumFractionDigits: n,
+      //         maximumFractionDigits: n,
+      //     });
+      //   };
+      //   this.$axios.$get(
+      //     `https://api.finage.co.uk/last/crypto/detailed/${coin.toLowerCase()}?apikey=${this.finageApiKey}`
+      //   )
+      //   .then((response) => {
+      //     let i = this.cryptocurrency.findIndex(index => index.name === coin.name);
+      //     this.$set(this.cryptocurrency[i], 'marketCap', response.marketCap.toLocaleFixed(2));
+      //   })
+      //   .catch((error) => {
+      //     console.log(error);
+      //   });
+      // },
       fetchNews(symbol){
         this.$axios.$get(`https://api.finage.co.uk/news/cryptocurrency/${symbol}?apikey=${this.finageApiKey}&limit=1`)
         .then(response => {
@@ -101,6 +119,9 @@ export default {
         this.$set(this.cryptocurrency[i], 'difference', item.change);
         this.$set(this.cryptocurrency[i], 'change', item.difference);
       });
+      // this.cryptocurrency.forEach(item => {
+      //   this.fetchMarketCap(item.symbol);
+      // });
       // this.cryptocurrency.forEach(item => {
       //   this.fetchNews(item.icon);
       // });

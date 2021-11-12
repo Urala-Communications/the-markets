@@ -24,24 +24,24 @@
       <div class="row">
         <div class="col-12 col-lg-8 pr-lg-0">
           <div class="row m-0 justify-content-between main-content">
-            <div class="col-lg-6">
+            <div class="col-lg-6 pl-half">
               <!-- <div class="col-12 white-well indices">
                 <h2>Indices
                   <NuxtLink class="index-link" to="/indices">View all</NuxtLink>
                 </h2>
                 <IndexList :data="indices" type="indices" />
               </div> -->
+              <div class="col-12 white-well crypto">
+                <h2>Cryptocurrencies
+                  <NuxtLink class="index-link" to="/cryptocurrency">View all</NuxtLink>
+                </h2>
+                <IndexList :data="cryptocurrency" type="cryptocurrency" />
+              </div>
               <div class="col-12 white-well">
                 <h2>Currencies
                   <NuxtLink class="index-link" to="/currencies">View all</NuxtLink>
                 </h2>
                 <IndexList :data="currencies" type="currencies" />
-              </div>
-              <div class="col-12 white-well">
-                <h2>Cryptocurrencies
-                  <NuxtLink class="index-link" to="/cryptocurrency">View all</NuxtLink>
-                </h2>
-                <IndexList :data="cryptocurrency" type="cryptocurrency" />
               </div>
               <div class="col-12 white-well">
                 <h2>Commodities
@@ -280,8 +280,12 @@ export default {
   padding-top: 15px;
 }
 
+.pl-half{
+  padding-left: 5px;
+}
+
 .content.container {
-  padding: 10px;
+  padding: 20px 10px;
   margin: 0 auto 0;
   display: flex;
   /* flex-flow: wrap; */
@@ -290,10 +294,10 @@ export default {
   min-height: calc(100vh - 603px); // height of nav/ads/footer
   /* canvas{ display: none !important;} */
   &.home {
-    .white-well:not(.indices) .instrument.index:nth-of-type(n+7){
+    .white-well:not(.indices, .crypto) .instrument.index:nth-of-type(n+7){
       display: none;
     }
-    .indices{
+    .indices, .crypto{
       .instrument.index:nth-of-type(n+11){
         display: none;
       }
@@ -396,17 +400,20 @@ h2 {
 @media(max-width:991px){
   .content.container{
     padding: 1rem;
-    &.home {padding-top: 8px;}
+    /* &.home {padding-top: 8px;} */
   }
   .border-left-grey{
     border-left: none;
   }
+  .pl-half{
+    padding-left: 15px;
+  }
 }
 
 @media(max-width: 400px){
-  .content.container{
+  /* .content.container{
     padding: 0 0.5rem;
-  }
+  } */
   hr{
     margin-top: 0.5rem;
   }

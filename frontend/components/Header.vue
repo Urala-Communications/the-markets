@@ -21,6 +21,9 @@
           <NuxtLink class="nav-link" to="/movers">
             Movers
           </NuxtLink>
+          <NuxtLink class="nav-link" to="/cryptocurrency">
+            Crypto
+          </NuxtLink>
           <NuxtLink class="nav-link" to="/commodities">
             Commodities
           </NuxtLink>
@@ -32,9 +35,6 @@
           </NuxtLink>
           <NuxtLink class="nav-link" to="/bonds">
             Bonds
-          </NuxtLink>
-          <NuxtLink class="nav-link" to="/cryptocurrency">
-            Crypto
           </NuxtLink>
           <!-- <NuxtLink class="nav-link" to="/analysis">
             Analysis
@@ -84,6 +84,9 @@
         <NuxtLink class="nav-link" to="/movers">
           Movers
         </NuxtLink>
+        <NuxtLink class="nav-link" to="/cryptocurrency">
+          Crypto
+        </NuxtLink>
         <NuxtLink class="nav-link" to="/commodities">
           Commodities
         </NuxtLink>
@@ -95,9 +98,6 @@
         </NuxtLink>
         <NuxtLink class="nav-link" to="/bonds">
           Bonds
-        </NuxtLink>
-        <NuxtLink class="nav-link" to="/cryptocurrency">
-          Crypto
         </NuxtLink>
         <!-- <NuxtLink class="nav-link" to="/analysis">
           Analysis

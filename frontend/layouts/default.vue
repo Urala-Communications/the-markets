@@ -18,6 +18,16 @@ import {cryptocurrency, currencies, stocks, indices, bonds, rising, commodities}
 // gsap.registerPlugin(DrawSVGPlugin);
 const finageApiKey = process.env.finageApiKey,
       finageSocketKey = process.env.finageSocketKey;
+// import Finage from 'finage';
+// const client = new Finage({ apiKey: finageApiKey });
+// async function test() {
+//    const res = await client.stocks.us.lastQuote({
+//     params: { symbol: 'AAPL' }, queries: { ts: 'ns' }
+//   }).then(() => {
+//     console.log(res)
+//   })
+// }
+// test()
 
 export default {
   components: {
@@ -108,7 +118,7 @@ export default {
       this.cryptoWS.onopen = () => {
         this.loading = true;
         // console.log("CRYPTO Socket connection established");
-        this.cryptoWS.send(JSON.stringify({"action": "subscribe", "symbols": "BTCUSD,ETHUSD,IOTAUSD,ADAUSD,XRPUSD,DOTUSD,DOGEUSD,1INCHUSD,AAVEUSD,ALGOUSD,ATOMUSD,BATUSD,BNBUSD,CAKEUSD,COMPUSD,CRVUSD,DASHUSD,ENJUSD,GRTUSD,LINKUSD,LTCUSD,LUNAUSD,MANAUSD,MATICUSD,MKRUSD,NEOUSD,SHIBUSD,SOLUSD,SUSHIUSD,UNIUSD,YFIUSD,ZILUSD,"}))
+        this.cryptoWS.send(JSON.stringify({"action": "subscribe", "symbols": "BTCUSD,ETHUSD,BNBUSD,ADAUSD,SOLUSD,XRPUSD,DOTUSD,DOGEUSD,SHIBUSD,LUNAUSD,AVAXUSD,LTCUSD,UNIUSD,LINKUSD,MATICUSD,ALGOUSD,VETUSD,XLMUSD,AXSUSD,FILUSD,TRXUSD,ETCUSD,ATOMUSD,THETAUSD,FTTUSD,FTMUSD,HBARUSD,DAIUSD,EGLDUSD,NEARUSD,GRTUSD,XTZUSD,XMRUSD,EOSUSD,MANAUSD,HNTUSD,CAKEUSD,AAVEUSD,LRCUSD,IOTAUSD,NEOUSD,MKRUSD,ENJUSD,DASHUSD,COMPUSD,CRVUSD,BATUSD,SUSHIUSD,ZILUSD,YFIUSD,1INCHUSD"}))
       }
       this.cryptoWS.onmessage = (msg) => {
         let data = JSON.parse(msg.data);
@@ -402,9 +412,6 @@ export default {
     this.stockWS.close();
     this.indicesWS.close();
   },
-//   mounted() {
-//     gsap.to(".navbar-brand", {x:300, duration:2, delay: 1, repeat: -1, yoyo:true})
-//   }
   watch: {
     $route () {
       // console.log('route changed', this.$route);

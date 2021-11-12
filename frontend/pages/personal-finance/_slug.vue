@@ -200,9 +200,9 @@ export default {
     top: -110px;
     visibility: hidden;
   }
-  .card {
+  /* .card {
     max-width: 500px;
-  }
+  } */
   @media (max-width: 768px){
     .article {
       img {

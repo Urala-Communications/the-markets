@@ -130,6 +130,12 @@ export default {
 }
 .banners {
   position: relative;
+  .carousel{
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0px 2.5px 9px 0 rgb(218 226 239 / 50%);
+  }
   img {
     width: 100%;
     &.tablet, &.mobile{

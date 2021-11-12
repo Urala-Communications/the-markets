@@ -14,11 +14,13 @@ export default {
   },
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
-    title: 'The Markets',
+    title: 'The Markets - Live Charts for Financial Markets & the Global Community of Traders. Bitcoin, Ethereum, Doge, Shiba, Memes, Crypto, Indices, Stocks, Forex, Bonds, CFDs and more.',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: 'The Markets - live charts for financial markets & the global community of traders' },
+      { hid: 'title', name: 'title', content: 'The Markets' },
+      { hid: 'description', name: 'description', content: 'Live Charts for Financial Markets & the Global Community of Traders. Bitcoin, Ethereum, Doge, Shiba, Memes, Crypto, Indices, Stocks, Forex, Bonds, CFDs and more.' },
+      { hid: 'keywords', name: 'keywords', content: 'live market, cfds, indices, stocks, crypto, cryptocurrency, bitcoin, commodities, forex, currencies, bonds, market news, market insights' },
       { name: 'apple-mobile-web-app-title', content: 'The Markets - live charts for financial markets & the global community of traders' },
     ],
     link: [

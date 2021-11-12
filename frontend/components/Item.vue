@@ -22,7 +22,7 @@
               </div>
             </div>
           </div>
-          <div class="graph white-well" :class="item.change > 0 ? 'up' : 'down'">
+          <div class="graph white-well p-0" :class="item.change > 0 ? 'up' : 'down'">
             <div class="d-flex justify-content-between row">
               <div class="d-inline-flex flex-column">
                 <h2 class="price">${{ item.price }}</h2>
@@ -37,6 +37,7 @@
                 <span><strong>Low:</strong>${{ low }}</span>
                 <span><strong>Close:</strong>${{ close }}</span>
                 <span><strong>Volume:</strong>{{ volume }}</span>
+                <span  v-if="marketCap"><strong>Marketcap:</strong>${{ marketCap }}</span>
               </div>
             </div>
             <chart
@@ -47,8 +48,6 @@
               :c_symbol="c_symbol"
               :new="item"
               ref="Chart"
-
-
             />
           </div>
           <div v-if="profile.description" class="info row">

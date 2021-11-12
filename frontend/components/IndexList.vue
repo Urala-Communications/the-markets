@@ -26,7 +26,8 @@
             class="instrument index d-flex icon-wrapper"
             :to="`/${type}/${index.name.replace(/\s+|[' '\/]/g, '-').toLowerCase()}`"
           >
-            <i class="icon" :class="index.icon"/>
+            <i class="icon" :class="index.icon" />
+            <!-- :style="{backgroundImage:`url(./_nuxt/assets/${index.icon}.png)`}" would be nice if all imgs were same type png/svg-->
             {{ index.name }}
             <span v-if="index.marketOpen" class="indicator"/>
           </NuxtLink>
@@ -439,6 +440,10 @@ export default {
   }
 }
 
+.news-section {
+  padding-right: 20px;
+}
+
 @media(max-width:768px){
   .content.container{
     .col-lg-6, .col-lg-12:not(.white-well){
@@ -459,6 +464,10 @@ export default {
       &:after{bottom: 0;}
     }
     .news-section {
+      padding: 0 15px;
+      .white-well {
+        padding: 0 8px;
+      }
       h2 {
         padding: 20px 26px 0;
       }

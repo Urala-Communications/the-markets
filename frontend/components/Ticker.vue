@@ -216,6 +216,8 @@ export default {
   &.aave  {background-image: url('./../assets/aave.png')}
   &.algo  {background-image: url('./../assets/algo.png')}
   &.atom  {background-image: url('./../assets/atom.png')}
+  &.avax  {background-image: url('./../assets/avax.png')}
+  &.axie  {background-image: url('./../assets/axie.png')}
   &.bat  {background-image: url('./../assets/bat.png')}
   &.bnb  {background-image: url('./../assets/bnb.png')}
   &.cake  {background-image: url('./../assets/cake.png'); background-size: 90%;}
@@ -223,6 +225,8 @@ export default {
   &.crv  {background-image: url('./../assets/crv.png')}
   &.dash  {background-image: url('./../assets/dash.png')}
   &.enj  {background-image: url('./../assets/enj.png')}
+  &.etc  {background-image: url('./../assets/etc.png')}
+  &.file  {background-image: url('./../assets/file.png')}
   &.grt  {background-image: url('./../assets/grt.png')}
   &.link  {background-image: url('./../assets/link.png')}
   &.ltc  {background-image: url('./../assets/ltc.png')}
@@ -234,9 +238,24 @@ export default {
   &.shiba  {background-image: url('./../assets/shiba.png')}
   &.sol  {background-image: url('./../assets/sol.png')}
   &.sushi  {background-image: url('./../assets/sushi.png')}
+  &.tron  {background-image: url('./../assets/tron.png')}
   &.uni  {background-image: url('./../assets/uni.png')}
   &.yfi  {background-image: url('./../assets/yfi.png')}
+  &.vet  {background-image: url('./../assets/vet.png')}
+  &.xlm  {background-image: url('./../assets/xlm.png')}
   &.zil  {background-image: url('./../assets/zil.png')}
+  &.theta  {background-image: url('./../assets/theta.png')}
+  &.ftt  {background-image: url('./../assets/ftt.png')}
+  &.ftm  {background-image: url('./../assets/ftm.png')}
+  &.hbar  {background-image: url('./../assets/hbar.png')}
+  &.dai  {background-image: url('./../assets/dai.png')}
+  &.egld  {background-image: url('./../assets/egld.png')}
+  &.near  {background-image: url('./../assets/near.png')}
+  &.xtz  {background-image: url('./../assets/xtz.png')}
+  &.xmr  {background-image: url('./../assets/xmr.png')}
+  &.eos  {background-image: url('./../assets/eos.png')}
+  &.hnt  {background-image: url('./../assets/hnt.png')}
+  &.lrc  {background-image: url('./../assets/lrc.png')}
   &.gold {
     background-image: url('./../assets/gold.svg');
   }
