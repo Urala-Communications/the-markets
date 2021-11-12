@@ -1,7 +1,8 @@
 const finageApiKey = process.env.FINAGE_API_KEY;
 const finageSocketKey = process.env.FINAGE_SOCKET_KEY;
 // const strapiBaseUri = process.env.STRAPI_URL || "http://localhost:1337";
-const strapiBaseUri = process.env.NODE_ENV === 'development' ? "http://localhost:1337" : "https://the-markets-cms.herokuapp.com";
+// const strapiBaseUri = process.env.NODE_ENV === 'development' ? "http://localhost:1337" : "https://the-markets-cms.herokuapp.com";
+const strapiBaseUri = "https://the-markets-cms.herokuapp.com";
 
 export default {
   // Disable server-side rendering (https://go.nuxtjs.dev/ssr-mode)
@@ -13,14 +14,19 @@ export default {
   },
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
-    title: 'The Markets',
+    title: 'The Markets - Live Charts for Financial Markets & the Global Community of Traders. Bitcoin, Ethereum, Doge, Shiba, Memes, Crypto, Indices, Stocks, Forex, Bonds, CFDs and more.',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: '' }
+      { hid: 'title', name: 'title', content: 'The Markets' },
+      { hid: 'description', name: 'description', content: 'Live Charts for Financial Markets & the Global Community of Traders. Bitcoin, Ethereum, Doge, Shiba, Memes, Crypto, Indices, Stocks, Forex, Bonds, CFDs and more.' },
+      { hid: 'keywords', name: 'keywords', content: 'live market, cfds, indices, stocks, crypto, cryptocurrency, bitcoin, commodities, forex, currencies, bonds, market news, market insights' },
+      { name: 'apple-mobile-web-app-title', content: 'The Markets - live charts for financial markets & the global community of traders' },
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: 'apple-touch-icon', type: 'image/png', href: '/apple-touch-icon.png' },
+      { rel: 'android-chrome', type: 'image/png', href: '/android-chrome-192x192.png' },
     ]
   },
 
@@ -33,6 +39,7 @@ export default {
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [
     '~/plugins/vue-directives',
+    { src: "~/plugins/gtag.js", mode: 'client' },
     { src: "~/plugins/highcharts.js", ssr: true },
   ],
 
@@ -44,6 +51,15 @@ export default {
     // '@nuxtjs/dotenv',
     // '@nuxtjs/fontawesome'
   ],
+
+  // googleAnalytics: {
+  //   id: 'G-Z7GS99Q7TZ', // Use as fallback if no runtime config is provided
+  // },
+  // publicRuntimeConfig: {
+  //   googleAnalytics: {
+  //     id: 'G-Z7GS99Q7TZ'
+  //   }
+  // },
 
   dev: process.env.NODE_ENV !== 'production',
 
@@ -58,7 +74,7 @@ export default {
   },
 
   'google-adsense': {
-    id: 'ca-pub-1293135381149415'
+    id: 'ca-pub-7227085508439540'
   },
 
   serverMiddleware: ['~/api/index'],
@@ -114,6 +130,9 @@ export default {
   build: {
     extractCSS: true,
     optimizeCSS: true,
+    // splitChunks: {
+    //   layouts: true
+    // },
     quiet: true,
     html:{
       minify:{
@@ -144,6 +163,11 @@ export default {
           }
         ]
       ]
-    }
+    },
+    // loaders:  {
+    //   vue: {
+    //     prettify: false
+    //   }
+    // },
   },
 }

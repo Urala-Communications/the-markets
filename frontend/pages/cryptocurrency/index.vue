@@ -9,7 +9,7 @@
       class="list-page content container container-fluid w-100 buffer"
       :class="view"
     >
-      <div class="row m-0">
+      <div class="row m-0 index-list" id="crypto">
         <h2 class="col-12">Cryptocurrencies</h2>
         <!-- <div class="toggle col-12">
           <button
@@ -23,14 +23,17 @@
             @click="showList()"
           />
         </div> -->
-        <div class="col-lg-8">
+        <div class="col-12 col-lg-7 offset-lg-5">
           <div class="col-12 white-well pt-2">
             <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
           </div>
         </div>
-        <div class="col-lg-4">
-          <News :newsData="newsData"/>
-        </div>
+        <!-- <div class="col-12 col-lg-7 offset-lg-5">
+          <div class="col-lg-12 mt-4 white-well">
+            <News :newsData="newsData"/>
+            <Ad feedAd/>
+          </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -55,13 +58,31 @@ export default {
       }
     },
     methods: {
+      // fetchMarketCap(coin) {
+      //   Number.prototype.toLocaleFixed = function (n) {
+      //     return this.toLocaleString(undefined, {
+      //         minimumFractionDigits: n,
+      //         maximumFractionDigits: n,
+      //     });
+      //   };
+      //   this.$axios.$get(
+      //     `https://api.finage.co.uk/last/crypto/detailed/${coin.toLowerCase()}?apikey=${this.finageApiKey}`
+      //   )
+      //   .then((response) => {
+      //     let i = this.cryptocurrency.findIndex(index => index.name === coin.name);
+      //     this.$set(this.cryptocurrency[i], 'marketCap', response.marketCap.toLocaleFixed(2));
+      //   })
+      //   .catch((error) => {
+      //     console.log(error);
+      //   });
+      // },
       fetchNews(symbol){
         this.$axios.$get(`https://api.finage.co.uk/news/cryptocurrency/${symbol}?apikey=${this.finageApiKey}&limit=1`)
         .then(response => {
           if(typeof response.news[0] !== 'undefined'){
             let index = this.newsData.findIndex(x => x.title === response.news[0].title);
             let newsItem = response.news[0];
-            this.loading = false;
+            // this.loading = false;
             if(index === -1){
               newsItem.symbol = symbol
               newsItem.type = 'cryptocurrency'
@@ -85,21 +106,31 @@ export default {
 
     },
     created() {
+      this.loading = false; // fix news api bug
       this.$root.$on('updateCrypto', (item) => {
         let i = this.cryptocurrency.findIndex(index => index.name === item.name);
+        // if(item.symbol === 'SHIBUSD'){
+          // this.$set(this.cryptocurrency[i], 'price', (item.price * 1000000).toLocaleFixed(2) );
+          // this.$set(this.cryptocurrency[i], 'change', (item.difference * 1000000).toLocaleFixed(2) );
+        // } else {
+        //   this.$set(this.cryptocurrency[i], 'price', item.price);
+        // }
         this.$set(this.cryptocurrency[i], 'price', item.price);
-        this.$set(this.cryptocurrency[i], 'difference', item.difference);
-        this.$set(this.cryptocurrency[i], 'change', item.change);
+        this.$set(this.cryptocurrency[i], 'difference', item.change);
+        this.$set(this.cryptocurrency[i], 'change', item.difference);
       });
-      this.cryptocurrency.forEach(item => {
-        this.fetchNews(item.icon);
-      });
-      setInterval(() => {
-        this.cryptocurrency.forEach(item => {
-          this.fetchNews(item.icon);
-        });
-        // every 5 minutes
-      }, 300000)
+      // this.cryptocurrency.forEach(item => {
+      //   this.fetchMarketCap(item.symbol);
+      // });
+      // this.cryptocurrency.forEach(item => {
+      //   this.fetchNews(item.icon);
+      // });
+      // setInterval(() => {
+      //   this.cryptocurrency.forEach(item => {
+      //     this.fetchNews(item.icon);
+      //   });
+      //   // every 5 minutes
+      // }, 300000)
     },
   }
 </script>

@@ -9,7 +9,7 @@
       class="list-page content container container-fluid w-100 buffer"
       :class="view"
     >
-      <div class="row m-0">
+      <div class="row m-0 index-list" id="stocks">
         <h2 class="col-12">Stocks</h2>
         <!-- <div class="toggle col-12">
           <button
@@ -23,13 +23,16 @@
             @click="showList()"
           />
         </div> -->
-        <div class="col-lg-8">
+        <div class="col-12 col-lg-7 offset-lg-5">
           <div class="col-12 white-well pt-2">
             <IndexList :data="stocks" indexPage type="stocks" />
           </div>
         </div>
-        <div class="col-lg-4">
-          <News :newsData="newsData"/>
+        <div class="col-12 col-lg-7 offset-lg-5">
+          <div class="col-lg-12 mt-4 white-well">
+            <News :newsData="newsData"/>
+            <Ad feedAd/>
+          </div>
         </div>
       </div>
     </div>

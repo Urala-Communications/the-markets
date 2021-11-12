@@ -1,4 +1,4 @@
-# theMarkets
+# The Markets
 
 ## Build Setup
 

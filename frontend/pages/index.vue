@@ -22,64 +22,64 @@
         />
       </div> -->
       <div class="row">
-        <div class="col-12 col-lg-8">
+        <div class="col-12 col-lg-8 pr-lg-0">
           <div class="row m-0 justify-content-between main-content">
-            <div class="col-lg-6">
-              <div class="col-12 white-well indices">
+            <div class="col-lg-6 pl-half">
+              <!-- <div class="col-12 white-well indices">
                 <h2>Indices
-                  <NuxtLink class="index-link" to="/indices">View all <span>></span></NuxtLink>
+                  <NuxtLink class="index-link" to="/indices">View all</NuxtLink>
                 </h2>
                 <IndexList :data="indices" type="indices" />
+              </div> -->
+              <div class="col-12 white-well crypto">
+                <h2>Cryptocurrencies
+                  <NuxtLink class="index-link" to="/cryptocurrency">View all</NuxtLink>
+                </h2>
+                <IndexList :data="cryptocurrency" type="cryptocurrency" />
               </div>
               <div class="col-12 white-well">
                 <h2>Currencies
-                  <NuxtLink class="index-link" to="/currencies">View all <span>></span></NuxtLink>
+                  <NuxtLink class="index-link" to="/currencies">View all</NuxtLink>
                 </h2>
                 <IndexList :data="currencies" type="currencies" />
               </div>
               <div class="col-12 white-well">
-                <h2>Cryptocurrencies
-                  <NuxtLink class="index-link" to="/cryptocurrency">View all <span>></span></NuxtLink>
+                <h2>Commodities
+                  <NuxtLink class="index-link" to="/commodities">View all</NuxtLink>
                 </h2>
-                <IndexList :data="cryptocurrency" type="cryptocurrency" />
+                <IndexList :data="commodities" type="commodities" />
               </div>
             </div>
             <div class="col-lg-6">
               <div class="col-12 white-well">
                 <h2>Movers
-                  <NuxtLink class="index-link" to="/movers">View all <span>></span></NuxtLink>
+                  <NuxtLink class="index-link" to="/movers">View all</NuxtLink>
                 </h2>
                 <IndexList :data="rising" type="rising" />
               </div>
               <div class="col-12 white-well">
                 <h2>Bonds
-                  <NuxtLink class="index-link" to="/bonds">View all <span>></span></NuxtLink>
+                  <NuxtLink class="index-link" to="/bonds">View all</NuxtLink>
                 </h2>
                 <IndexList :data="bonds" type="bonds" />
               </div>
               <div class="col-12 white-well">
                 <h2>Stocks
-                  <NuxtLink class="index-link" to="/stocks">View all <span>></span></NuxtLink>
+                  <NuxtLink class="index-link" to="/stocks">View all</NuxtLink>
                 </h2>
                 <IndexList :data="stocks" type="stocks" />
-              </div>
-              <div class="col-12 white-well">
-                <h2>Commodities
-                  <NuxtLink class="index-link" to="/commodities">View all <span>></span></NuxtLink>
-                </h2>
-                <IndexList :data="commodities" type="commodities" />
               </div>
             </div>
           </div>
         </div>
-        <div class="col-12 col-lg-4">
+        <div class="col-12 col-lg-4 mb-5 news-section">
           <div class="row m-0 justify-content-between">
-            <div class="col-lg-12 border-left-grey">
+            <div class="col-lg-12 white-well">
               <h2 class="mt-0">News</h2>
               <News :newsData="stockNews"/>
-              <Ad feedAd/>
-              <Ad feedAd/>
-              <News :newsData="cryptoNews"/>
+              <!-- <Ad feedAd/> -->
+              <!-- <Ad feedAd/> -->
+              <!-- <News :newsData="cryptoNews"/> -->
             </div>
           </div>
         </div>
@@ -90,11 +90,11 @@
 
 <script>
 import {cryptocurrency, currencies, stocks, indices, bonds, rising, commodities} from "./../market.js";
-import IndexList from '../components/IndexList.vue';
+// import IndexList from '../components/IndexList.vue';
 import Ad from "./../components/Ad.vue";
 export default {
     components: {
-      IndexList,
+      IndexList: () => import('./../components/IndexList'),
       Ad
     },
     data() {
@@ -130,7 +130,7 @@ export default {
               newsItem.type = 'stocks'
               newsfeed.push(newsItem)
             }
-            if(newsfeed.length > 5){
+            if(newsfeed.length > 9){
               newsfeed.pop()
             }
           }
@@ -239,88 +239,30 @@ export default {
           this.fetchNews(item.symbol);
         });
       }, 300000);
-      this.cryptocurrency.forEach(item => {
-        this.fetchCryptoNews(item.icon);
-      });
-      setInterval(() => {
-        this.cryptocurrency.forEach(item => {
-          this.fetchCryptoNews(item.icon);
-        });
-      }, 300000)
-      this.rising.forEach(item => {
-        if(item.symbol === 'DOGEUSD'){
-          this.fetchCryptoNews(item.symbol, 'rising');
-        } else {
-          this.fetchNews(item.symbol, 'rising');
-        }
-      });
-      setInterval(() => {
-        this.rising.forEach(item => {
-          if(item.symbol === 'DOGEUSD'){
-            this.fetchCryptoNews(item.symbol, 'rising');
-          } else {
-            this.fetchNews(item.symbol, 'rising');
-          }
-        });
-      }, 300000)
-      // try {
-      //   // const { userlist } = await fetch('/api/userlist')
-      //   this.chartData = {
-      //     datasets: [{
-      //       data: [
-      //         {x: 0, y: 125},
-      //         {x: 50, y: 140},
-      //         {x: 100, y: 115},
-      //         {x: 150, y: 140},
-      //         {x: 200, y: 90},
-      //         {x: 250, y: 80},
-      //       ],
-      //       borderWidth: 0,
-      //       backgroundColor: '#DC0D56',
-      //       pointRadius: 0
-      //     }]
-      //   };
-      //   this.chartOptions = {
-      //     showLines: true,
-      //     responsive: false,
-      //     legend: {
-      //       display: false
-      //     },
-      //     scales: {
-      //       xAxes: [{
-      //         type: 'linear',
-      //         gridLines: {
-      //           display: false
-      //         },
-      //         ticks: {
-      //           display: false
-      //         }
-      //       }],
-      //       yAxes: [{
-      //         gridLines: {
-      //           display: false
-      //         },
-      //         ticks: {
-      //           display: false
-      //         }
-      //       }],
-      //       // elements: {
-      //       //   point:{
-      //       //     radius: 0
-      //       //   },
-      //       //   arc: {
-      //       //     borderWidth: 0
-      //       //   }
-      //       // }
-      //     },
-      //     layout: {
-      //       padding: 0
-      //     }
+      // this.cryptocurrency.forEach(item => {
+      //   this.fetchCryptoNews(item.icon);
+      // });
+      // setInterval(() => {
+      //   this.cryptocurrency.forEach(item => {
+      //     this.fetchCryptoNews(item.icon);
+      //   });
+      // }, 300000)
+      // this.rising.forEach(item => {
+      //   if(item.symbol === 'DOGEUSD'){
+      //     this.fetchCryptoNews(item.symbol, 'rising');
+      //   } else {
+      //     this.fetchNews(item.symbol, 'rising');
       //   }
-      //   this.loaded = true;
-      // } catch (e) {
-      //   console.error(e)
-      // }
+      // });
+      // setInterval(() => {
+      //   this.rising.forEach(item => {
+      //     if(item.symbol === 'DOGEUSD'){
+      //       this.fetchCryptoNews(item.symbol, 'rising');
+      //     } else {
+      //       this.fetchNews(item.symbol, 'rising');
+      //     }
+      //   });
+      // }, 300000)
     }
   }
 </script>
@@ -338,8 +280,12 @@ export default {
   padding-top: 15px;
 }
 
+.pl-half{
+  padding-left: 5px;
+}
+
 .content.container {
-  padding: 10px;
+  padding: 20px 10px;
   margin: 0 auto 0;
   display: flex;
   /* flex-flow: wrap; */
@@ -348,10 +294,10 @@ export default {
   min-height: calc(100vh - 603px); // height of nav/ads/footer
   /* canvas{ display: none !important;} */
   &.home {
-    .white-well:not(.indices) .instrument.index:nth-of-type(n+7){
+    .white-well:not(.indices, .crypto) .instrument.index:nth-of-type(n+7){
       display: none;
     }
-    .indices{
+    .indices, .crypto{
       .instrument.index:nth-of-type(n+11){
         display: none;
       }
@@ -379,8 +325,9 @@ export default {
 
 .white-well {
   background: #ffffff;
-  border-radius: 1rem;
-  box-shadow: 1px 1px 3px #ddd;
+  padding: 20px 26px 24px;
+  border-radius: 18px;
+  box-shadow: 0px 2.5px 9px 0 rgba(218, 226, 239, 0.5);
 }
 
 .main-content{
@@ -426,9 +373,9 @@ export default {
 .btn {max-width: 100%;}
 
 h2 {
-  font-family: 'DM Serif Display', serif;
+  font-family: 'Nunito', serif;
   font-size: 20px;
-  font-weight: 400;
+  font-weight: 800;
   margin-bottom: 1rem;
   display: flex;
   justify-content: space-between;
@@ -440,27 +387,33 @@ h2 {
   align-items: center;
   font-size: 12px;
   @include main-font();
-  text-transform: uppercase;
+  color: #fff;
   font-weight: 700;
-  span{
-    padding-left: 3px;
-    font-size: 15px;
+  padding: 5px 10px;
+  border-radius: 12px;
+  background-color: #4647ff;
+  &:hover {
+    color: #fff;
   }
 }
 
 @media(max-width:991px){
   .content.container{
     padding: 1rem;
+    /* &.home {padding-top: 8px;} */
   }
   .border-left-grey{
     border-left: none;
   }
+  .pl-half{
+    padding-left: 15px;
+  }
 }
 
 @media(max-width: 400px){
-  .content.container{
+  /* .content.container{
     padding: 0 0.5rem;
-  }
+  } */
   hr{
     margin-top: 0.5rem;
   }

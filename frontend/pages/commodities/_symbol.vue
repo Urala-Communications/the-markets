@@ -55,7 +55,7 @@ export default {
     },
     head() {
       return {
-        title: this.symbol.replace('-',' ').toUpperCase() + ' $' + this.item.price + ' - ' + 'The Markets'
+        title: this.symbol.replace('-',' ').toUpperCase() + ' $' + this.item.price + ' - ' + 'The Markets - Live Charts for Financial Markets & the Global Community of Traders. Bitcoin, Ethereum, Doge, Shiba, Memes, Crypto, Indices, Stocks, Forex, Bonds, CFDs and more.'
       }
     },
     async asyncData({ params }) {
@@ -311,7 +311,7 @@ export default {
           }
           } else {
               let url = `https://api.thedice.com/api/${range}/${i.symbol}/1`;
-              
+
               this.$axios
               .$get(
                   url
@@ -332,7 +332,7 @@ export default {
       startUpdateData(symbol, range, limit, interval, minDate, startPoint) {
           console.log("change chart data: ", [symbol, interval, minDate]);
           let url = `https://api.finage.co.uk/agg/forex/${symbol}/1/${interval}/${minDate}/${this.today}?&apikey=${process.env.FINAGE_API_KEY}&limit=${limit}`;
-          
+
           this.$axios
               .$get(
                   `https://api.finage.co.uk/agg/forex/${symbol}/1/${interval}/${minDate}/${this.today}?&apikey=${this.finageApiKey}&limit=${limit}`

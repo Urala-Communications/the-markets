@@ -2,35 +2,35 @@
   <nuxt-link
     :key="article.id"
     :to="`${article.category.slug}/${article.slug}`"
-    class="uk-link-reset"
+    class="article-card"
   >
-    <div class="uk-card uk-card-muted">
-      <div class="uk-card-media-top">
-        <img :src="getStrapiMedia(article.image.url)" height="100" />
-      </div>
-      <div class="uk-card-body">
-        <!-- <p v-if="article.category" id="category" class="uk-text-uppercase">
-          {{ article.category.name }}
-        </p> -->
-        <p id="title" class="uk-text-large">{{ article.title }}</p>
-        <hr class="uk-divider-small" />
-        <div class="uk-grid-small uk-flex-left" data-uk-grid="true">
-          <div>
-            <img
-              class="avatar"
-              :src="getStrapiMedia(article.author.picture.url)"
-              style="position: static; border-radius: 50%; object-fit: cover"
-              width="40px"
-              height="40px"
-              :alt="article.title"
-            />
-          </div>
-          <div class="uk-width-expand">
-            <p class="uk-margin-remove-bottom">{{ article.author.name }}</p>
-          </div>
-        </div>
-      </div>
-    </div>
+    <b-card no-body>
+      <b-row>
+        <b-col class="d-flex align-items-center col-12 col-md-7">
+          <b-card-body class="pr-0 pb-0 pt-0">
+            <b-card-text>
+              <h5 id="title" class="card-title">{{ article.title }}</h5>
+              <p>{{ article.author.name }}</p>
+              <p class="date mt-lg-3 mt-2 ">{{ getDate(article.updated_at) }}</p>
+              <!-- <div>
+                <img
+                  v-if="article.author.picture"
+                  class="avatar"
+                  :src="getStrapiMedia(article.author.picture.url)"
+                  style="position: static; border-radius: 50%; object-fit: cover"
+                  width="40px"
+                  height="40px"
+                  :alt="article.title"
+                />
+              </div> -->
+            </b-card-text>
+          </b-card-body>
+        </b-col>
+        <b-col class="pl-lg-0 col-12 col-md-5 mt-1 mt-lg-3 mb-2 mb-lg-3">
+          <b-card-img v-if="article.image.url" :src="getStrapiMedia(article.image.url)" alt="image"></b-card-img>
+        </b-col>
+      </b-row>
+    </b-card>
   </nuxt-link>
 </template>
 
@@ -46,9 +46,13 @@ export default {
   },
   methods: {
     getStrapiMedia,
+    getDate(d){
+      let dt = new Date(d).toLocaleString('en-GB',{month:'long', year:'numeric', day:'numeric'});
+      return dt;
+    }
   },
   mounted(){
-    console.log(this.article)
+    // console.log(this.article)
   }
 };
 </script>

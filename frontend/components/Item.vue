@@ -11,7 +11,7 @@
         <div class="col-12">
           <div class="hero">
             <div class="title row mb-3">
-              <div class="col-12 d-flex justify-content-between">
+              <div class="col-12 d-flex justify-content-between title-wrapper">
                 <h1 class="d-inline-flex w-100 text-capitalize mb-3">
                   <div class="icon" :class="item.icon"/>
                   {{ item.name }}
@@ -22,7 +22,7 @@
               </div>
             </div>
           </div>
-          <div class="graph white-well" :class="item.change > 0 ? 'up' : 'down'">
+          <div class="graph white-well p-0" :class="item.change > 0 ? 'up' : 'down'">
             <div class="d-flex justify-content-between row">
               <div class="d-inline-flex flex-column">
                 <h2 class="price">${{ item.price }}</h2>
@@ -37,6 +37,7 @@
                 <span><strong>Low:</strong>${{ low }}</span>
                 <span><strong>Close:</strong>${{ close }}</span>
                 <span><strong>Volume:</strong>{{ volume }}</span>
+                <span  v-if="marketCap"><strong>Marketcap:</strong>${{ marketCap }}</span>
               </div>
             </div>
             <chart
@@ -47,8 +48,6 @@
               :c_symbol="c_symbol"
               :new="item"
               ref="Chart"
-
-
             />
           </div>
           <div v-if="profile.description" class="info row">
@@ -73,21 +72,21 @@
               <div class="white-well col-12">
                 <h5>Statistics</h5>
                 <div class="d-flex flex-column">
-                  <span>Open: ${{ open }}</span>
-                  <span>High: ${{ high }}</span>
-                  <span>Low: ${{ low }}</span>
-                  <span>Close: ${{ close }}</span>
+                  <p>Open: ${{ open }}</p>
+                  <p>High: ${{ high }}</p>
+                  <p>Low: ${{ low }}</p>
+                  <p>Close: ${{ close }}</p>
                 </div>
                 <!-- <div class="d-inline-flex align-items-center w-100 mt-1">
                   <strong class="mr-1">Range:</strong>2021-05-18 09:00 - 2021-05-19 09:00
                 </div> -->
                 <div class="d-md-flex flex-column w-100">
-                  <span v-if="marketCap">Marketcap: ${{ marketCap }}</span>
-                  <span>Volume: {{ volume }}</span>
+                  <p v-if="marketCap">Marketcap: ${{ marketCap }}</p>
+                  <p>Volume: {{ volume }}</p>
                 </div>
                 <div v-if="yearHigh" class="d-inline-flex flex-column w-100">
-                  <span>Year High: ${{ yearHigh }}</span>
-                  <span>Year Low: ${{ yearLow }}</span>
+                  <p>Year High: ${{ yearHigh }}</p>
+                  <p>Year Low: ${{ yearLow }}</p>
                 </div>
               </div>
             </div>
@@ -178,6 +177,7 @@ export default {
   },
   methods: {
     getchart() {
+      console.log(this.item)
       return this.$refs.Chart
     }
   }
@@ -211,10 +211,12 @@ export default {
     flex-direction: column;
   }
   h1 {
-    font-weight: bold;
     font-size: 40px;
     align-items: center;
     @include title-font();
+    @include main-font();
+    font-weight: 900;
+    color: rgba(1, 3, 78, 0.9);
     /* flex-direction: column; */
     margin-bottom: 0;
     .icon{
@@ -226,6 +228,7 @@ export default {
   .status{
     font-size: 13px;
     position: relative;
+    color: $green;
     &:before{
       content: '';
       border-radius: 50%;
@@ -238,16 +241,20 @@ export default {
     &.green:before{background: $green; animation: blink 0.6s ease-in infinite alternate;}
     &.red:before{background: $red;}
   }
-  .up span{
+  /* .up span{
     color: $green;
     strong{color: #222;}
   }
   .down span{
     color: $red;
     strong{color: #222;}
+  } */
+  span{
+    color: $red;
+    strong{color: #222;}
   }
   .detail{
-    font-size: 12px;
+    font-size: 14px;
     width: auto;
     vertical-align: top;
     padding-top: 16px;
@@ -303,12 +310,12 @@ export default {
     /* justify-content: flex-end; */
     margin-bottom: 35px;
     overflow: hidden;
-    &.up h2.price{
+    /* &.up h2.price{
       color: $green;
     }
     &.down h2.price{
       color: $red;
-    }
+    } */
     h2.price {
       /* @include main-font; */
       @include number-font;
@@ -316,7 +323,7 @@ export default {
       display: inline-block;
       padding-top: 16px;
       padding-left: 34px;
-      color: #222;
+      color: $red;
     }
     .diff{
       padding-left: 34px;
@@ -365,9 +372,12 @@ export default {
   }
 
   @media(max-width:768px){
+    .title-wrapper{
+      flex-direction: column;
+    }
     h1{
       /* justify-content: center; */
-      font-size: 36px;
+      font-size: 28px;
       .icon {
         width: 44px;
         height: 44px
@@ -384,18 +394,25 @@ export default {
     }
   }
   @media(max-width:440px){
-    .graph .d-flex.row{
-      flex-direction: column;
-    }
-    .diff{
-      margin-bottom: 5px;
-    }
-    .detail {
-      padding-top: 0;
-      padding-left: 34px;
-      text-align: left !important;
-      flex-direction: row !important;
-      flex-wrap: wrap;
+    .graph {
+      .d-flex.row{
+        flex-direction: column;
+      }
+      .diff{
+        margin-bottom: 5px;
+        padding-left: 1rem;
+      }
+      h2.price {
+        padding-left: 1rem;
+      }
+      .detail {
+        padding-top: 0;
+        /* padding-left: 34px; */
+        padding-left: 1rem;
+        text-align: left !important;
+        flex-direction: row !important;
+        flex-wrap: wrap;
+      }
     }
   }
 }

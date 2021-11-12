@@ -36,11 +36,8 @@
     >
       <b-card no-body>
         <b-row v-if="item.symbol">
-          <b-col class="pr-0 col-sm-5">
-            <b-card-img :src="getThumb(item)" alt="image"></b-card-img>
-          </b-col>
-          <b-col class="d-flex align-items-center col-sm-7">
-            <b-card-body class="pl-0 pb-0 pt-0">
+          <b-col class="d-flex align-items-center col-md-7">
+            <b-card-body class="pr-0 pb-0 pt-0">
               <b-card-text>
                 <!-- <p v-if="item.source" class="category">{{ item.source }}</p> -->
                 <h5 class="card-title" v-snip="2">{{ item.title }}</h5>
@@ -48,6 +45,9 @@
                 <span>{{ item.time }}</span>
               </b-card-text>
             </b-card-body>
+          </b-col>
+          <b-col class="pl-0 col-md-5">
+            <b-card-img :src="getThumb(item)" alt="image"></b-card-img>
           </b-col>
         </b-row>
         <b-row v-else>
@@ -135,19 +135,21 @@ export default {
   flex-direction: row;
   margin-bottom: 1.5rem;
   background: #ffffff;
-  border-radius: 1rem;
-  box-shadow: 1px 1px 3px #ddd;
+  /* padding: 20px 26px 24px; */
+  /* border-radius: 18px; */
+  /* box-shadow: 0px 2.5px 9px 0 rgba(218, 226, 239, 0.5); */
   .card-img {
     /* height: 7rem; */
     margin-right: 0;
-    box-shadow: 0px 2px 4px 1px rgb(128 128 128 / 10%);
-    border-radius: 7px;
+    border-radius: 18px;
+    box-shadow: 0px 2.5px 9px 0 rgba(218, 226, 239, 0.5);
   }
   .card-body{
-    padding: 15px;
+    padding: 0;
     overflow: hidden;
     .card-title {
       font-size: 14px;
+      text-transform: capitalize;
       font-weight: 700;
       margin-bottom: 0.25rem;
     }
@@ -213,11 +215,12 @@ export default {
   .card{
     overflow: hidden;
     .row .pr-0{
-      padding-right: 15px !important;
+      padding-left: 15px !important;
     }
+    .col-md-7{padding-right: 5px;}
+    .col-md-5{margin-right: 10px;}
     .card-body{
-      padding: 0 5px 0 0 !important;
-      margin-left: -15px;
+      padding: 0 0 0 5px !important;
       .card-title{
         font-size: 14px;
         -webkit-line-clamp: 4 !important;

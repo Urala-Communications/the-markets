@@ -9,7 +9,8 @@
       class="list-page content container w-100 buffer"
       :class="view"
     >
-      <div class="row m-0 justify-content-center">
+      <div class="row m-0 index-list" id="movers">
+        <h2 class="col-12">Movers</h2>
         <!-- <div class="toggle col-12">
           <button
             class="grid btn-outline-dark btn mb-4 mr-2"
@@ -22,8 +23,7 @@
             @click="showList()"
           />
         </div> -->
-        <div class="col-12 col-lg-8">
-          <h2 class="col-12">Movers</h2>
+        <div class="col-12 col-lg-7 offset-lg-5">
           <div class="col-12 white-well pt-2">
             <IndexList :data="rising" indexPage type="rising" />
           </div>

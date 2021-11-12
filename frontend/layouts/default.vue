@@ -3,13 +3,14 @@
     <Header ref="header"/>
     <Ad headerAd/>
     <Nuxt/>
+    <CookieNotice v-if="showCookieNotice"/>
     <Footer/>
   </div>
 </template>
 
 <script>
-import Header from "./../components/Header.vue";
-import Footer from "./../components/Footer.vue";
+// import Header from "./../components/Header.vue";
+// import Footer from "./../components/Footer.vue";
 import Ad from "./../components/Ad.vue";
 import {cryptocurrency, currencies, stocks, indices, bonds, rising, commodities} from "./../market.js";
 // import { gsap } from "gsap";
@@ -17,11 +18,22 @@ import {cryptocurrency, currencies, stocks, indices, bonds, rising, commodities}
 // gsap.registerPlugin(DrawSVGPlugin);
 const finageApiKey = process.env.finageApiKey,
       finageSocketKey = process.env.finageSocketKey;
+// import Finage from 'finage';
+// const client = new Finage({ apiKey: finageApiKey });
+// async function test() {
+//    const res = await client.stocks.us.lastQuote({
+//     params: { symbol: 'AAPL' }, queries: { ts: 'ns' }
+//   }).then(() => {
+//     console.log(res)
+//   })
+// }
+// test()
 
 export default {
   components: {
-    Header,
-    Footer,
+    Header: () => import('./../components/Header'),
+    Footer: () => import('./../components/Footer'),
+    CookieNotice: () => import('./../components/CookieNotice'),
     Ad
   },
   data() {
@@ -46,6 +58,7 @@ export default {
       marketStatus: {},
       yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
       today: new Date(Date.now()).toLocaleDateString("fr-CA"),
+      showCookieNotice: false
     }
   },
   head() {
@@ -56,6 +69,11 @@ export default {
     }
   },
   methods: {
+    getGDPR() {
+      if (process.browser) {
+        return localStorage.getItem('GDPR:accepted', true);
+      }
+    },
     connectSockets() {
       Number.prototype.toLocaleFixed = function(n) {
         return this.toLocaleString(undefined, {
@@ -100,13 +118,17 @@ export default {
       this.cryptoWS.onopen = () => {
         this.loading = true;
         // console.log("CRYPTO Socket connection established");
-        this.cryptoWS.send(JSON.stringify({"action": "subscribe", "symbols": "BTCUSD,ETHUSD,IOTAUSD,ADAUSD,XRPUSD,DOTUSD,DOGEUSD"}))
+        this.cryptoWS.send(JSON.stringify({"action": "subscribe", "symbols": "BTCUSD,ETHUSD,BNBUSD,ADAUSD,SOLUSD,XRPUSD,DOTUSD,DOGEUSD,SHIBUSD,LUNAUSD,AVAXUSD,LTCUSD,UNIUSD,LINKUSD,MATICUSD,ALGOUSD,VETUSD,XLMUSD,AXSUSD,FILUSD,TRXUSD,ETCUSD,ATOMUSD,THETAUSD,FTTUSD,FTMUSD,HBARUSD,DAIUSD,EGLDUSD,NEARUSD,GRTUSD,XTZUSD,XMRUSD,EOSUSD,MANAUSD,HNTUSD,CAKEUSD,AAVEUSD,LRCUSD,IOTAUSD,NEOUSD,MKRUSD,ENJUSD,DASHUSD,COMPUSD,CRVUSD,BATUSD,SUSHIUSD,ZILUSD,YFIUSD,1INCHUSD"}))
       }
       this.cryptoWS.onmessage = (msg) => {
         let data = JSON.parse(msg.data);
         if(this.cryptocurrency.find(index => index.symbol === data['s'])){
           let item = this.cryptocurrency.find(index => index.symbol === data['s']);
-          item.price = Number(data['p']).toLocaleFixed(2);
+          if(item.symbol === 'SHIBUSD'){
+            item.price = Number(data['p']);
+          } else {
+            item.price = Number(data['p']).toLocaleFixed(2);
+          }
           item.difference = Number(data['dd']).toLocaleFixed(2);
           item.change = Number(data['dc']).toLocaleFixed(2);
           item.time = data['t'];
@@ -160,7 +182,7 @@ export default {
       }
       this.indicesWS.onmessage = (msg) => {
         let data = JSON.parse(msg.data);
-        
+
         if(typeof data.p !== 'undefined'){
           if(this.indices.find(index => index.symbol === data.s)){
             // console.log('non-CFD')
@@ -261,7 +283,7 @@ export default {
       .then(response => {
         let i = this.indices.find( indice => indice.symbol === response.symbol );
         i.price = response.price.toLocaleFixed(2);
-        i.priceNumber = response.price;        
+        i.priceNumber = response.price;
         this.$root.$emit('updateIndice', i);
       })
       .then(() => {
@@ -380,6 +402,9 @@ export default {
         this.mobileNavOpen = collapsed;
       }
     });
+    if (!this.getGDPR() === true) {
+      this.showCookieNotice = true;
+    }
   },
   beforeDestroy() {
     this.forexWS.close();
@@ -387,9 +412,6 @@ export default {
     this.stockWS.close();
     this.indicesWS.close();
   },
-//   mounted() {
-//     gsap.to(".navbar-brand", {x:300, duration:2, delay: 1, repeat: -1, yoyo:true})
-//   }
   watch: {
     $route () {
       // console.log('route changed', this.$route);
@@ -401,9 +423,10 @@ export default {
 </script>
 
 <style lang="scss">
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=Nunito:wght@400;800&display=swap');
 html, body {
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Archivo', sans-serif;
   font-size: 16px;
   word-spacing: 1px;
   overflow-x: hidden;
@@ -412,15 +435,16 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
+  color: rgba(1, 3, 78, 0.9);
 }
 
 body{
-  margin-top: 104px;
-  background: #f5f3f1;
+  margin-top: 112px;
+  background: #f7faff;
 }
 @media(max-width: 1200px){
   body{
-    margin-top: 92px;
+    margin-top: 95px;
   }
 }
 @media(max-width: 750px){
@@ -437,11 +461,11 @@ body{
 }
 
 a {
-  color: #222;
+  color: rgba(1, 3, 78, 0.9);
   transition: 0.3s ease-in-out;
   &:hover {
     text-decoration: none;
-    color: $blue;
+    color: $red;
   }
 }
 

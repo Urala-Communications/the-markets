@@ -8,7 +8,6 @@
               <NuxtLink to="/">
                 <h1 class="title">
                   <img src="./../assets/logo-white.svg" alt="The Markets Logo">
-                  The Markets
                 </h1>
               </NuxtLink>
             </div>
@@ -17,9 +16,9 @@
                 <NuxtLink class="nav-link" to="/">
                   Overview
                 </NuxtLink>
-                <NuxtLink class="nav-link" to="/indices">
+                <!-- <NuxtLink class="nav-link" to="/indices">
                   Indices
-                </NuxtLink>
+                </NuxtLink> -->
                 <NuxtLink class="nav-link" to="/movers">
                   Movers
                 </NuxtLink>
@@ -29,7 +28,7 @@
                 <NuxtLink class="nav-link" to="/currencies">
                   Currencies
                 </NuxtLink>
-                <NuxtLink class="nav-link" to="/stocks">
+                <!-- <NuxtLink class="nav-link" to="/stocks">
                   Stocks
                 </NuxtLink>
                 <NuxtLink class="nav-link" to="/bonds">
@@ -38,22 +37,37 @@
                 <NuxtLink class="nav-link" to="/cryptocurrency">
                   Crypto
                 </NuxtLink>
+                <NuxtLink class="nav-link" to="/personal-finance">
+                  Personal Finance
+                </NuxtLink> -->
               </b-navbar-nav>
             </div>
             <div class="col-lg-3 pr-0">
               <b-navbar-nav>
-                <NuxtLink class="nav-link" to="/analysis">
-                  Analysis
+                 <NuxtLink class="nav-link" to="/stocks">
+                  Stocks
                 </NuxtLink>
-                <NuxtLink class="nav-link" to="/trading-101">
-                  Trading 101
+                <NuxtLink class="nav-link" to="/bonds">
+                  Bonds
+                </NuxtLink>
+                <NuxtLink class="nav-link" to="/cryptocurrency">
+                  Crypto
                 </NuxtLink>
                 <NuxtLink class="nav-link" to="/personal-finance">
                   Personal Finance
                 </NuxtLink>
-                <NuxtLink class="nav-link" to="/magazine">
-                  Magazine
+                <!-- <NuxtLink class="nav-link" to="/analysis">
+                  Analysis
                 </NuxtLink>
+                <NuxtLink class="nav-link" to="/trading-101">
+                  Trading 101
+                </NuxtLink> -->
+                <!-- <NuxtLink class="nav-link" to="/personal-finance">
+                  Personal Finance
+                </NuxtLink> -->
+                <!-- <NuxtLink class="nav-link" to="/magazine">
+                  Magazine
+                </NuxtLink> -->
               </b-navbar-nav>
             </div>
           </div>
@@ -81,7 +95,7 @@
       <p>&#169; {{ new Date().getFullYear() }} The Markets Inc. All rights reserved.</p>
       <div class="admin">
         <NuxtLink class="nav-link" to="/privacy-policy">
-          Privacy Policy
+          Privacy Policy |
         </NuxtLink>
         <NuxtLink class="nav-link" to="/terms-and-conditions">
           Terms &amp; Conditions
@@ -101,16 +115,19 @@ export default {
 
 footer{
   /* background: $blue; */
-  background: #242424;
+  background: #20225b;
   padding: 40px 1rem 40px;
   color: #fff;
+  margin-top: 1rem;
   @include title-font();
   .title {
+    @include main-font();
     display: flex;
     align-items: center;
-    font-size: 28px;
+    font-size: 24px;
     letter-spacing: -1px;
     margin-bottom: 0;
+    font-weight: 800;
   }
   a {
     color: #fff;
@@ -125,6 +142,7 @@ footer{
   .nav-link{
     color: #fff;
     padding: 0 0 5px;
+    font-weight: 800;
     display: inline-block;
   }
   hr{

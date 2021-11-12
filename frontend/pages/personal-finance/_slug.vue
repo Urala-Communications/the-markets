@@ -1,12 +1,13 @@
 <template>
   <div class="article-container">
     <div>
-      <div class="article bg-white">
-        <b-jumbotron class="text-center" text-variant="white" :style="{backgroundImage:`url(${getStrapiMedia(article.image.url)})`}">
+      <div class="article bg-white" :class="article.cardComparison ? 'card-comparison' : ''">
+        <b-jumbotron class="text-center" text-variant="white">
+          <div class="background" :style="{backgroundImage:`url(${getStrapiMedia(article.image.url)})`}"/>
           <p>Personal Finance</p>
           <h1>{{ article.title }}</h1>
           <!-- <p>By Rebecca Hey</p> -->
-          <span class="credit">© GETTY IMAGES / VANNI BASSETT</span>
+          <!-- <span class="credit">© GETTY IMAGES / VANNI BASSETT</span> -->
         </b-jumbotron>
         <div class="container content buffer pb-5">
           <div class="row d-flex justify-content-center">
@@ -58,7 +59,7 @@ export default {
     getStrapiMedia,
   },
   head() {
-    const { defaultSeo, favicon, siteName } = this.global;
+    const { defaultSeo, siteName } = this.global;
     // console.log(this.article.content)
     // Merge default and article-specific SEO data
     const fullSeo = {
@@ -72,12 +73,12 @@ export default {
       titleTemplate: `%s | ${siteName}`,
       title: fullSeo.metaTitle,
       meta: getMetaTags(fullSeo),
-      link: [
-        {
-          rel: "favicon",
-          href: getStrapiMedia(favicon.url),
-        },
-      ],
+      // link: [
+      //   {
+      //     rel: "favicon",
+      //     href: getStrapiMedia(favicon.url),
+      //   },
+      // ],
     };
   },
 };
@@ -86,7 +87,7 @@ export default {
 <style lang="scss">
 
 .article-container {
-  margin-top: -1rem;
+  margin-top: -6rem;
   .container {
     min-height: 100vh;
   }
@@ -113,12 +114,36 @@ export default {
     background-size: cover;
     position: relative;
     border-radius: 0;
+    z-index: 1;
+    .background {
+      width: 100%;
+      /* max-height: 810px; */
+      height: 74vh;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: -1;
+      filter: blur(3px);
+    }
     @include title-font();
     .credit{
       position: absolute;
       bottom: 5px;
       left: 5px;
       font-size: 12px;
+    }
+    &:after{
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 74vh;
+      background: rgb(0 0 0 / 50%);
+      left: 0;
+      top: 0;
+      z-index: -1;
     }
   }
   .article {
@@ -150,7 +175,10 @@ export default {
       visibility: hidden;
     }
     img {
-        max-width: 270px;
+      max-width: 100%;
+    }
+    &.card-comparison img{
+      max-width: 270px;
     }
   }
   p {
@@ -172,9 +200,9 @@ export default {
     top: -110px;
     visibility: hidden;
   }
-  .card {
+  /* .card {
     max-width: 500px;
-  }
+  } */
   @media (max-width: 768px){
     .article {
       img {

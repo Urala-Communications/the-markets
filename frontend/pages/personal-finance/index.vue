@@ -1,42 +1,10 @@
 <template>
   <div class="container content buffer pb-5">
-    <div class="row d-flex justify-content-center">
-      <div class="col-11 white-well pb-3">
-        <h2 class="mb-4 pt-3">Personal Finance</h2>
-        <div>
-          <div class="">
-            <div class="">
-              <!-- <h1>{{ homepage.hero.title }}</h1> -->
-              <Articles :articles="articles" />
-            </div>
-          </div>
-        </div>
-        <div class="posts d-flex">
-          <!-- <NuxtLink
-            v-for="post in posts"
-            :key="post._id"
-            :to="`/personal-finance/${post.slug.current}`"
-            class="article-link"
-          >
-            <b-card
-              :title="post.title"
-              :imgSrc="$urlFor(post.mainImage.asset._ref).size(320)"
-              :imgAlt="post.title"
-              img-top
-              tag="article"
-              class="mb-2"
-            > -->
-              <!-- <b-card-text>
-                <SanityContent
-                  :blocks="[post.body[0]]"
-                  v-bind:key="post.body[0]._id"
-                  v-if="post.body.length"
-                />
-              </b-card-text> -->
-
-              <!-- <b-button href="#" class="w-100 mt-3" variant="secondary">Read more</b-button>
-            </b-card>
-          </NuxtLink> -->
+    <div class="row m-0 index-list" id="personal-finance">
+      <h2 class="col-12">Personal Finance</h2>
+      <div class="col-12 col-lg-6 offset-lg-6">
+        <div class="col-12 white-well pt-2">
+          <Articles :articles="articles" />
         </div>
       </div>
     </div>
@@ -46,7 +14,7 @@
 <script>
 import Articles from "./../../components/Articles";
 import { getMetaTags } from "./../../utils/seo";
-import { getStrapiMedia } from "./../../utils/medias";
+// import { getStrapiMedia } from "./../../utils/medias";
 
 export default {
   components: {
@@ -61,7 +29,7 @@ export default {
   },
   head() {
     const { seo } = this.homepage;
-    const { defaultSeo, favicon, siteName } = this.global;
+    const { defaultSeo, siteName } = this.global;
 
     // Merge default and article-specific SEO data
     const fullSeo = {
@@ -73,14 +41,11 @@ export default {
       titleTemplate: `%s | ${siteName}`,
       title: fullSeo.metaTitle,
       meta: getMetaTags(fullSeo),
-      link: [
-        {
-          rel: "favicon",
-          href: getStrapiMedia(favicon.url),
-        },
-      ],
     };
   },
+  mounted(){
+    console.log(this.articles)
+  }
 };
 </script>
 

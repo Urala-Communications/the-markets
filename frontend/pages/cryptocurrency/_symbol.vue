@@ -71,11 +71,11 @@ export default {
     head() {
         return {
             title:
-                this.symbol.toUpperCase() +
+                this.symbol.toUpperCase().replace('-', ' ') +
                 " $" +
                 this.item.price +
                 " - " +
-                "The Markets",
+                "The Markets - Live Charts for Financial Markets & the Global Community of Traders. Bitcoin, Ethereum, Doge, Shiba, Memes, Crypto, Indices, Stocks, Forex, Bonds, CFDs and more.",
         };
     },
     async asyncData({ params }) {
@@ -85,9 +85,12 @@ export default {
     methods: {
         fetchDetails() {
             // let i = this.cryptocurrency.find( item => item.name.toLowerCase() === this.symbol);
+            let i = this.cryptocurrency.find(
+                (item) => item.name.toLowerCase() === this.symbol.replace('-', ' ')
+            );
             this.$axios
                 .$get(
-                    `https://api.finage.co.uk/detail/cryptocurrency/${this.symbol}?apikey=${this.finageApiKey}`
+                    `https://api.finage.co.uk/detail/cryptocurrency/${i.icon}?apikey=${this.finageApiKey}`
                 )
                 .then((response) => {
                     // console.log("Details")
@@ -105,7 +108,7 @@ export default {
                 });
             };
             let i = this.cryptocurrency.find(
-                (item) => item.name.toLowerCase() === this.symbol
+                (item) => item.name.toLowerCase() === this.symbol.replace('-', ' ')
             );
             this.$axios
                 .$get(
@@ -139,7 +142,7 @@ export default {
         },
         fetchAggregates() {
             let i = this.cryptocurrency.find(
-                (item) => item.name.toLowerCase() === this.symbol
+                (item) => item.name.toLowerCase() === this.symbol.replace('-', ' ')
             );
             // this.$axios.$get(`https://api.finage.co.uk/agg/crypto/${i.symbol}/1/day/${fiveYearsAgo}/${this.today}?limit=5000&apikey=${this.finageApiKey}`)
             this.$axios
@@ -148,10 +151,10 @@ export default {
                 )
                 .then((response) => {
                     console.log("Aggregates");
-                    
+
                     this.chartData = response.results.map((i) => {
                         return [i.t, i.c];
-                    });                    
+                    });
                     this.c_symbol = i.symbol;
                     localStorage.setItem(
                         i.symbol + "-All",
@@ -344,7 +347,7 @@ export default {
                         startPoint
                     );
                 } else {
-                    
+
                     this.$root.$emit("update-chart-data", {
                         interval: interval,
                         range: range,
@@ -364,7 +367,7 @@ export default {
             }
             } else {
                 let url = `https://api.thedice.com/api/${range}/${i.symbol}/1`;
-                
+
                 this.$axios
                 .$get(
                     url
@@ -385,7 +388,7 @@ export default {
         startUpdateData(symbol, range, limit, interval, minDate, startPoint) {
             console.log("change chart data: ", [symbol, interval, minDate]);
             let url = `https://api.finage.co.uk/agg/crypto/${symbol}/1/${interval}/${minDate}/${this.today}?&apikey=${process.env.FINAGE_API_KEY}&limit=${limit}`;
-           
+
             this.$axios
                 .$get(
                     `https://api.finage.co.uk/agg/crypto/${symbol}/1/${interval}/${minDate}/${this.today}?&apikey=${this.finageApiKey}&limit=${limit}`
@@ -419,7 +422,7 @@ export default {
         },
         fetchNews() {
             let i = this.cryptocurrency.find(
-                (item) => item.name.toLowerCase() === this.symbol
+                (item) => item.name.toLowerCase() === this.symbol.replace('-', ' ')
             );
             this.$axios
                 .$get(
@@ -447,7 +450,7 @@ export default {
     },
     created() {
         this.$root.$on("updateCrypto", (item) => {
-            if (item.name.toLowerCase() === this.symbol) {
+            if (item.name.toLowerCase() === this.symbol.replace('-', ' ')) {
                 let i = this.cryptocurrency.findIndex(
                     (index) =>
                         index.name.toLowerCase() === item.name.toLowerCase()
@@ -473,10 +476,10 @@ export default {
         this.checkMarketStatus();
         this.fetchAggregates();
         this.fetchPrice();
-        this.fetchNews();
-        setInterval(() => {
-            this.fetchNews();
-        }, 300000);
+        // this.fetchNews();
+        // setInterval(() => {
+        //     this.fetchNews();
+        // }, 300000);
         setInterval(() => {
             this.checkMarketStatus();
         }, 300000);

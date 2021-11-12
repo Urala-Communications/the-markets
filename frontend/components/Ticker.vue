@@ -31,14 +31,11 @@ export default {
 <style lang="scss">
 
 .ticker{
-  padding: 0.5rem 1rem;
   width: 100%;
   margin-top: 1rem;
-  /* border-top: 1px solid rgba(255,255,255,0.3); */
-  /* border-bottom: 1px solid rgba(255,255,255,0.3); */
-  /* background: #fff; */
-  /* background: #343434; */
-  background: #000000;
+  /* border-top: 1px solid rgb(0 0 0 / 20%); */
+  padding: 10px 30px;
+  background-color: #f3f3ff;
   justify-content: space-between;
   @include main-font();
   .ticker-wrap{
@@ -53,16 +50,17 @@ export default {
     justify-content: center;
     align-items: center;
     text-transform: uppercase;
-    color: #fff;
+    color:#1c1e53;
     &:first-of-type{
       border-left: none;
     }
     h3{
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
       margin-bottom: 0;
       display: inline-block;
     }
+
     .info {
       line-height: 1.1;
       strong, p {
@@ -82,7 +80,7 @@ export default {
     }
     p, strong{
       font-size: 12px;
-      font-weight: 400;
+      font-weight: 800;
       display: inline-block;
       /* @include number-font; */
     }
@@ -108,13 +106,13 @@ export default {
   min-width: 34px;
   height: 34px;
   /* border: #f2f2f2 5px solid; */
-  border: #fff 4px solid;
+  /* border: #fff 4px solid; */
   background-repeat: no-repeat;
   /* background-color: #f2f2f2; */
   background-color: #fff;
   background-size: cover;
   background-position: center;
-  box-shadow: rgb(51 51 51 / 30%) 1px 1px 3px 0px;
+  /* box-shadow: rgb(51 51 51 / 30%) 1px 1px 3px 0px; */
   border-radius: 50%;
   margin-right: 10px;
   &.usa {
@@ -214,6 +212,50 @@ export default {
   &.polkadot {
     background-image: url('./../assets/polkadot.svg');
   }
+  &.oneinch  {background-image: url('./../assets/oneinch.png')}
+  &.aave  {background-image: url('./../assets/aave.png')}
+  &.algo  {background-image: url('./../assets/algo.png')}
+  &.atom  {background-image: url('./../assets/atom.png')}
+  &.avax  {background-image: url('./../assets/avax.png')}
+  &.axie  {background-image: url('./../assets/axie.png')}
+  &.bat  {background-image: url('./../assets/bat.png')}
+  &.bnb  {background-image: url('./../assets/bnb.png')}
+  &.cake  {background-image: url('./../assets/cake.png'); background-size: 90%;}
+  &.comp  {background-image: url('./../assets/comp.png')}
+  &.crv  {background-image: url('./../assets/crv.png')}
+  &.dash  {background-image: url('./../assets/dash.png')}
+  &.enj  {background-image: url('./../assets/enj.png')}
+  &.etc  {background-image: url('./../assets/etc.png')}
+  &.file  {background-image: url('./../assets/file.png')}
+  &.grt  {background-image: url('./../assets/grt.png')}
+  &.link  {background-image: url('./../assets/link.png')}
+  &.ltc  {background-image: url('./../assets/ltc.png')}
+  &.luna  {background-image: url('./../assets/luna.png')}
+  &.mana  {background-image: url('./../assets/mana.png'); background-size: 130%;}
+  &.matic  {background-image: url('./../assets/matic.png')}
+  &.mkr  {background-image: url('./../assets/mkr.png')}
+  &.neo  {background-image: url('./../assets/neo.png'); background-size: 80%;}
+  &.shiba  {background-image: url('./../assets/shiba.png')}
+  &.sol  {background-image: url('./../assets/sol.png')}
+  &.sushi  {background-image: url('./../assets/sushi.png')}
+  &.tron  {background-image: url('./../assets/tron.png')}
+  &.uni  {background-image: url('./../assets/uni.png')}
+  &.yfi  {background-image: url('./../assets/yfi.png')}
+  &.vet  {background-image: url('./../assets/vet.png')}
+  &.xlm  {background-image: url('./../assets/xlm.png')}
+  &.zil  {background-image: url('./../assets/zil.png')}
+  &.theta  {background-image: url('./../assets/theta.png')}
+  &.ftt  {background-image: url('./../assets/ftt.png')}
+  &.ftm  {background-image: url('./../assets/ftm.png')}
+  &.hbar  {background-image: url('./../assets/hbar.png')}
+  &.dai  {background-image: url('./../assets/dai.png')}
+  &.egld  {background-image: url('./../assets/egld.png')}
+  &.near  {background-image: url('./../assets/near.png')}
+  &.xtz  {background-image: url('./../assets/xtz.png')}
+  &.xmr  {background-image: url('./../assets/xmr.png')}
+  &.eos  {background-image: url('./../assets/eos.png')}
+  &.hnt  {background-image: url('./../assets/hnt.png')}
+  &.lrc  {background-image: url('./../assets/lrc.png')}
   &.gold {
     background-image: url('./../assets/gold.svg');
   }

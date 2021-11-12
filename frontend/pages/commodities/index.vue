@@ -9,7 +9,7 @@
       class="content container container-fluid w-100 buffer"
       :class="view"
     >
-     <div class="row m-0">
+     <div class="row m-0 index-list" id="commodities">
         <h2 class="col-12">Commodities</h2>
         <!-- <div class="toggle col-12">
           <button
@@ -23,13 +23,16 @@
             @click="showList()"
           />
         </div> -->
-        <div class="col-lg-8">
+        <div class="col-12 col-lg-7 offset-lg-5">
           <div class="col-12 white-well pt-2">
             <IndexList :data="commodities" indexPage type="commodities" />
           </div>
         </div>
-        <div class="col-lg-4">
-          <News :newsData="newsData"/>
+        <div class="col-12 col-lg-7 offset-lg-5">
+          <div class="col-lg-12 mt-4 white-well">
+            <News :newsData="newsData"/>
+            <Ad feedAd/>
+          </div>
         </div>
       </div>
     </div>
@@ -63,9 +66,11 @@ export default {
           if(typeof response.news[0] !== 'undefined'){
             let index = this.newsData.findIndex(x => x.title === response.news[0].title);
             let newsItem = response.news[0]
+            let newsItem2 = response.news[1]
             this.loading = false;
             if(index === -1){
               this.newsData.push(newsItem)
+              this.newsData.push(newsItem2)
             }
             if(this.newsData.length > 10){
               this.newsData.pop()
