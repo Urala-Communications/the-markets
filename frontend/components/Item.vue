@@ -37,7 +37,7 @@
                 <span><strong>Low:</strong>${{ low }}</span>
                 <span><strong>Close:</strong>${{ close }}</span>
                 <span><strong>Volume:</strong>{{ volume }}</span>
-                <span  v-if="marketCap"><strong>Marketcap:</strong>${{ marketCap }}</span>
+                <span v-if="marketCap"><strong>Marketcap:</strong>${{ marketCap }}</span>
               </div>
             </div>
             <chart
