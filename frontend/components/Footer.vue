@@ -74,17 +74,23 @@
         </div>
         <div class="social col-lg-4 d-flex justify-content-end">
           <div>
-            <a href="" class="social-icon">
+            <a href="https://twitter.com/thisismarkets" target="_blank" class="social-icon">
               <img src="./../assets/twitter.svg" alt="">
             </a>
-            <a href="" class="social-icon">
+            <a href="" target="_blank" class="social-icon">
               <img src="./../assets/fb.svg" alt="">
             </a>
-            <a href="" class="social-icon">
+            <a href="https://www.youtube.com/channel/UCLY9RA1cVQkCrOikRtZ-2fw" target="_blank" class="social-icon">
               <img src="./../assets/youtube.svg" alt="">
             </a>
-            <a href="" class="social-icon">
+            <a href="https://www.instagram.com/thisismarkets" target="_blank" class="social-icon">
               <img src="./../assets/instagram.svg" alt="">
+            </a>
+            <a href="https://discord.gg/9RTEpNSM" target="_blank" class="social-icon">
+              <img src="./../assets/discord.png" alt="">
+            </a>
+            <a href="https://t.me/joinchat/OoRc6u9d3Tw0YWVl" target="_blank" class="social-icon">
+              <img src="./../assets/telegram.png" alt="">
             </a>
           </div>
         </div>
@@ -137,7 +143,10 @@ footer{
   }
   img {
     width: 38px;
-    margin-right: 10px;
+    margin-right: 5px;
+  }
+  .social {
+    img{margin-bottom: 10px;}
   }
   .nav-link{
     color: #fff;
@@ -147,6 +156,7 @@ footer{
   }
   hr{
     margin: 40px auto 20px;
+    border-top: 1px solid white;
     background-color: #beddeb;
   }
 }
