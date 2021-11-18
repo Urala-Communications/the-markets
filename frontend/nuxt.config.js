@@ -1,5 +1,6 @@
 const finageApiKey = process.env.FINAGE_API_KEY;
 const finageSocketKey = process.env.FINAGE_SOCKET_KEY;
+const liveApiUrl = process.env.LIVE_API_URL;
 const cmcApiKey = process.env.CMC_KEY;
 // const strapiBaseUri = process.env.STRAPI_URL || "http://localhost:1337";
 // const strapiBaseUri = process.env.NODE_ENV === 'development' ? "http://localhost:1337" : "https://the-markets-cms.herokuapp.com";
@@ -13,6 +14,7 @@ export default {
     finageSocketKey,
     cmcApiKey,
     strapiBaseUri,
+    liveApiUrl
   },
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
@@ -52,6 +54,7 @@ export default {
   buildModules: [
     // '@nuxtjs/dotenv',
     // '@nuxtjs/fontawesome'
+    '@nuxtjs/sanity/module',
   ],
 
   // googleAnalytics: {
@@ -83,7 +86,7 @@ export default {
 
   styleResources: {
     scss: [
-        '~/assets/scss/variables.scss',
+      '~/assets/scss/variables.scss',
     ]
   },
 
@@ -151,8 +154,8 @@ export default {
     //   layouts: true
     // },
     quiet: true,
-    html:{
-      minify:{
+    html: {
+      minify: {
         collapseBooleanAttributes: true,
         decodeEntities: true,
         minifyCSS: true,
