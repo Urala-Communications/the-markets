@@ -1,5 +1,6 @@
 const finageApiKey = process.env.FINAGE_API_KEY;
 const finageSocketKey = process.env.FINAGE_SOCKET_KEY;
+const cmcApiKey = process.env.CMC_KEY;
 // const strapiBaseUri = process.env.STRAPI_URL || "http://localhost:1337";
 // const strapiBaseUri = process.env.NODE_ENV === 'development' ? "http://localhost:1337" : "https://the-markets-cms.herokuapp.com";
 const strapiBaseUri = "https://the-markets-cms.herokuapp.com";
@@ -10,6 +11,7 @@ export default {
   env: {
     finageApiKey,
     finageSocketKey,
+    cmcApiKey,
     strapiBaseUri,
   },
   // Global page headers (https://go.nuxtjs.dev/config-head)
@@ -85,6 +87,13 @@ export default {
     ]
   },
 
+  watchers: {
+    webpack: {
+      ignored: /node_modules/,
+      poll: 3000
+    }
+  },
+
   // Modules (https://go.nuxtjs.dev/config-modules)
   modules: [
     // https://go.nuxtjs.dev/bootstrap
@@ -96,6 +105,14 @@ export default {
     "@nuxtjs/markdownit",
     "@nuxtjs/strapi"
   ],
+
+  proxy: {
+    '/api': {
+      target: 'https://pro-api.coinmarketcap.com',
+      changeOrigin: true,
+      pathRewrite: { '^/api': '/' },
+    },
+  },
 
   strapi: {
     url: strapiBaseUri,

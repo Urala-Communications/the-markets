@@ -15,58 +15,38 @@
     <b-sidebar id="sidebar" backdrop shadow>
       <div class="sidebar-inner">
         <b-navbar-nav>
-          <!-- <NuxtLink class="nav-link" to="/indices">
-            Indices
-          </NuxtLink> -->
-          <NuxtLink class="nav-link" to="/movers">
-            Movers
-          </NuxtLink>
-          <NuxtLink class="nav-link" to="/cryptocurrency">
-            Crypto
-          </NuxtLink>
-          <NuxtLink class="nav-link" to="/commodities">
-            Commodities
-          </NuxtLink>
-          <NuxtLink class="nav-link" to="/currencies">
-            Currencies
-          </NuxtLink>
-          <NuxtLink class="nav-link" to="/stocks">
-            Stocks
-          </NuxtLink>
-          <NuxtLink class="nav-link" to="/bonds">
-            Bonds
-          </NuxtLink>
-          <!-- <NuxtLink class="nav-link" to="/analysis">
-            Analysis
-          </NuxtLink>
-          <NuxtLink class="nav-link" to="/trading-101">
-            Trading 101
-          </NuxtLink> -->
-          <NuxtLink class="nav-link" to="/personal-finance">
-            Personal Finance
-          </NuxtLink>
-          <!-- <NuxtLink class="nav-link" to="/magazine">
-            Magazine
-          </NuxtLink> -->
-          <NuxtLink class="nav-link font-weight-light" to="/privacy-policy">
-            Privacy Policy
-          </NuxtLink>
-          <NuxtLink class="nav-link font-weight-light" to="/terms-and-conditions">
-            Terms &amp; Conditions
-          </NuxtLink>
+          <NuxtLink class="nav-link" to="/movers">Movers</NuxtLink>
+          <NuxtLink class="nav-link" to="/cryptocurrency">Crypto</NuxtLink>
+          <!-- <NuxtLink class="nav-link" to="/indices">Indices</NuxtLink> -->
+          <NuxtLink class="nav-link" to="/commodities">Commodities</NuxtLink>
+          <NuxtLink class="nav-link" to="/currencies">Currencies</NuxtLink>
+          <NuxtLink class="nav-link" to="/stocks">Stocks</NuxtLink>
+          <NuxtLink class="nav-link" to="/bonds">Bonds</NuxtLink>
+          <!-- <NuxtLink class="nav-link" to="/analysis">Analysis</NuxtLink>
+          <NuxtLink class="nav-link" to="/trading-101">Trading 101</NuxtLink> -->
+          <NuxtLink class="nav-link" to="/personal-finance">Personal Finance</NuxtLink>
+          <!-- <NuxtLink class="nav-link" to="/magazine">Magazine</NuxtLink> -->
+          <NuxtLink class="nav-link font-weight-light" to="/privacy-policy">Privacy Policy</NuxtLink>
+          <NuxtLink class="nav-link font-weight-light" to="/terms-and-conditions">Terms &amp; Conditions</NuxtLink>
           <hr>
-          <div class="social d-flex justify-content-between">
-            <a href="" class="social-icon">
+          <div class="social">
+            <a href="https://twitter.com/thisismarkets" target="_blank" class="social-icon">
               <img src="./../assets/twitter-black.svg" alt="">
             </a>
-            <a href="" class="social-icon">
+            <a href="" target="_blank" class="social-icon">
               <img src="./../assets/fb-black.svg" alt="">
             </a>
-            <a href="" class="social-icon">
+            <a href="https://www.youtube.com/channel/UCLY9RA1cVQkCrOikRtZ-2fw" target="_blank" class="social-icon">
               <img src="./../assets/youtube-black.svg" alt="">
             </a>
-            <a href="" class="social-icon">
+            <a href="https://www.instagram.com/thisismarkets" target="_blank" class="social-icon">
               <img src="./../assets/instagram-black.svg" alt="">
+            </a>
+            <a href="https://discord.gg/9RTEpNSM" target="_blank" class="social-icon">
+              <img src="./../assets/discord-black.png" alt="">
+            </a>
+            <a href="https://t.me/joinchat/OoRc6u9d3Tw0YWVl" target="_blank" class="social-icon">
+              <img src="./../assets/telegram-black.png" alt="">
             </a>
           </div>
           <div class="container d-flex justify-content-center text-center p-0">
@@ -78,39 +58,17 @@
     <b-collapse id="nav-text-collapse" is-nav class="justify-content-end collapse">
       <b-navbar-nav>
         <b-navbar-toggle target="nav-text-collapse mobile" ></b-navbar-toggle>
-        <!-- <NuxtLink class="nav-link" to="/indices">
-          Indices
-        </NuxtLink> -->
-        <NuxtLink class="nav-link" to="/movers">
-          Movers
-        </NuxtLink>
-        <NuxtLink class="nav-link" to="/cryptocurrency">
-          Crypto
-        </NuxtLink>
-        <NuxtLink class="nav-link" to="/commodities">
-          Commodities
-        </NuxtLink>
-        <NuxtLink class="nav-link" to="/currencies">
-          Currencies
-        </NuxtLink>
-        <NuxtLink class="nav-link" to="/stocks">
-          Stocks
-        </NuxtLink>
-        <NuxtLink class="nav-link" to="/bonds">
-          Bonds
-        </NuxtLink>
-        <!-- <NuxtLink class="nav-link" to="/analysis">
-          Analysis
-        </NuxtLink>
-        <NuxtLink class="nav-link" to="/trading-101">
-          Trading 101
-        </NuxtLink> -->
-        <NuxtLink class="nav-link" to="/personal-finance">
-          Personal Finance
-        </NuxtLink>
-        <!-- <NuxtLink class="nav-link" to="/magazine">
-          Magazine
-        </NuxtLink> -->
+        <NuxtLink class="nav-link" to="/movers">Movers</NuxtLink>
+        <NuxtLink class="nav-link" to="/cryptocurrency">Crypto</NuxtLink>
+        <!-- <NuxtLink class="nav-link" to="/indices">Indices</NuxtLink> -->
+        <NuxtLink class="nav-link" to="/commodities">Commodities</NuxtLink>
+        <NuxtLink class="nav-link" to="/currencies">Currencies</NuxtLink>
+        <NuxtLink class="nav-link" to="/stocks">Stocks</NuxtLink>
+        <NuxtLink class="nav-link" to="/bonds">Bonds</NuxtLink>
+        <!-- <NuxtLink class="nav-link" to="/analysis">Analysis</NuxtLink>
+        <NuxtLink class="nav-link" to="/trading-101">Trading 101</NuxtLink> -->
+        <NuxtLink class="nav-link" to="/personal-finance">Personal Finance</NuxtLink>
+        <!-- <NuxtLink class="nav-link" to="/magazine">Magazine</NuxtLink> -->
       </b-navbar-nav>
     </b-collapse>
     <Ticker :tickerItems="tickerItems" />
@@ -276,8 +234,6 @@ export default {
 <style lang="scss">
 
 .navbar {
-  /* background: $blue; */
-  /* background: #242424; */
   background: #fff;
   padding: 1rem 0 0;
   margin-bottom: 0;
@@ -355,7 +311,14 @@ export default {
         padding: 1.5rem;
       }
       .social{
-        padding: 0.5rem 1.5rem 1rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        text-align: center;
+        grid-row-gap: 1rem;
+        padding: 0.5rem 0 1rem;
+        img{
+          width: 40px;
+        }
       }
     }
     .b-sidebar-backdrop{
