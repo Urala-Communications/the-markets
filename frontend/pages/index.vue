@@ -25,18 +25,18 @@
         <div class="col-12 col-lg-8 pr-lg-0">
           <div class="row m-0 justify-content-between main-content">
             <div class="col-lg-6 pl-half">
-              <!-- <div class="col-12 white-well indices">
-                <h2>Indices
-                  <NuxtLink class="index-link" to="/indices">View all</NuxtLink>
-                </h2>
-                <IndexList :data="indices" type="indices" />
-              </div> -->
               <div class="col-12 white-well crypto">
                 <h2>Cryptocurrencies
                   <NuxtLink class="index-link" to="/cryptocurrency">View all</NuxtLink>
                 </h2>
                 <IndexList :data="cryptocurrency" type="cryptocurrency" />
               </div>
+              <!-- <div class="col-12 white-well indices">
+                <h2>Indices
+                  <NuxtLink class="index-link" to="/indices">View all</NuxtLink>
+                </h2>
+                <IndexList :data="indices" type="indices" />
+              </div> -->
               <div class="col-12 white-well">
                 <h2>Currencies
                   <NuxtLink class="index-link" to="/currencies">View all</NuxtLink>
@@ -178,7 +178,6 @@ export default {
     },
     // async mounted () {
     created() {
-      console.log()
       // this.loaded = false;
       // this.checkMarketStatus();
       this.$root.$on('updateCrypto', (item) => {

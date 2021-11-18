@@ -360,7 +360,9 @@ export default {
     max-width: 100%;
     display: block;
     .row {
-      justify-content: space-between;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+      grid-gap: 2rem;
     }
   }
   .icon-wrapper{
@@ -368,12 +370,10 @@ export default {
   }
   .index {
     flex-direction: column;
-    width: calc(100% / 2 - 12px);
-    max-width: 166px;
-    box-shadow: 0px 2px 4px 1px rgb(128 128 128 / 40%);
+    max-width: 210px;
+    box-shadow: 0px 2px 4px 1px rgba(128, 128, 128, 0.4);
     border: none;
     border-radius: 12px;
-    margin-bottom: 20px;
     padding: 0.5rem 0 0;
     justify-content: center;
     text-align: center;
