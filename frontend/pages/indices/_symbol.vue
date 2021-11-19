@@ -31,6 +31,7 @@ export default {
     data() {
       return {
         finageApiKey: process.env.finageApiKey,
+        liveApiUrl: process.env.liveApiUrl,
         item: {
           price: 0,
           icon: ''
@@ -88,8 +89,7 @@ export default {
         let i = this.indices.find( item => item.name === this.symbol.replace('-', ' ').toUpperCase());
         this.$axios.$get(`https://api.finage.co.uk/last/index/${i.symbol}?apikey=${this.finageApiKey}`)
         .then(response => {
-          console.log("Price")
-          console.log(response)
+          
           this.item.price = response.price.toLocaleFixed(2);
           this.item.priceNumber = response.price;
           this.$set(this.item, 'icon', i.icon);
@@ -115,7 +115,7 @@ export default {
         let i = this.indices.find( item => item.name === this.symbol.replace('-', ' ').toUpperCase());
         this.$axios.$get(`https://api.finage.co.uk/agg/index/${i.symbol}/1day/2021-01-01/${this.today}?limit=1825&apikey=${this.finageApiKey}`)
         .then(response => {
-          console.log("Aggregates")
+          //console.log("Aggregates")
           this.c_symbol = i.symbol;
           this.chartData = response.results.map((i) => {
             return [(new Date(i.t)).getTime(), parseFloat(i.c)];
@@ -270,17 +270,12 @@ export default {
                   break;
           }
           let data = localStorage.getItem(i.symbol + "-" + range);
-          console.log("local data:", data)
-          console.timeEnd("receivedDat");
-          console.log(i.symbol + "-" + interval);
+          
           if (interval !== "second") {
             // remove old data and add the new one
             if (data !== null) {
                 data = JSON.parse(data);
-                console.log("debug time compare: ", [
-                    data[data.length - 1][0],
-                    lastinterval.getTime(),
-                ]);
+                
                 if (interval === "All") {
                     this.$root.$emit("update-chart-data", {
                         interval: interval,
@@ -315,7 +310,7 @@ export default {
                 );
             }
           } else {
-              let url = `https://api.thedice.com/api/${range}/${i.symbol}/1`;
+              let url = `${this.liveApiUrl}/${range}/${i.symbol}/1`;
 
               this.$axios
               .$get(
@@ -335,20 +330,18 @@ export default {
           }
       },
       startUpdateData(symbol, range, limit, interval, minDate, startPoint) {
-          console.log("change chart data: ", [symbol, interval, minDate]);
-          let url = `https://api.finage.co.uk/agg/index/${symbol}/${interval}/${minDate}/${this.today}?&apikey=${process.env.FINAGE_API_KEY}&limit=${limit}`;
-
+          
           this.$axios
               .$get(
                   `https://api.finage.co.uk/agg/index/${symbol}/${interval}/${minDate}/${this.today}?&apikey=${this.finageApiKey}&limit=${limit}`
               )
               .then((response) => {
-                  console.log("Aggregates");
-                  //console.log(response.results);
+                  //console.log("Aggregates");
+                  
                   let tempdata = response.results.map((i) => {
                      return [(new Date(i.t)).getTime(), parseFloat(i.c)];
                   });
-                  //console.log(startPoint.getTime());
+                  
                   this.$root.$emit("update-chart-data", {
                       interval: interval,
                       range: range,
@@ -382,8 +375,7 @@ export default {
         }
       });
       this.$root.$on("changeRangeData", ([item, range, interval]) => {
-          console.log("received emit data: ", [item, range, interval]);
-          console.time("receivedDat");
+          
           if (item.name === this.c_symbol) {
               this.changeChartData(range, interval);
           }

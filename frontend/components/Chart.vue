@@ -623,7 +623,7 @@ export default {
                         if (index === -1) {
                             tempdat.push([time, price]);
                             series.addPoint([time, price], true, true);
-                            console.log("new point added", [time, price]);
+                            //console.log("new point added", [time, price]);
                         } else {
                             if (series.points.length > 0) {
                                 if (
@@ -671,7 +671,7 @@ export default {
                         if (index === -1) {
                             tempdat.push([time, price]);
                             series.addPoint([time, price], true, true);
-                            console.log("new point added", [time, price]);
+                            //console.log("new point added", [time, price]);
                         } else {
                             if (series.points.length > 0) {
                                 if (
@@ -697,7 +697,7 @@ export default {
     created() {
         const self = this;
         this.$root.$on("update-chart-data", (data) => {
-            console.log("received & change new data:", data);
+            //console.log("received & change new data:", data);
 //            self.$refs.highcharts.chart.reflow();
             if (data.data.length && self.$refs.highcharts) {
                 self.$refs.highcharts.chart.series[0].update({

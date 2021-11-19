@@ -31,6 +31,7 @@ export default {
     data() {
       return {
         finageApiKey: process.env.finageApiKey,
+        liveApiUrl: process.env.liveApiUrl,
         item: {
           price: 0,
           icon: ''
@@ -67,7 +68,7 @@ export default {
         let i = this.commodities.find(item => item.icon.toLowerCase() === this.symbol);
         this.$axios.$get(`https://api.finage.co.uk/agg/forex/prev-close/${i.symbol}?apikey=${this.finageApiKey}`)
           .then(response => {
-            console.log("Details")
+            //console.log("Details")
             this.open = response.results[0].o;
             this.high = response.results[0].h;
             this.low = response.results[0].l;
@@ -88,8 +89,8 @@ export default {
         let i = this.commodities.find( item => item.icon.toLowerCase() === this.symbol);
         this.$axios.$get(`https://api.finage.co.uk/last/trade/forex/${i.symbol}?apikey=${this.finageApiKey}`)
         .then(response => {
-          console.log("Price")
-          console.log(response)
+          //console.log("Price")
+          //console.log(response)
           this.item.price = response.price.toLocaleFixed(2);
           this.$set(this.item, 'icon', i.icon);
           this.loading = false;
@@ -103,8 +104,8 @@ export default {
         this.$axios.$get(`https://api.finage.co.uk/news/forex/${i.symbol}?apikey=${this.finageApiKey}`)
         .then(response => {
           let filteredNews = response.news.filter((v,i,a)=>a.findIndex(t=>(t.title === v.title))===i); // filter duplicates from API - may need to also filter this.news on each fetch
-          console.log('NEWS')
-          console.log(filteredNews)
+          //console.log('NEWS')
+          //console.log(filteredNews)
           this.news = filteredNews;
           if(this.news.length > 10){
             this.news.pop()
@@ -127,8 +128,8 @@ export default {
         let i = this.commodities.find( item => item.icon.toLowerCase() === this.symbol);
         this.$axios.$get(`https://api.finage.co.uk/agg/forex/${i.symbol}/1/day/2021-01-01/${this.yesterday}?limit=1825&apikey=${this.finageApiKey}`)
         .then(response => {
-          console.log("Aggregates")
-          console.log(response.results)
+          //console.log("Aggregates")
+          //console.log(response.results)
           this.chartData = response.results.map(i => i.c);
         })
         .catch(error => {
@@ -266,16 +267,12 @@ export default {
                   break;
           }
           let data = localStorage.getItem(i.symbol + "-" + range);
-          console.timeEnd("receivedDat");
-          console.log(i.symbol + "-" + interval);
+          
           if (interval !== "second") {
           // remove old data and add the new one
           if (data !== null) {
               data = JSON.parse(data);
-              console.log("debug time compare: ", [
-                  data[data.length - 1][0],
-                  lastinterval.getTime(),
-              ]);
+              
               if (interval === "All") {
                   this.$root.$emit("update-chart-data", {
                       interval: interval,
@@ -310,7 +307,7 @@ export default {
               );
           }
           } else {
-              let url = `https://api.thedice.com/api/${range}/${i.symbol}/1`;
+              let url = `${this.liveApiUrl}/${range}/${i.symbol}/1`;
 
               this.$axios
               .$get(
@@ -330,20 +327,19 @@ export default {
           }
       },
       startUpdateData(symbol, range, limit, interval, minDate, startPoint) {
-          console.log("change chart data: ", [symbol, interval, minDate]);
-          let url = `https://api.finage.co.uk/agg/forex/${symbol}/1/${interval}/${minDate}/${this.today}?&apikey=${process.env.FINAGE_API_KEY}&limit=${limit}`;
-
+          
+          
           this.$axios
               .$get(
                   `https://api.finage.co.uk/agg/forex/${symbol}/1/${interval}/${minDate}/${this.today}?&apikey=${this.finageApiKey}&limit=${limit}`
               )
               .then((response) => {
-                  console.log("Aggregates");
+                  //console.log("Aggregates");
                   //console.log(response.results);
                   let tempdata = response.results.map((i) => {
                       return [i.t, i.c];
                   });
-                  console.log(new Date(tempdata[tempdata.length-1][0]).getTime() - startPoint );
+                  
                   this.$root.$emit("update-chart-data", {
                       interval: interval,
                       range: range,
@@ -377,8 +373,8 @@ export default {
         }
       });
       this.$root.$on("changeRangeData", ([item, range, interval]) => {
-          console.log("received emit data: ", [item, range, interval]);
-          console.time("receivedDat");
+          //console.log("received emit data: ", [item, range, interval]);
+          //console.time("receivedDat");
           if (item.name === this.c_symbol) {
               this.changeChartData(range, interval);
           }

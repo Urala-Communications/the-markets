@@ -31,6 +31,7 @@ export default {
     data() {
       return {
         finageApiKey: process.env.finageApiKey,
+        liveApiUrl: process.env.liveApiUrl,
         item: {
           price: 0,
           icon: ''
@@ -68,7 +69,7 @@ export default {
         this.$axios.$get(`https://api.finage.co.uk/detail/stock/${i.symbol}?apikey=${this.finageApiKey}`)
           .then(response => {
             this.profile = response;
-            console.log("Details")
+            
           })
           .catch(error => {
             console.log(error);
@@ -84,8 +85,7 @@ export default {
         let i = this.stocks.find(item => item.name.toLowerCase() === this.symbol);
         this.$axios.$get(`https://api.finage.co.uk/last/stock/${i.symbol}?apikey=${this.finageApiKey}`)
         .then(response => {
-          console.log("Price")
-          console.log(response)
+          
           this.item.price = response.ask.toLocaleFixed(2);
           this.$set(this.item, 'icon', i.icon);
           this.loading = false;
@@ -107,7 +107,7 @@ export default {
         let i = this.stocks.find( item => item.name.toLowerCase() === this.symbol);
         this.$axios.$get(`https://api.finage.co.uk/agg/stock/${i.symbol}/1/day/2021-01-01/${this.today}?limit=1825&apikey=${this.finageApiKey}`)
           .then(response => {
-            console.log("Aggregates")
+            //console.log("Aggregates")
             this.chartData = response.results.map((i) => {
                 return [i.t, i.c];
             });
@@ -272,16 +272,12 @@ export default {
                   break;
           }
           let data = localStorage.getItem(i.symbol + "-" + range);
-          console.timeEnd("receivedDat");
-          console.log(i.symbol + "-" + interval);
+          
           if (interval !== "second") {
           // remove old data and add the new one
           if (data !== null) {
               data = JSON.parse(data);
-              console.log("debug time compare: ", [
-                  data[data.length - 1][0],
-                  lastinterval.getTime(),
-              ]);
+              
               if (interval === "All") {
                   this.$root.$emit("update-chart-data", {
                       interval: interval,
@@ -316,7 +312,7 @@ export default {
               );
           }
           } else {
-              let url = `https://api.thedice.com/api/${range}/${i.symbol}/1`;
+              let url = `${this.liveApiUrl}/${range}/${i.symbol}/1`;
 
               this.$axios
               .$get(
@@ -336,20 +332,18 @@ export default {
           }
       },
       startUpdateData(symbol, range, limit, interval, minDate, startPoint) {
-          console.log("change chart data: ", [symbol, interval, minDate]);
-          let url = `https://api.finage.co.uk/agg/stock/${symbol}/1/${interval}/${minDate}/${this.today}?&apikey=${process.env.FINAGE_API_KEY}&limit=${limit}`;
-
+          
           this.$axios
               .$get(
                   `https://api.finage.co.uk/agg/stock/${symbol}/1/${interval}/${minDate}/${this.today}?&apikey=${this.finageApiKey}&limit=${limit}`
               )
               .then((response) => {
-                  console.log("Aggregates");
-                  //console.log(response.results);
+                  //console.log("Aggregates");
+                  
                   let tempdata = response.results.map((i) => {
                       return [i.t, i.c];
                   });
-                  console.log(new Date(tempdata[tempdata.length-1][0]).getTime() - startPoint );
+                  
                   this.$root.$emit("update-chart-data", {
                       interval: interval,
                       range: range,
@@ -382,8 +376,7 @@ export default {
         }
       });
       this.$root.$on("changeRangeData", ([item, range, interval]) => {
-          console.log("received emit data: ", [item, range, interval]);
-          console.time("receivedDat");
+          
           if (item.name === this.c_symbol) {
               this.changeChartData(range, interval);
           }
