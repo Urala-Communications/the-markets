@@ -101,6 +101,7 @@ export default {
                     marginLeft: 0,
                     marginRight: 0,
                     marginTop: 50,
+                    animation: false,
                 },
                 plotOptions: {
                     series: {
@@ -566,27 +567,10 @@ export default {
         };
     },
     watch: {
-        new: {
-            handler: function (val, oldval) {
-                //console.log("new data changed: ",[val, oldval])
-            },
-            deep: true,
-        },
+        
     },
     methods: {
-        /**
-         * GET THE MAX AND MIN OF INPUT DATA CHART
-         */
-        hasMin(array) {
-            return array.reduce(function (prev, curr) {
-                return prev[1] < curr[1] ? prev : curr;
-            });
-        },
-        hasMax(array) {
-            return array.reduce(function (prev, curr) {
-                return prev[1] > curr[1] ? prev : curr;
-            });
-        },
+       
     },
     mounted() {
         this.$nextTick(() => {
@@ -595,102 +579,66 @@ export default {
 
         cChart = this;
         const self = this;
+        function updateChartDat(data) {
+            if (data.symbol === self.c_symbol) {
+                if (self.$refs.highcharts != null) {
+
+                    let group_timedata = new Date(data.time);
+                    group_timedata.setMilliseconds(0);
+                    if (grouping == "minute") {
+                        group_timedata.setSeconds(0);
+                    }
+
+                    if (grouping !== "hour" && grouping !== "day") {
+
+                        const price = parseFloat(data.price.replace(",", ""));
+                        const time = group_timedata.getTime();
+
+                        const series = self.$refs.highcharts.chart.series[0];
+
+                        let tempdat = series.options.data;
+                        const index = _.findIndex(
+                            series.options.data,
+                            function (el) {
+                                return el[0] == time;
+                            }
+                        );
+                        if (index === -1) {
+                            tempdat.push([time, price]);
+                            series.addPoint([time, price], true, true);                            
+                        } else {
+                            if (series.points.length > 0) {
+                                if (
+                                    series.points[series.points.length - 1]
+                                        .y !== price
+                                ) {
+
+                                    series.points[
+                                        series.points.length - 1
+                                    ].update({
+                                        y: price,
+                                    });
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+
+        }
 
         this.$root.$on("updateCrypto", (data) => {
-            if (data.symbol === cChart.c_symbol) {
-                if (self.$refs.highcharts != null) {
-
-                    let group_timedata = new Date(data.time);
-                    group_timedata.setMilliseconds(0);
-                    if (grouping == "minute") {
-                        group_timedata.setSeconds(0);
-                    }
-
-                    if (grouping !== "hour" && grouping !== "day") {
-
-                        const price = parseFloat(data.price.replace(",", ""));
-                        const time = group_timedata.getTime();
-
-                        const series = self.$refs.highcharts.chart.series[0];
-
-                        let tempdat = series.options.data;
-                        const index = _.findIndex(
-                            series.options.data,
-                            function (el) {
-                                return el[0] == time;
-                            }
-                        );
-                        if (index === -1) {
-                            tempdat.push([time, price]);
-                            series.addPoint([time, price], true, true);
-                            //console.log("new point added", [time, price]);
-                        } else {
-                            if (series.points.length > 0) {
-                                if (
-                                    series.points[series.points.length - 1]
-                                        .y !== price
-                                ) {
-
-                                    series.points[
-                                        series.points.length - 1
-                                    ].update({
-                                        y: price,
-                                    });
-                                }
-                            }
-                        }
-
-                    }
-                }
-            }
+            updateChartDat(data);
         });
         this.$root.$on("updateCurrency", (data) => {
-            if (data.symbol === cChart.c_symbol) {
-                if (self.$refs.highcharts != null) {
-
-                    let group_timedata = new Date(data.time);
-                    group_timedata.setMilliseconds(0);
-                    if (grouping == "minute") {
-                        group_timedata.setSeconds(0);
-                    }
-
-                    if (grouping !== "hour" && grouping !== "day") {
-
-                        const price = parseFloat(data.price.replace(",", ""));
-                        const time = group_timedata.getTime();
-
-                        const series = self.$refs.highcharts.chart.series[0];
-
-                        let tempdat = series.options.data;
-                        const index = _.findIndex(
-                            series.options.data,
-                            function (el) {
-                                return el[0] == time;
-                            }
-                        );
-                        if (index === -1) {
-                            tempdat.push([time, price]);
-                            series.addPoint([time, price], true, true);
-                            //console.log("new point added", [time, price]);
-                        } else {
-                            if (series.points.length > 0) {
-                                if (
-                                    series.points[series.points.length - 1]
-                                        .y !== price
-                                ) {
-
-                                    series.points[
-                                        series.points.length - 1
-                                    ].update({
-                                        y: price,
-                                    });
-                                }
-                            }
-                        }
-
-                    }
-                }
-            }
+             updateChartDat(data);
+        });
+        this.$root.$on("updateIndice", (data) => {
+             updateChartDat(data);
+        });
+        this.$root.$on("updateStock", (data) => {
+             updateChartDat(data);
         });
 
     },
