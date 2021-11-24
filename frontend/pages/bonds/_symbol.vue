@@ -76,18 +76,18 @@ export default {
         })
       },
       fetchPrice() {
-        Number.prototype.toLocaleFixed = function(n) {
-          return this.toLocaleString(undefined, {
-            minimumFractionDigits: n,
-            maximumFractionDigits: n
-          });
-        };
+        // Number.prototype.toFixed = function(n) {
+        //   return this.toLocaleString(undefined, {
+        //     minimumFractionDigits: n,
+        //     maximumFractionDigits: n
+        //   });
+        // };
         let i = this.bonds.find(item => item.name.toLowerCase() === this.symbol.replace(/-/g, ' '));
         this.$axios.$get(`https://api.finage.co.uk/bonds/us/rate/${i.symbol}?apikey=${this.finageApiKey}`)
         .then(response => {
           console.log("Price")
           console.log(response)
-          this.item.price = response.price.toLocaleFixed(2);
+          this.item.price = response.price.toFixed(2);
           this.$set(this.item, 'icon', i.icon);
           this.loading = false;
         })
