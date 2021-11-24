@@ -12,7 +12,7 @@
 // import Header from "./../components/Header.vue";
 // import Footer from "./../components/Footer.vue";
 import Ad from "./../components/Ad.vue";
-import {currencies, stocks, indices, bonds, rising, commodities} from "./../market.js";
+import {cryptocurrency, currencies, stocks, indices, bonds, rising, commodities} from "./../market.js";
 // import { gsap } from "gsap";
 // import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
 // gsap.registerPlugin(DrawSVGPlugin);
@@ -60,6 +60,7 @@ export default {
       cmcApiKey: process.env.cmcApiKey,
       loading: false,
       view: 'list',
+      cryptocurrency,
       currencies,
       stocks,
       indices,
@@ -96,11 +97,7 @@ export default {
       .then((response) => {
         console.log(response)
         // this.writeToFirestore(response)
-        this.cryptocurrency = response
-        this.connect();
-        setInterval(() => {
-          this.connect()
-        }, 60000);
+        // this.cryptocurrency = response
       })
       .catch((error) => {
         console.log(error);
@@ -181,7 +178,7 @@ export default {
       }
       this.cryptoWS.onmessage = (msg) => {
         let data = JSON.parse(msg.data);
-        
+
         let item = this.cryptocurrency.find(index => index.symbol === data['s']);
         if (item) {
           if(item.symbol === 'SHIBUSD'){
@@ -211,7 +208,7 @@ export default {
         this.stockWS.send(JSON.stringify({"action": "subscribe", "symbols": "AAPL,AMZN,BA,BABA,FB,MSFT,MRNA,NIO,NVDA,PFE,PLTR,SAN,TSLA,XPEV,GME,AMC,BB"}));
       }
       this.stockWS.onmessage = (msg) => {
-        let data = JSON.parse(msg.data);        
+        let data = JSON.parse(msg.data);
         let item = this.stocks.find(index => index.symbol === data['s']);
         if (item) {
           item.price = Number(data['a']).toFixed(2);
@@ -243,7 +240,7 @@ export default {
         let data = JSON.parse(msg.data);
 
         if(typeof data.p !== 'undefined'){
-          
+
             // console.log('non-CFD')
             // console.log(data.p)
             // console.log(data)
@@ -262,7 +259,7 @@ export default {
             this.$root.$emit('updateIndice', item);
           }
         } else {
-          
+
             // console.log('CFD')
             // console.log(data.s)
             // console.log(data)
@@ -449,6 +446,10 @@ export default {
     },
   },
   created() {
+    this.connect();
+    setInterval(() => {
+      this.connect()
+    }, 60000);
     this.fetchCoinsByMarketCap()
     // this.readFromFirestore()
     this.$root.$on('bv::collapse::state', (id, collapsed) => {

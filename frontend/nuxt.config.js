@@ -197,6 +197,7 @@ export default {
       }
     },
     babel: {
+      "sourceType": "unambiguous",
       compact: true,
       presets(env, [preset, options]) {
         return [["@babel/preset-env", {}]];

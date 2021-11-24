@@ -120,9 +120,9 @@
 </template>
 
 <script>
-import { SanityContent } from '@nuxtjs/sanity/dist/components/sanity-content'
+// import { SanityContent } from '@nuxtjs/sanity/dist/components/sanity-content'
 export default {
-  components: { SanityContent },
+  // components: { SanityContent },
   props: {
       post: {
           type: Object,
