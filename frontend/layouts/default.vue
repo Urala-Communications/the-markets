@@ -181,8 +181,9 @@ export default {
       }
       this.cryptoWS.onmessage = (msg) => {
         let data = JSON.parse(msg.data);
-        if(this.cryptocurrency.find(index => index.symbol === data['s'])){
-          let item = this.cryptocurrency.find(index => index.symbol === data['s']);
+        
+        let item = this.cryptocurrency.find(index => index.symbol === data['s']);
+        if (item) {
           if(item.symbol === 'SHIBUSD'){
             item.price = Number(data['p']);
           } else {
@@ -210,10 +211,9 @@ export default {
         this.stockWS.send(JSON.stringify({"action": "subscribe", "symbols": "AAPL,AMZN,BA,BABA,FB,MSFT,MRNA,NIO,NVDA,PFE,PLTR,SAN,TSLA,XPEV,GME,AMC,BB"}));
       }
       this.stockWS.onmessage = (msg) => {
-        let data = JSON.parse(msg.data);
-        // console.log(data)
-        if(this.stocks.find(index => index.symbol === data['s'])){
-          let item = this.stocks.find(index => index.symbol === data['s']);
+        let data = JSON.parse(msg.data);        
+        let item = this.stocks.find(index => index.symbol === data['s']);
+        if (item) {
           item.price = Number(data['a']).toFixed(2);
           item.difference = Number(data['dd']).toFixed(2);
           item.change = Number(data['dc']).toFixed(2);
@@ -243,11 +243,12 @@ export default {
         let data = JSON.parse(msg.data);
 
         if(typeof data.p !== 'undefined'){
-          if(this.indices.find(index => index.symbol === data.s)){
+          
             // console.log('non-CFD')
             // console.log(data.p)
             // console.log(data)
-            let item = this.indices.find(index => index.symbol === data.s);
+          let item = this.indices.find(index => index.symbol === data.s);
+          if (item) {
             item.price = Number(data.p).toFixed(2);
             item.difference = Number(data.dd).toFixed(2);
             item.change = Number(data.dc).toFixed(2);
@@ -261,11 +262,12 @@ export default {
             this.$root.$emit('updateIndice', item);
           }
         } else {
-          if(this.indices.find(index => index.cfd && index.symbol === data.s)){
+          
             // console.log('CFD')
             // console.log(data.s)
             // console.log(data)
-            let item = this.indices.find(index => index.cfd && index.symbol === data.s);
+          let item = this.indices.find(index => index.cfd && index.symbol === data.s);
+          if (item) {
             // console.log('CFD')
             // console.log(item)
             // console.log("")
@@ -375,7 +377,7 @@ export default {
       .then(response => {
         let i = this.cryptocurrency.find( crypto => crypto.symbol === response.symbol );
         i.price = Number(response.price).toFixed(2);
-          this.$root.$emit('updateCrypto', i);
+        this.$root.$emit('updateCrypto', i);
       })
       .catch(error => {
         console.log(error);
