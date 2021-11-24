@@ -12,7 +12,7 @@
 // import Header from "./../components/Header.vue";
 // import Footer from "./../components/Footer.vue";
 import Ad from "./../components/Ad.vue";
-import {cryptocurrency, currencies, stocks, indices, bonds, rising, commodities} from "./../market.js";
+import {currencies, stocks, indices, bonds, rising, commodities} from "./../market.js";
 // import { gsap } from "gsap";
 // import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
 // gsap.registerPlugin(DrawSVGPlugin);
@@ -36,15 +36,30 @@ export default {
     CookieNotice: () => import('./../components/CookieNotice'),
     Ad
   },
+  async asyncData () {
+    let topCoins = [];
+    await this.$fire.firestore()
+      .collection('cryptoTop')
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(doc => {
+          topCoins.push(doc.data());
+        });
+        console.log(topCoins)
+      });
+    return {
+      topCoins
+    }
+  },
   data() {
     return {
       forexWS: new WebSocket(`wss://w29hxx2ndd.finage.ws:8001/?token=${finageSocketKey}`),
       cryptoWS: new WebSocket(`wss://mZ3Zq4NXbp.finage.ws:6002/?token=${finageSocketKey}`),
       stockWS: new WebSocket(`wss://m2s3swr9mp.finage.ws:7005/?token=${finageSocketKey}`),
       indicesWS: new WebSocket(`wss://8umh1cipe9.finage.ws:9001/?token=${finageSocketKey}`),
+      cmcApiKey: process.env.cmcApiKey,
       loading: false,
       view: 'list',
-      cryptocurrency,
       currencies,
       stocks,
       indices,
@@ -69,18 +84,62 @@ export default {
     }
   },
   methods: {
+    fetchCoinsByMarketCap() {
+      this.$axios.$get(`/api/v1/cryptocurrency/listings/latest?start=1&limit=50&convert=USD&CMC_PRO_API_KEY=${this.cmcApiKey}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        },
+        json: true,
+        gzip: true
+      })
+      .then((response) => {
+        console.log(response)
+        // this.writeToFirestore(response)
+        this.cryptocurrency = response
+        this.connect();
+        setInterval(() => {
+          this.connect()
+        }, 60000);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    },
+    // async readFromFirestore() {
+    //   const coinRef = this.$fire.firestore.collection('cryptoTop').doc('coins')
+    //   try {
+    //     const coinDoc = await coinRef.get()
+    //     console.log(coinDoc.data().topFifty)
+    //   } catch(e) {
+    //     console.log(e)
+    //     return
+    //   }
+    // },
+    // async writeToFirestore(coinArray) {
+    //   const coinRef = this.$fire.firestore.collection('cryptoTop').doc('coins')
+    //   try {
+    //     await coinRef.set({
+    //       topFifty: coinArray
+    //     })
+    //   } catch(e) {
+    //     console.log(e)
+    //     return
+    //   }
+    //   console.log('Wrote data to store successfully.')
+    // },
     getGDPR() {
       if (process.browser) {
         return localStorage.getItem('GDPR:accepted', true);
       }
     },
     connectSockets() {
-      Number.prototype.toLocaleFixed = function(n) {
-        return this.toLocaleString(undefined, {
-          minimumFractionDigits: n,
-          maximumFractionDigits: n
-        });
-      };
+      // Number.prototype.toFixed = function(n) {
+      //   return this.toLocaleString(undefined, {
+      //     minimumFractionDigits: n,
+      //     maximumFractionDigits: n
+      //   });
+      // };
 
       // FOREX
       this.forexWS.onopen = () => {
@@ -92,15 +151,15 @@ export default {
         let data = JSON.parse(msg.data);
         if(typeof data.s !== 'undefined'){
           let item = this.currencies.find(index => index.name === data.s);
-          item.difference = Number(data.dd).toLocaleFixed(2);
-          item.change = Number(data.dc).toLocaleFixed(2);
+          item.difference = Number(data.dd).toFixed(2);
+          item.change = Number(data.dc).toFixed(2);
           item.time = data['t'];
           if(item.type === 'commodity'){
-            item.price = Number(data.a).toLocaleFixed(2);
+            item.price = Number(data.a).toFixed(2);
             item.marketOpen = true;
             this.$root.$emit('updateCommodity', item);
           } else {
-            item.price = Number(data.a).toLocaleFixed(4);
+            item.price = Number(data.a).toFixed(4);
             item.marketOpen = true;
             this.$root.$emit('updateCurrency', item);
           }
@@ -127,10 +186,10 @@ export default {
           if(item.symbol === 'SHIBUSD'){
             item.price = Number(data['p']);
           } else {
-            item.price = Number(data['p']).toLocaleFixed(2);
+            item.price = Number(data['p']).toFixed(2);
           }
-          item.difference = Number(data['dd']).toLocaleFixed(2);
-          item.change = Number(data['dc']).toLocaleFixed(2);
+          item.difference = Number(data['dd']).toFixed(2);
+          item.change = Number(data['dc']).toFixed(2);
           item.time = data['t'];
           item.marketOpen = true;
           this.$root.$emit('updateCrypto', item);
@@ -155,9 +214,9 @@ export default {
         // console.log(data)
         if(this.stocks.find(index => index.symbol === data['s'])){
           let item = this.stocks.find(index => index.symbol === data['s']);
-          item.price = Number(data['a']).toLocaleFixed(2);
-          item.difference = Number(data['dd']).toLocaleFixed(2);
-          item.change = Number(data['dc']).toLocaleFixed(2);
+          item.price = Number(data['a']).toFixed(2);
+          item.difference = Number(data['dd']).toFixed(2);
+          item.change = Number(data['dc']).toFixed(2);
           item.time = data['t'];
           if(this.marketStatus.market === 'open'){
             item.marketOpen = true;
@@ -189,9 +248,9 @@ export default {
             // console.log(data.p)
             // console.log(data)
             let item = this.indices.find(index => index.symbol === data.s);
-            item.price = Number(data.p).toLocaleFixed(2);
-            item.difference = Number(data.dd).toLocaleFixed(2);
-            item.change = Number(data.dc).toLocaleFixed(2);
+            item.price = Number(data.p).toFixed(2);
+            item.difference = Number(data.dd).toFixed(2);
+            item.change = Number(data.dc).toFixed(2);
             item.time = data.t;
             // if(this.marketStatus.exchanges.nasdaq){
               // need asian market indicators
@@ -210,11 +269,11 @@ export default {
             // console.log('CFD')
             // console.log(item)
             // console.log("")
-            item.price = Number(data.a).toLocaleFixed(2); // ask or bid or both?
-            item.difference = Number(data.dd).toLocaleFixed(2);
-            item.change = Number(data.dc).toLocaleFixed(2);
+            item.price = Number(data.a).toFixed(2); // ask or bid or both?
+            item.difference = Number(data.dd).toFixed(2);
+            item.change = Number(data.dc).toFixed(2);
             item.time = data.t;
-            //item.change = Number(data.dc).toLocaleFixed(2);
+            //item.change = Number(data.dc).toFixed(2);
             // if(this.marketStatus.exchanges.nasdaq){
               // need asian market indicators
               // item.marketOpen = true;
@@ -236,7 +295,7 @@ export default {
       .then(response => {
         response.forEach(item => {
           let i = this.stocks.find( stock => stock.symbol === item.symbol );
-          i.price = Number(item.ask).toLocaleFixed(2);
+          i.price = Number(item.ask).toFixed(2);
           i.priceNumber = item.ask
           this.$root.$emit('updateStock', i);
         });
@@ -267,10 +326,10 @@ export default {
       .then(response => {
         let i = this.currencies.find(currency => currency.symbol === response.symbol );
         if(i.type === 'commodity'){
-          i.price = Number(response.price).toLocaleFixed(2);
+          i.price = Number(response.price).toFixed(2);
           this.$root.$emit('updateCommodity', i);
         } else {
-          i.price = Number(response.price).toLocaleFixed(4);
+          i.price = Number(response.price).toFixed(4);
           this.$root.$emit('updateCurrency', i);
         }
       })
@@ -282,7 +341,7 @@ export default {
       this.$axios.$get(`https://api.finage.co.uk/last/index/${symbol}?apikey=${finageApiKey}`)
       .then(response => {
         let i = this.indices.find( indice => indice.symbol === response.symbol );
-        i.price = response.price.toLocaleFixed(2);
+        i.price = response.price.toFixed(2);
         i.priceNumber = response.price;
         this.$root.$emit('updateIndice', i);
       })
@@ -315,13 +374,8 @@ export default {
       this.$axios.$get(`https://api.finage.co.uk/last/crypto/${symbol}?apikey=${finageApiKey}`)
       .then(response => {
         let i = this.cryptocurrency.find( crypto => crypto.symbol === response.symbol );
-        i.price = Number(response.price).toLocaleFixed(2);
-        // if(i.symbol === 'DOGEUSD') {
-        //   this.$root.$emit('updateRising', i);
-        // } else {
+        i.price = Number(response.price).toFixed(2);
           this.$root.$emit('updateCrypto', i);
-        // }
-        // console.log(response);
       })
       .catch(error => {
         console.log(error);
@@ -332,7 +386,7 @@ export default {
       .then(response => {
         // console.log(response)
         let i = this.indices.find( indice => indice.symbol === response.symbol );
-        i.price = Number(response.value).toLocaleFixed(4);
+        i.price = Number(response.value).toFixed(4);
         this.$root.$emit('updateBond', i);
       })
       .catch(error => {
@@ -345,7 +399,7 @@ export default {
         // console.log(response)
         // this.rising = response;
         // let i = this.indices.find( indice => indice.symbol === response.symbol );
-        // i.price = Number(response.value).toLocaleFixed(2);
+        // i.price = Number(response.value).toFixed(2);
         this.$root.$emit('updateRising', response);
       })
       .catch(error => {
@@ -393,10 +447,8 @@ export default {
     },
   },
   created() {
-    this.connect();
-    setInterval(() => {
-      this.connect()
-    }, 60000);
+    this.fetchCoinsByMarketCap()
+    // this.readFromFirestore()
     this.$root.$on('bv::collapse::state', (id, collapsed) => {
       if (id === "sidebar") {
         this.mobileNavOpen = collapsed;

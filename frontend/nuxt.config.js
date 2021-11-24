@@ -54,7 +54,6 @@ export default {
   buildModules: [
     // '@nuxtjs/dotenv',
     // '@nuxtjs/fontawesome'
-    '@nuxtjs/sanity/module',
   ],
 
   // googleAnalytics: {
@@ -106,8 +105,35 @@ export default {
     '@nuxtjs/axios',
     '@nuxtjs/google-adsense',
     "@nuxtjs/markdownit",
-    "@nuxtjs/strapi"
+    "@nuxtjs/strapi",
+    '@nuxtjs/firebase',
   ],
+
+  firebase: {
+    config: {
+      apiKey: "AIzaSyAl9dhYaPSs-UscghS_Mgd3KdbxF1ezf-I",
+      authDomain: "themarkets.firebaseapp.com",
+      projectId: "themarkets",
+      storageBucket: "themarkets.appspot.com",
+      messagingSenderId: "523290113240",
+      appId: "1:523290113240:web:842a2726513bdead0f93ad",
+      measurementId: "G-C2H6JMSF7Z"
+    },
+    services: {
+      firestore: true
+    }
+  },
+
+  firestore: {
+    memoryOnly: false, // default
+    chunkName: process.env.NODE_ENV !== 'production' ? 'firebase-auth' : '[id]', // default
+    enablePersistence: true,
+    emulatorPort: 8080,
+    emulatorHost: 'localhost',
+    settings: {
+      // Firestore Settings - currently only works in SPA mode
+    }
+  },
 
   proxy: {
     '/api': {
