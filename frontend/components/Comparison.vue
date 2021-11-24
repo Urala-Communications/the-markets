@@ -9,11 +9,11 @@
     <div class="container content buffer pb-5">
       <div class="row d-flex justify-content-center">
         <div class="col-12 py-3">
-          <SanityContent
+          <!-- <SanityContent
             v-for="child in post.body"
             :blocks="[child]"
             v-bind:key="child._id"
-          />
+          /> -->
         </div>
       </div>
     </div>
