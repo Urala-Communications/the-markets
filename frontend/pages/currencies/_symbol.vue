@@ -387,8 +387,8 @@ export default {
       this.$root.$on('updateCurrency', (item) => {
         let itemSymbol = this.symbol.replace('-', '').toUpperCase();
         if(item.symbol === itemSymbol){
-          let i = this.currencies.findIndex(index => index.name.toLowerCase() === item.name.toLowerCase());
-          this.$set(this.item, 'name', this.currencies[i].name);
+          //let i =  this.currencies.findIndex(index => index.name.toLowerCase() === item.name.toLowerCase());
+          this.$set(this.item, 'name', this.currencies[item.indexFound].name);
           this.$set(this.item, 'price', item.price);
           this.$set(this.item, 'difference', item.difference);
           this.$set(this.item, 'change', item.change);

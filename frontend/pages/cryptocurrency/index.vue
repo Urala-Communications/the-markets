@@ -115,11 +115,11 @@ export default {
     created() {
       this.fetchCoinsByMarketCap();
       this.loading = false; // fix news api bug
-      this.$root.$on('updateCrypto', (item) => {
-        let i = this.cryptocurrency.findIndex(index => index.name === item.name);
+      this.$root.$on('updateCrypto', (item) => {        
+        let i = item.indexFound;//this.cryptocurrency.findIndex(index => index.name === item.name);
         this.$set(this.cryptocurrency[i], 'price', item.price);
-        this.$set(this.cryptocurrency[i], 'difference', item.change);
-        this.$set(this.cryptocurrency[i], 'change', item.difference);
+        this.$set(this.cryptocurrency[i], 'difference', item.difference);
+        this.$set(this.cryptocurrency[i], 'change', item.change);
       });
       // this.cryptocurrency.forEach(item => {
       //   this.fetchMarketCap(item.symbol);

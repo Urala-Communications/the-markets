@@ -93,16 +93,16 @@ export default {
       },
     },
     created() {
-      this.$root.$on('updateCurrency', (item) => {
-        let i = this.currencies.findIndex(index => index.name === item.name);
+      this.$root.$on('updateCurrency', (item) => {       
+        let i = item.indexFound;//this.currencies.findIndex(index => index.name === item.name);
         this.$set(this.currencies[i], 'price', item.price);
         this.$set(this.currencies[i], 'difference', item.difference);
         this.$set(this.currencies[i], 'change', item.change);
       });
       this.$root.$on('updateIndice', (item) => {
-        // console.log(item)
+        // console.log(item)        
         if(item.symbol === 'DXY'){
-          let i = this.currencies.findIndex(index => index.name === item.name);
+          let i =  this.currencies.findIndex(index => index.name === item.name);
           this.$set(this.currencies[i], 'price', item.price);
           this.$set(this.currencies[i], 'difference', item.difference);
           this.$set(this.currencies[i], 'change', item.change);

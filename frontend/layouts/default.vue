@@ -91,18 +91,26 @@ export default {
       this.forexWS.onmessage = (msg) => {
         let data = JSON.parse(msg.data);
         if(typeof data.s !== 'undefined'){
-          let item = this.currencies.find(index => index.name === data.s);
+          let indexFound = this.currencies.findIndex(index => index.name === data.s);
+          let item = this.currencies[indexFound];
+          item.indexFound = indexFound;
           item.difference = Number(data.dd).toFixed(2);
           item.change = Number(data.dc).toFixed(2);
           item.time = data['t'];
           if(item.type === 'commodity'){
             item.price = Number(data.a).toFixed(2);
             item.marketOpen = true;
-            this.$root.$emit('updateCommodity', item);
+            if (this.currencies[indexFound].mdOldPrice != item.price ) {              
+              this.$root.$emit('updateCommodity', item);              
+              this.currencies[indexFound].mdOldPrice = item.price;
+            }
           } else {
             item.price = Number(data.a).toFixed(4);
             item.marketOpen = true;
-            this.$root.$emit('updateCurrency', item);
+            if (this.currencies[indexFound].rcOldPrice != item.price ) {              
+              this.$root.$emit('updateCurrency', item);
+              this.currencies[indexFound].rcOldPrice = item.price;
+            }
           }
         }
         this.loading = false;
@@ -115,6 +123,7 @@ export default {
       }
 
       // CRYPTO
+      
       this.cryptoWS.onopen = () => {
         this.loading = true;
         // console.log("CRYPTO Socket connection established");
@@ -123,8 +132,12 @@ export default {
       this.cryptoWS.onmessage = (msg) => {
         let data = JSON.parse(msg.data);
         
-        let item = this.cryptocurrency.find(index => index.symbol === data['s']);
-        if (item) {
+        let indexFound = this.cryptocurrency.findIndex(index => index.symbol === data['s']);
+        //if (item) {
+        if (indexFound !== -1) {
+          
+          const item = this.cryptocurrency[indexFound];
+          item.indexFound = indexFound;
           if(item.symbol === 'SHIBUSD'){
             item.price = Number(data['p']);
           } else {
@@ -133,8 +146,12 @@ export default {
           item.difference = Number(data['dd']).toFixed(2);
           item.change = Number(data['dc']).toFixed(2);
           item.time = data['t'];
-          item.marketOpen = true;
-          this.$root.$emit('updateCrypto', item);
+          item.marketOpen = true;        
+          //item.indexFound = this.cryptocurrency.findIndex(index => index.symbol === item.symbol); 
+          if (this.cryptocurrency[indexFound].op != item.price ) {
+            this.$root.$emit('updateCrypto', item);
+            this.cryptocurrency[indexFound].op = item.price;
+          }
         }
         this.loading = false;
       }
@@ -153,8 +170,10 @@ export default {
       }
       this.stockWS.onmessage = (msg) => {
         let data = JSON.parse(msg.data);        
-        let item = this.stocks.find(index => index.symbol === data['s']);
-        if (item) {
+        let indexFound = this.stocks.findIndex(index => index.symbol === data['s']);
+        if (indexFound !== -1) {
+          const item = this.stocks[indexFound];
+          item.indexFound = indexFound;
           item.price = Number(data['a']).toFixed(2);
           item.difference = Number(data['dd']).toFixed(2);
           item.change = Number(data['dc']).toFixed(2);
@@ -162,7 +181,10 @@ export default {
           if(this.marketStatus.market === 'open'){
             item.marketOpen = true;
           }
-          this.$root.$emit('updateStock', item);
+           if (this.stocks[indexFound].stOldPrice != item.price ) {              
+            this.$root.$emit('updateStock', item);
+            this.stocks[indexFound].stOldPrice = item.price;
+          }
         }
         this.loading = false;
       }
@@ -188,8 +210,10 @@ export default {
             // console.log('non-CFD')
             // console.log(data.p)
             // console.log(data)
-          let item = this.indices.find(index => index.symbol === data.s);
-          if (item) {
+          let indexFound = this.indices.findIndex(index => index.symbol === data.s);
+          if (indexFound !== -1) {            
+            const item = this.indices[indexFound];
+            item.indexFound = indexFound;
             item.price = Number(data.p).toFixed(2);
             item.difference = Number(data.dd).toFixed(2);
             item.change = Number(data.dc).toFixed(2);
@@ -200,15 +224,20 @@ export default {
             // }
             // console.log(item)
             // console.log("")
-            this.$root.$emit('updateIndice', item);
+            if (this.indices[indexFound].idOldPrice != item.price ) {              
+              this.$root.$emit('updateIndice', item);
+              this.indices[indexFound].idOldPrice = item.price;
+            }
           }
         } else {
           
             // console.log('CFD')
             // console.log(data.s)
             // console.log(data)
-          let item = this.indices.find(index => index.cfd && index.symbol === data.s);
-          if (item) {
+          let indexFound = this.indices.findIndex(index => index.cfd && index.symbol === data.s);
+          if (indexFound !== -1) {            
+            const item = this.indices[indexFound];
+            item.indexFound = indexFound;
             // console.log('CFD')
             // console.log(item)
             // console.log("")
@@ -221,7 +250,10 @@ export default {
               // need asian market indicators
               // item.marketOpen = true;
             // }
-            this.$root.$emit('updateIndice', item);
+            if (this.indices[indexFound].idOldPrice != item.price ) {              
+              this.$root.$emit('updateIndice', item);
+              this.indices[indexFound].idOldPrice = item.price;
+            }
           }
         }
         this.loading = false;
@@ -237,7 +269,9 @@ export default {
       this.$axios.$get(`https://api.finage.co.uk/last/stocks/?symbols=AAPL,AMZN,BA,BABA,FB,MSFT,MRNA,NIO,NVDA,PFE,PLTR,SAN,TSLA,XPEV,GME,AMC,BB&apikey=${finageApiKey}`)
       .then(response => {
         response.forEach(item => {
-          let i = this.stocks.find( stock => stock.symbol === item.symbol );
+          const indexFound = this.stocks.findIndex( stock => stock.symbol === item.symbol );          
+          let i = this.stocks[indexFound];
+          i.indexFound = indexFound;
           i.price = Number(item.ask).toFixed(2);
           i.priceNumber = item.ask
           this.$root.$emit('updateStock', i);
@@ -247,7 +281,9 @@ export default {
         this.stocks.forEach(item => {
           this.$axios.$get(`https://api.finage.co.uk/agg/stock/${item.symbol}/1/day/2021-01-01/${this.today}?limit=1825&apikey=${finageApiKey}`)
           .then(response => {
-            let i = this.stocks.find( stock => stock.symbol === response.symbol );
+            const indexFound = this.stocks.findIndex( stock => stock.symbol === response.symbol );
+            let i = this.stocks[indexFound];
+            i.indexFound = indexFound;
             let last = response.results.pop();
             i.difference = i.priceNumber - last.c
             i.difference = i.difference.toFixed(2)
@@ -267,8 +303,10 @@ export default {
     fetchCurrency(symbol) {
       this.$axios.$get(`https://api.finage.co.uk/last/trade/forex/${symbol}?apikey=${finageApiKey}`)
       .then(response => {
-        let i = this.currencies.find(currency => currency.symbol === response.symbol );
-        if(i.type === 'commodity'){
+        let indexFound = this.currencies.findIndex(currency => currency.symbol === response.symbol );
+        let i = this.currencies[indexFound];
+        i.indexFound = indexFound;
+        if(i.type === 'commodity'){          
           i.price = Number(response.price).toFixed(2);
           this.$root.$emit('updateCommodity', i);
         } else {
@@ -283,7 +321,9 @@ export default {
     fetchIndice(symbol) {
       this.$axios.$get(`https://api.finage.co.uk/last/index/${symbol}?apikey=${finageApiKey}`)
       .then(response => {
-        let i = this.indices.find( indice => indice.symbol === response.symbol );
+        let indexFound = this.indices.findIndex( indice => indice.symbol === response.symbol );
+        let i = this.indices[indexFound];
+        i.indexFound = indexFound;
         i.price = response.price.toFixed(2);
         i.priceNumber = response.price;
         this.$root.$emit('updateIndice', i);
@@ -296,7 +336,9 @@ export default {
           // } else {
           //   let i = this.indices.find( indice => indice.symbol === response.symbol && indice.cfd );
           // }
-          let i = this.indices.find( indice => indice.symbol === response.symbol );
+          let indexFound = this.indices.findIndex( indice => indice.symbol === response.symbol );
+          let i = this.indices[indexFound];
+          i.indexFound = indexFound;
           let last = response.results.pop();
           i.difference = i.priceNumber - last.c
           i.difference = i.difference.toFixed(2)
@@ -316,7 +358,9 @@ export default {
     fetchCrypto(symbol) {
       this.$axios.$get(`https://api.finage.co.uk/last/crypto/${symbol}?apikey=${finageApiKey}`)
       .then(response => {
-        let i = this.cryptocurrency.find( crypto => crypto.symbol === response.symbol );
+        let indexFound = this.cryptocurrency.findIndex( crypto => crypto.symbol === response.symbol );
+        let i = this.cryptocurrency[indexFound];
+        i.indexFound = indexFound;
         i.price = Number(response.price).toFixed(2);
         // if(i.symbol === 'DOGEUSD') {
         //   this.$root.$emit('updateRising', i);
@@ -396,6 +440,7 @@ export default {
   },
   created() {
     this.connect();
+    // WHY WE HAVE AN INTERVAL HERE ?
     setInterval(() => {
       this.connect()
     }, 60000);

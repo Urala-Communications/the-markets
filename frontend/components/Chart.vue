@@ -579,6 +579,16 @@ export default {
 
         cChart = this;
         const self = this;
+        
+        let oldtime = new Date();
+        oldtime.setMilliseconds(0);
+        oldtime = oldtime.getTime();
+
+        let oldtimeMin = new Date();
+        oldtimeMin.setMilliseconds(0);
+        oldtimeMin.setSeconds(0);
+        oldtimeMin = oldtimeMin.getTime();
+        
         function updateChartDat(data) {
             if (data.symbol === self.c_symbol) {
                 if (self.$refs.highcharts != null) {
@@ -595,17 +605,19 @@ export default {
                         const time = group_timedata.getTime();
 
                         const series = self.$refs.highcharts.chart.series[0];
-
-                        let tempdat = series.options.data;
-                        const index = _.findIndex(
-                            series.options.data,
-                            function (el) {
-                                return el[0] == time;
-                            }
-                        );
-                        if (index === -1) {
-                            tempdat.push([time, price]);
-                            series.addPoint([time, price], true, true);                            
+                        let conditionAdd=true;
+                        if (grouping == "second") {
+                            conditionAdd = (time-oldtime)>=1000;
+                        } else if (grouping == "minute"){
+                            conditionAdd = (time-oldtimeMin)>=10000;
+                        }
+                        if (conditionAdd) {
+                            series.addPoint([time, price], true, true);
+                            if (grouping == "second") {
+                                oldtime=time;
+                            } else if (grouping == "minute"){                                
+                                oldtimeMin=time;
+                            } 
                         } else {
                             if (series.points.length > 0) {
                                 if (
