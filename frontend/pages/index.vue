@@ -181,15 +181,15 @@ export default {
       // this.loaded = false;
       // this.checkMarketStatus();
       this.$root.$on('updateCrypto', (item) => {
-        // console.log(item)
-        let itemIndex = this.cryptocurrency.findIndex(index => index.name === item.name);
+        // console.log(item)        
+        let itemIndex =  item.indexFound ;//this.cryptocurrency.findIndex(index => index.name === item.name);
         this.$set(this.cryptocurrency[itemIndex], 'price', item.price);
         this.$set(this.cryptocurrency[itemIndex], 'difference', item.difference);
         this.$set(this.cryptocurrency[itemIndex], 'change', item.change);
       });
       this.$root.$on('updateCurrency', (item) => {
-        // console.log(item)
-        let itemIndex = this.currencies.findIndex(index => index.name === item.name);
+        // console.log(item)       
+        let itemIndex = item.indexFound ;//this.currencies.findIndex(index => index.name === item.name);
         this.$set(this.currencies[itemIndex], 'price', item.price);
         this.$set(this.currencies[itemIndex], 'difference', item.difference);
         this.$set(this.currencies[itemIndex], 'change', item.change);
@@ -200,8 +200,8 @@ export default {
         this.$set(this.commodities[itemIndex], 'difference', item.difference);
         this.$set(this.commodities[itemIndex], 'change', item.change);
       });
-      this.$root.$on('updateStock', (item) => {
-        let itemIndex = this.stocks.findIndex(index => index.name === item.name);
+      this.$root.$on('updateStock', (item) => {       
+        const itemIndex = item.indexFound ;//this.stocks.findIndex(index => index.name === item.name);
         this.$set(this.stocks[itemIndex], 'price', item.price);
         this.$set(this.stocks[itemIndex], 'difference', item.difference);
         this.$set(this.stocks[itemIndex], 'change', item.change);
@@ -212,7 +212,7 @@ export default {
           this.loading = false;
         });
       });
-      this.$root.$on('updateIndice', (item) => {
+      this.$root.$on('updateIndice', (item) => {        
         let itemIndex = this.indices.findIndex(index => index.name === item.name);
         this.$set(this.indices[itemIndex], 'price', item.price);
         this.$set(this.indices[itemIndex], 'difference', item.difference);
