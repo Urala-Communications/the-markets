@@ -48,7 +48,7 @@
       :key="index.symbol"
       class="mover index"
     >
-      <h4>{{ index.company_name }}&nbsp;<span class="green">{{index.change_percentage}}</span></h4>
+      <h4>{{ index.company_name }}&nbsp;<span class="green">{{Number(index.change_percentage).toFixed(2)}}</span></h4>
       <Price :index="index" :price="index.price" class="mover-price"/>
     </div>
   </div>

@@ -78,7 +78,7 @@ export default {
               this.low = response.results[0].l;
               this.close = response.results[0].c;
               this.volume = response.results[0].v;
-              
+
           })
           .catch(error => {
             console.log(error);
@@ -86,12 +86,12 @@ export default {
         }
       },
       fetchPrice() {
-        Number.prototype.toLocaleFixed = function(n) {
-          return this.toLocaleString(undefined, {
-            minimumFractionDigits: n,
-            maximumFractionDigits: n
-          });
-        };
+        // Number.prototype.toFixed = function(n) {
+        //   return this.toLocaleString(undefined, {
+        //     minimumFractionDigits: n,
+        //     maximumFractionDigits: n
+        //   });
+        // };
         // API Price
         let itemSymbol = this.symbol.replace('-', '').toUpperCase();
         let priceType = `trade/forex/${itemSymbol}`;
@@ -100,8 +100,8 @@ export default {
         }
         this.$axios.$get(`https://api.finage.co.uk/last/${priceType}?apikey=${this.finageApiKey}`)
         .then(response => {
-          
-          this.item.price = response.price.toLocaleFixed(4);
+
+          this.item.price = response.price.toFixed(4);
           this.$set(this.item, 'icon', i.icon);
           this.loading = false;
         })
@@ -146,7 +146,7 @@ export default {
         this.$axios.$get(`https://api.finage.co.uk/news/forex/${itemSymbol}?apikey=${this.finageApiKey}`)
         .then(response => {
           let filteredNews = response.news.filter((v,i,a)=>a.findIndex(t=>(t.title === v.title))===i); // filter duplicates from API - may need to also filter this.news on each fetch
-          
+
           this.news = filteredNews;
           if(this.news.length > 10){
             this.news.pop()
@@ -158,11 +158,11 @@ export default {
       },
       changeChartData(range, interval = "day") {
           let itemSymbol = this.symbol.replace('-', '').toUpperCase();
-          
+
           let i = this.currencies.find(
               (item) => item.symbol === itemSymbol
           );
-          
+
           let minDate = "2021-01-01";
           let date = new Date();
           let startPoint = date;
@@ -290,12 +290,12 @@ export default {
                   break;
           }
           let data = localStorage.getItem(i.symbol + "-" + range);
-          
+
           if (interval !== "second") {
           // remove old data and add the new one
           if (data !== null) {
               data = JSON.parse(data);
-              
+
               if (interval === "All") {
                   this.$root.$emit("update-chart-data", {
                       interval: interval,
@@ -350,18 +350,18 @@ export default {
           }
       },
       startUpdateData(symbol, range, limit, interval, minDate, startPoint) {
-          
+
           this.$axios
               .$get(
                   `https://api.finage.co.uk/agg/forex/${symbol}/1/${interval}/${minDate}/${this.today}?&apikey=${this.finageApiKey}&limit=${limit}`
               )
               .then((response) => {
-                  
-                  
+
+
                   let tempdata = response.results.map((i) => {
                       return [i.t, i.c];
                   });
-                 
+
                   this.$root.$emit("update-chart-data", {
                       interval: interval,
                       range: range,
@@ -408,7 +408,7 @@ export default {
         }
       });
       this.$root.$on("changeRangeData", ([item, range, interval]) => {
-          
+
           if (item.name === this.c_symbol) {
               this.changeChartData(range, interval);
           }

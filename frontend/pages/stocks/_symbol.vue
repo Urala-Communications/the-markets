@@ -69,24 +69,24 @@ export default {
         this.$axios.$get(`https://api.finage.co.uk/detail/stock/${i.symbol}?apikey=${this.finageApiKey}`)
           .then(response => {
             this.profile = response;
-            
+
           })
           .catch(error => {
             console.log(error);
           })
       },
       fetchPrice() {
-        Number.prototype.toLocaleFixed = function(n) {
-          return this.toLocaleString(undefined, {
-            minimumFractionDigits: n,
-            maximumFractionDigits: n
-          });
-        };
+        // Number.prototype.toLocaleFixed = function(n) {
+        //   return this.toLocaleString(undefined, {
+        //     minimumFractionDigits: n,
+        //     maximumFractionDigits: n
+        //   });
+        // };
         let i = this.stocks.find(item => item.name.toLowerCase() === this.symbol);
         this.$axios.$get(`https://api.finage.co.uk/last/stock/${i.symbol}?apikey=${this.finageApiKey}`)
         .then(response => {
-          
-          this.item.price = response.ask.toLocaleFixed(2);
+
+          this.item.price = response.ask.toFixed(2);
           this.$set(this.item, 'icon', i.icon);
           this.loading = false;
         })
@@ -272,12 +272,12 @@ export default {
                   break;
           }
           let data = localStorage.getItem(i.symbol + "-" + range);
-          
+
           if (interval !== "second") {
           // remove old data and add the new one
           if (data !== null) {
               data = JSON.parse(data);
-              
+
               if (interval === "All") {
                   this.$root.$emit("update-chart-data", {
                       interval: interval,
@@ -332,18 +332,18 @@ export default {
           }
       },
       startUpdateData(symbol, range, limit, interval, minDate, startPoint) {
-          
+
           this.$axios
               .$get(
                   `https://api.finage.co.uk/agg/stock/${symbol}/1/${interval}/${minDate}/${this.today}?&apikey=${this.finageApiKey}&limit=${limit}`
               )
               .then((response) => {
                   //console.log("Aggregates");
-                  
+
                   let tempdata = response.results.map((i) => {
                       return [i.t, i.c];
                   });
-                  
+
                   this.$root.$emit("update-chart-data", {
                       interval: interval,
                       range: range,
@@ -376,7 +376,7 @@ export default {
         }
       });
       this.$root.$on("changeRangeData", ([item, range, interval]) => {
-          
+
           if (item.name === this.c_symbol) {
               this.changeChartData(range, interval);
           }

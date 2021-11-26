@@ -112,12 +112,12 @@ export default {
         });
     },
     fetchPrice() {
-      Number.prototype.toLocaleFixed = function (n) {
-        return this.toLocaleString(undefined, {
-          minimumFractionDigits: n,
-          maximumFractionDigits: n,
-        });
-      };
+      // Number.prototype.toFixed = function (n) {
+      //   return this.toLocaleString(undefined, {
+      //     minimumFractionDigits: n,
+      //     maximumFractionDigits: n,
+      //   });
+      // };
       let i = this.cryptocurrency.find(
         (item) => item.name.toLowerCase() === this.symbol.replace("-", " ")
       );
@@ -126,14 +126,14 @@ export default {
           `https://api.finage.co.uk/last/crypto/detailed/${i.symbol}?apikey=${this.finageApiKey}`
         )
         .then((response) => {
-          this.open = response.open.toLocaleFixed(2);
-          this.close = response.close.toLocaleFixed(2);
-          this.high = response.high.toLocaleFixed(2);
-          this.low = response.low.toLocaleFixed(2);
-          this.volume = response.volume.toLocaleFixed(2);
-          this.marketCap = response.marketCap.toLocaleFixed(2);
-          this.yearHigh = response.yearHigh.toLocaleFixed(2);
-          this.yearLow = response.yearLow.toLocaleFixed(2);
+          this.open = response.open.toFixed(2);
+          this.close = response.close.toFixed(2);
+          this.high = response.high.toFixed(2);
+          this.low = response.low.toFixed(2);
+          this.volume = response.volume.toFixed(2);
+          this.marketCap = response.marketCap.toFixed(2);
+          this.yearHigh = response.yearHigh.toFixed(2);
+          this.yearLow = response.yearLow.toFixed(2);
         })
         .catch((error) => {
           console.log(error);
@@ -364,7 +364,7 @@ export default {
           );
         }
       } else {
-        
+
         let url = `${this.liveApiUrl}/${range}/${i.symbol}/1`;
 
         this.$axios.$get(url).then((response) => {
