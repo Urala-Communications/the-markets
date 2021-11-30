@@ -56,15 +56,6 @@ export default {
     // '@nuxtjs/fontawesome'
   ],
 
-  // googleAnalytics: {
-  //   id: 'G-Z7GS99Q7TZ', // Use as fallback if no runtime config is provided
-  // },
-  // publicRuntimeConfig: {
-  //   googleAnalytics: {
-  //     id: 'G-Z7GS99Q7TZ'
-  //   }
-  // },
-
   dev: process.env.NODE_ENV !== 'production',
 
   devServer: {

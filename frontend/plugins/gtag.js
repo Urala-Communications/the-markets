@@ -5,7 +5,7 @@ const getGDPR = localStorage.getItem('GDPR:accepted');
 
 export default ({ app }) => {
   Vue.use(VueGtag, {
-    config: { id: 'G-2K1382J0CJ' },
+    config: { id: 'G-EKVBQ55ZX4' },
     appName: 'themarkets',
     bootstrap: getGDPR === 'true',
     enabled: getGDPR === 'true',

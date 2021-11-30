@@ -12,7 +12,7 @@
           <div class="hero">
             <div class="title row mb-3">
               <div class="col-12 d-flex justify-content-between title-wrapper">
-                <h1 class="d-inline-flex w-100 text-capitalize mb-3">
+                <h1 class="d-inline-flex w-100 text-capitalize mb-0">
                   <div class="icon" :class="item.icon"/>
                   {{ item.name }}
                 </h1>
@@ -220,9 +220,9 @@ export default {
     /* flex-direction: column; */
     margin-bottom: 0;
     .icon{
-      margin-right: 16px;
-      width: 54px;
-      height: 54px;
+      margin-right: 8px;
+      width: 40px;
+      height: 40px;
     }
   }
   .status{

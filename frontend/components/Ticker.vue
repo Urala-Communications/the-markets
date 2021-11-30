@@ -192,13 +192,13 @@ export default {
     background-image: url('./../assets/uk.svg');
   }
   &.btc {
-    background-image: url('./../assets/btc.svg');
+    background-image: url('./../assets/btc.gif');
   }
   &.eth {
     background-image: url('./../assets/eth.svg');
   }
   &.doge {
-    background-image: url('./../assets/dogecoin.svg');
+    background-image: url('./../assets/doge.gif');
   }
   &.xrp {
     background-image: url('./../assets/xrp.svg');
@@ -214,9 +214,9 @@ export default {
   }
   &.oneinch  {background-image: url('./../assets/oneinch.png')}
   &.aave  {background-image: url('./../assets/aave.png')}
-  &.algo  {background-image: url('./../assets/algo.png')}
+  &.algo  {background-image: url('./../assets/algorand.gif')}
   &.atom  {background-image: url('./../assets/atom.png')}
-  &.avax  {background-image: url('./../assets/avax.png')}
+  &.avax  {background-image: url('./../assets/avalanche.gif')}
   &.axie  {background-image: url('./../assets/axie.png')}
   &.bat  {background-image: url('./../assets/bat.png')}
   &.bnb  {background-image: url('./../assets/bnb.png')}
@@ -228,18 +228,18 @@ export default {
   &.etc  {background-image: url('./../assets/etc.png')}
   &.file  {background-image: url('./../assets/file.png')}
   &.grt  {background-image: url('./../assets/grt.png')}
-  &.link  {background-image: url('./../assets/link.png')}
-  &.ltc  {background-image: url('./../assets/ltc.png')}
-  &.luna  {background-image: url('./../assets/luna.png')}
+  &.link  {background-image: url('./../assets/link.gif')}
+  &.ltc  {background-image: url('./../assets/litecoin.gif')}
+  &.luna  {background-image: url('./../assets/terra.gif')}
   &.mana  {background-image: url('./../assets/mana.png'); background-size: 130%;}
-  &.matic  {background-image: url('./../assets/matic.png')}
+  &.matic  {background-image: url('./../assets/polygon.gif')}
   &.mkr  {background-image: url('./../assets/mkr.png')}
   &.neo  {background-image: url('./../assets/neo.png'); background-size: 80%;}
-  &.shiba  {background-image: url('./../assets/shiba.png')}
-  &.sol  {background-image: url('./../assets/sol.png')}
+  &.shiba  {background-image: url('./../assets/shiba.gif')}
+  &.sol  {background-image: url('./../assets/solana.gif')}
   &.sushi  {background-image: url('./../assets/sushi.png')}
   &.tron  {background-image: url('./../assets/tron.png')}
-  &.uni  {background-image: url('./../assets/uni.png')}
+  &.uni  {background-image: url('./../assets/uniswap.gif')}
   &.yfi  {background-image: url('./../assets/yfi.png')}
   &.vet  {background-image: url('./../assets/vet.png')}
   &.xlm  {background-image: url('./../assets/xlm.png')}
