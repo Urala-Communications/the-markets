@@ -437,11 +437,12 @@ export default {
   },
   created() {
     this.$root.$on("updateCrypto", (item) => {
+      //console.log(item)
       if (item.name.toLowerCase() === this.symbol.replace("-", " ")) {
-        let i = this.cryptocurrency.findIndex(
-          (index) => index.name.toLowerCase() === item.name.toLowerCase()
-        );
-        this.$set(this.item, "name", this.cryptocurrency[i].name);
+        /* let i =  this.cryptocurrency.findIndex(
+           (index) => index.name.toLowerCase() === item.name.toLowerCase()
+        ); */
+        this.$set(this.item, "name", this.cryptocurrency[item.indexFound].name);
         this.$set(this.item, "price", item.price);
         this.$set(this.item, "difference", item.difference);
         this.$set(this.item, "change", item.change);

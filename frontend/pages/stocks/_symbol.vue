@@ -367,8 +367,8 @@ export default {
     created() {
       this.$root.$on('updateStock', (item) => {
         if(item.name.toLowerCase() === this.symbol){
-          let i = this.stocks.findIndex(index => index.name.toLowerCase() === item.name.toLowerCase());
-          this.$set(this.item, 'name', this.stocks[i].name);
+          //let i = this.stocks.findIndex(index => index.name.toLowerCase() === item.name.toLowerCase());
+          this.$set(this.item, 'name', this.stocks[item.indexFound].name);
           this.$set(this.item, 'price', item.price);
           this.$set(this.item, 'difference', item.difference);
           this.$set(this.item, 'change', item.change);
