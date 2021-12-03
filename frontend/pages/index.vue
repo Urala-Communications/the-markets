@@ -25,6 +25,12 @@
         <div class="col-12 col-lg-8 pr-lg-0">
           <div class="row m-0 justify-content-between main-content">
             <div class="col-lg-6 pl-half">
+              <!-- <div class="col-12 white-well crypto">
+                <h2>Top 50 Coins
+                  <NuxtLink class="index-link" to="/cryptocurrency">View all</NuxtLink>
+                </h2>
+                <IndexList :data="coins" type="cryptocurrency" />
+              </div> -->
               <div class="col-12 white-well crypto">
                 <h2>Cryptocurrencies
                   <NuxtLink class="index-link" to="/cryptocurrency">View all</NuxtLink>
@@ -102,6 +108,7 @@ export default {
         finageApiKey: process.env.finageApiKey,
         loading: true,
         view: 'list',
+        coins: [],
         cryptocurrency,
         currencies,
         stocks,
@@ -130,7 +137,7 @@ export default {
               newsItem.type = 'stocks'
               newsfeed.push(newsItem)
             }
-            if(newsfeed.length > 9){
+            if(newsfeed.length > 14){
               newsfeed.pop()
             }
           }
@@ -178,17 +185,19 @@ export default {
     },
     // async mounted () {
     created() {
-      // this.loaded = false;
       // this.checkMarketStatus();
+      // this.$root.$on('updateCoins', (update) => {
+      //   this.coins = update;
+      // });
       this.$root.$on('updateCrypto', (item) => {
-        // console.log(item)        
+        // console.log(item)
         let itemIndex =  item.indexFound ;//this.cryptocurrency.findIndex(index => index.name === item.name);
         this.$set(this.cryptocurrency[itemIndex], 'price', item.price);
         this.$set(this.cryptocurrency[itemIndex], 'difference', item.difference);
         this.$set(this.cryptocurrency[itemIndex], 'change', item.change);
       });
       this.$root.$on('updateCurrency', (item) => {
-        // console.log(item)       
+        // console.log(item)
         let itemIndex = item.indexFound ;//this.currencies.findIndex(index => index.name === item.name);
         this.$set(this.currencies[itemIndex], 'price', item.price);
         this.$set(this.currencies[itemIndex], 'difference', item.difference);
@@ -200,7 +209,14 @@ export default {
         this.$set(this.commodities[itemIndex], 'difference', item.difference);
         this.$set(this.commodities[itemIndex], 'change', item.change);
       });
-      this.$root.$on('updateStock', (item) => {       
+      // this.$root.$on('updateEconCommodities', (item) => {
+      //   console.log(item)
+      //   // let itemIndex = this.commodities.findIndex(index => index.symbol === item.symbol);
+      //   // this.$set(this.commodities[itemIndex], 'price', item.price);
+      //   // this.$set(this.commodities[itemIndex], 'difference', item.difference);
+      //   // this.$set(this.commodities[itemIndex], 'change', item.change);
+      // });
+      this.$root.$on('updateStock', (item) => {
         const itemIndex = item.indexFound ;//this.stocks.findIndex(index => index.name === item.name);
         this.$set(this.stocks[itemIndex], 'price', item.price);
         this.$set(this.stocks[itemIndex], 'difference', item.difference);
@@ -212,7 +228,7 @@ export default {
           this.loading = false;
         });
       });
-      this.$root.$on('updateIndice', (item) => {        
+      this.$root.$on('updateIndice', (item) => {
         let itemIndex = this.indices.findIndex(index => index.name === item.name);
         this.$set(this.indices[itemIndex], 'price', item.price);
         this.$set(this.indices[itemIndex], 'difference', item.difference);
@@ -233,33 +249,17 @@ export default {
           this.fetchNews(item.symbol);
         }
       });
-      setInterval(() => {
-        this.stocks.forEach(item => {
-          this.fetchNews(item.symbol);
-        });
-      }, 300000);
+      // setInterval(() => {
+      //   this.stocks.forEach(item => {
+      //     this.fetchNews(item.symbol);
+      //   });
+      // }, 300000);
       // this.cryptocurrency.forEach(item => {
       //   this.fetchCryptoNews(item.icon);
       // });
       // setInterval(() => {
       //   this.cryptocurrency.forEach(item => {
       //     this.fetchCryptoNews(item.icon);
-      //   });
-      // }, 300000)
-      // this.rising.forEach(item => {
-      //   if(item.symbol === 'DOGEUSD'){
-      //     this.fetchCryptoNews(item.symbol, 'rising');
-      //   } else {
-      //     this.fetchNews(item.symbol, 'rising');
-      //   }
-      // });
-      // setInterval(() => {
-      //   this.rising.forEach(item => {
-      //     if(item.symbol === 'DOGEUSD'){
-      //       this.fetchCryptoNews(item.symbol, 'rising');
-      //     } else {
-      //       this.fetchNews(item.symbol, 'rising');
-      //     }
       //   });
       // }, 300000)
     }

@@ -11,6 +11,14 @@
     >
      <div class="row m-0 index-list" id="commodities">
         <h2 class="col-12">Commodities</h2>
+        <!-- <div>{{ econCommodities }}</div> -->
+        <!-- <div v-if="Object.entries(econCommodities).length > 0" >
+        <div v-for="item in econCommodities" :key="item.name">
+          <p>{{ item.ticker }}</p>
+          <p>{{ item.name }}</p>
+          <p>{{ item.last }}</p>
+        </div>
+        </div> -->
         <!-- <div class="toggle col-12">
           <button
             class="grid btn-outline-dark btn mb-4 mr-2"
@@ -22,6 +30,11 @@
             :class="view === 'list' ? 'active' : ''"
             @click="showList()"
           />
+        </div> -->
+        <!-- <div class="col-12 col-lg-7 offset-lg-5">
+          <div class="col-12 white-well pt-2">
+            <IndexList :data="econCommodities" indexPage type="commodities" />
+          </div>
         </div> -->
         <div class="col-12 col-lg-7 offset-lg-5">
           <div class="col-12 white-well pt-2">
@@ -51,6 +64,7 @@ export default {
         finageApiKey: process.env.finageApiKey,
         loading: true,
         commodities,
+        econCommodities: {},
         view: 'list',
         chartData: null,
         chartOptions: null,
@@ -90,19 +104,23 @@ export default {
     },
     created() {
       this.$root.$on('updateCommodity', (item) => {
+        this.loading = false;
         let i = this.commodities.findIndex(index => index.symbol === item.symbol);
         this.$set(this.commodities[i], 'price', item.price);
         this.$set(this.commodities[i], 'difference', item.difference);
         this.$set(this.commodities[i], 'change', item.change);
       });
-      this.commodities.forEach(item => {
-        this.fetchNews(item.symbol);
-      });
-      setInterval(() => {
-        this.commodities.forEach(item => {
-          this.fetchNews(item.symbol);
-        });
-      }, 300000)
+      // this.$root.$on('updateEconCommodities', (item) => {
+      //   console.log(item)
+      //   this.econCommodities = item
+      //   // let itemIndex = this.commodities.findIndex(index => index.symbol === item.symbol);
+      //   // this.$set(this.commodities[itemIndex], 'price', item.price);
+      //   // this.$set(this.commodities[itemIndex], 'difference', item.difference);
+      //   // this.$set(this.commodities[itemIndex], 'change', item.change);
+      // });
+      // this.commodities.forEach(item => {
+      //   this.fetchNews(item.symbol);
+      // });
     },
   }
 </script>

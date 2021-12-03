@@ -36,7 +36,7 @@
     >
       <b-card no-body>
         <b-row v-if="item.symbol">
-          <b-col class="d-flex align-items-center col-md-7">
+          <b-col class="d-flex align-items-center col-12">
             <b-card-body class="pr-0 pb-0 pt-0">
               <b-card-text>
                 <!-- <p v-if="item.source" class="category">{{ item.source }}</p> -->
@@ -46,9 +46,19 @@
               </b-card-text>
             </b-card-body>
           </b-col>
-          <b-col class="pl-0 col-md-5">
+          <!-- <b-col class="d-flex align-items-center col-md-7">
+            <b-card-body class="pr-0 pb-0 pt-0">
+              <b-card-text> -->
+                <!-- <p v-if="item.source" class="category">{{ item.source }}</p> -->
+                <!-- <h5 class="card-title" v-snip="2">{{ item.title }}</h5>
+                <p class="card-text" v-snip="2">{{ item.description }}</p>
+                <span>{{ item.time }}</span>
+              </b-card-text>
+            </b-card-body>
+          </b-col> -->
+          <!-- <b-col class="pl-0 col-md-5">
             <b-card-img :src="getThumb(item)" alt="image"></b-card-img>
-          </b-col>
+          </b-col> -->
         </b-row>
         <b-row v-else>
           <b-col md="12">
@@ -133,13 +143,11 @@ export default {
 .card {
   border: none;
   flex-direction: row;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   background: #ffffff;
-  /* padding: 20px 26px 24px; */
-  /* border-radius: 18px; */
-  /* box-shadow: 0px 2.5px 9px 0 rgba(218, 226, 239, 0.5); */
+  .row {overflow: hidden;}
   .card-img {
-    /* height: 7rem; */
+
     margin-right: 0;
     border-radius: 18px;
     box-shadow: 0px 2.5px 9px 0 rgba(218, 226, 239, 0.5);
