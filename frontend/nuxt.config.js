@@ -1,5 +1,6 @@
 const finageApiKey = process.env.FINAGE_API_KEY;
 const finageSocketKey = process.env.FINAGE_SOCKET_KEY;
+const tradingEconKey = process.env.TRADING_ECON_API_KEY;
 const liveApiUrl = process.env.LIVE_API_URL;
 const cmcApiKey = process.env.CMC_KEY;
 // const strapiBaseUri = process.env.STRAPI_URL || "http://localhost:1337";
@@ -13,6 +14,7 @@ export default {
     finageApiKey,
     finageSocketKey,
     cmcApiKey,
+    tradingEconKey,
     strapiBaseUri,
     liveApiUrl
   },

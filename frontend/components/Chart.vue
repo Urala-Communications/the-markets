@@ -88,7 +88,8 @@ export default {
                 series: [
                     {
                         name: "Price",
-                        type: "area",
+                        // type: 'candlestick',
+                        type: 'area',
                         data: this.data,
                         color: "#fff",
                     },
@@ -108,6 +109,12 @@ export default {
                         dataGrouping: {
                             enabled: false,
                         },
+                    },
+                    candlestick: {
+                        color: 'red',
+                        lineColor: 'red',
+                        upColor: 'green',
+                        upLineColor: 'green',
                     },
                     area: {
                         //stacking: "normal",
@@ -567,10 +574,10 @@ export default {
         };
     },
     watch: {
-        
+
     },
     methods: {
-       
+
     },
     mounted() {
         this.$nextTick(() => {
@@ -579,7 +586,7 @@ export default {
 
         cChart = this;
         const self = this;
-        
+
         let oldtime = new Date();
         oldtime.setMilliseconds(0);
         oldtime = oldtime.getTime();
@@ -588,7 +595,7 @@ export default {
         oldtimeMin.setMilliseconds(0);
         oldtimeMin.setSeconds(0);
         oldtimeMin = oldtimeMin.getTime();
-        
+
         function updateChartDat(data) {
             if (data.symbol === self.c_symbol) {
                 if (self.$refs.highcharts != null) {
@@ -615,9 +622,9 @@ export default {
                             series.addPoint([time, price], true, true);
                             if (grouping == "second") {
                                 oldtime=time;
-                            } else if (grouping == "minute"){                                
+                            } else if (grouping == "minute"){
                                 oldtimeMin=time;
-                            } 
+                            }
                         } else {
                             if (series.points.length > 0) {
                                 if (
