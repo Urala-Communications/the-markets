@@ -398,8 +398,8 @@ export default {
       });
       this.$root.$on('updateIndice', (item) => {
         if(item.name.replace(/ /g, '-').toLowerCase() === this.symbol){
-          let i = this.indices.findIndex(index => index.name.toLowerCase() === item.name.toLowerCase());
-          this.$set(this.item, 'name', this.indices[i].name);
+          //let i = this.indices.findIndex(index => index.name.toLowerCase() === item.name.toLowerCase());
+          this.$set(this.item, 'name', this.indices[item.indexFound].name);
           this.$set(this.item, 'price', item.price);
           this.$set(this.item, 'difference', item.difference);
           this.$set(this.item, 'change', item.change);

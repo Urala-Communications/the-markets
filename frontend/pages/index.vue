@@ -213,10 +213,10 @@ export default {
         });
       });
       this.$root.$on('updateIndice', (item) => {        
-        let itemIndex = this.indices.findIndex(index => index.name === item.name);
-        this.$set(this.indices[itemIndex], 'price', item.price);
-        this.$set(this.indices[itemIndex], 'difference', item.difference);
-        this.$set(this.indices[itemIndex], 'change', item.change);
+        //let itemIndex = this.indices.findIndex(index => index.name === item.name);
+        this.$set(this.indices[item.indexFound], 'price', item.price);
+        this.$set(this.indices[item.indexFound], 'difference', item.difference);
+        this.$set(this.indices[item.indexFound], 'change', item.change);
       });
       this.$root.$on('updateBond', (item) => {
         let itemIndex = this.bonds.findIndex(index => index.name === item.name);

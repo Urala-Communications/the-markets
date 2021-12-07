@@ -96,11 +96,11 @@ export default {
     },
     created() {
       this.$root.$on('updateIndice', (item) => {
-        let i = this.indices.findIndex(index => index.name === item.name);
+        //let i = this.indices.findIndex(index => index.name === item.name);
         // console.log(this.indices[i])
-        this.$set(this.indices[i], 'price', item.price);
-        this.$set(this.indices[i], 'difference', item.difference);
-        this.$set(this.indices[i], 'change', item.change);
+        this.$set(this.indices[item.indexFound], 'price', item.price);
+        this.$set(this.indices[item.indexFound], 'difference', item.difference);
+        this.$set(this.indices[item.indexFound], 'change', item.change);
         this.$nextTick(() => {
           this.loading = false;
         });
