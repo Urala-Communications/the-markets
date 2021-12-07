@@ -1,18 +1,18 @@
 <template>
   <div v-if="indexPage && !mobileScreen" class="row mx-0 justify-content-between w-100">
-    <div class="grid">
-      <div class="pb-3"><strong>Symbol</strong></div>
-      <div class="pb-3"><strong>Name</strong></div>
-      <div class="pb-3"><strong>Price</strong></div>
-      <div class="pb-3 justify-content-center"><strong>% Change</strong></div>
-      <div class="pb-3 justify-content-center"><strong>$ Change</strong></div>
+    <div class="grid grid-header">
+      <div class="pb-2"><strong>Symbol</strong></div>
+      <div class="pb-2"><strong>Name</strong></div>
+      <div class="pb-2"><strong>Price</strong></div>
+      <div class="pb-2 justify-content-center"><strong>% Change</strong></div>
+      <div class="pb-2 justify-content-center"><strong>$ Change</strong></div>
     </div>
     <div
       v-for="index in data"
       :key="index.name"
       class="w-100 grid-wrapper"
     >
-      <div v-if="type === 'rising'" class="movers-grid grid">
+      <div v-if="type === 'rising'" class="movers-grid grid grid-header">
         <span>{{ index.symbol }}</span>
         <span>{{ index.company_name }}</span>
         <span :class="index.change > 0 ? 'up' : 'down'"><span v-if="type !== 'indices'">$</span>{{ index.price }}</span>
@@ -26,7 +26,7 @@
             class="instrument index d-flex icon-wrapper"
             :to="`/${type}/${index.name.replace(/\s+|[' '\/]/g, '-').toLowerCase()}`"
           >
-            <i class="icon" :class="index.icon" />
+            <i class="icon" :class="index.icon ? index.icon : index.symbol" />
             <!-- :style="{backgroundImage:`url(./_nuxt/assets/${index.icon}.png)`}" would be nice if all imgs were same type png/svg-->
             {{ index.name }}
             <span v-if="index.marketOpen" class="indicator"/>
@@ -61,7 +61,7 @@
       :to="`/${type}/${index.name.replace(/\s+|[' '\/]/g, '-').toLowerCase()}`"
     >
       <div class="d-flex icon-wrapper">
-        <div class="icon" :class="index.icon"/>
+        <div class="icon" :class="index.icon ? index.icon : index.symbol.toLowerCase()"/>
         <h4>{{ index.name }}<span v-if="index.marketOpen" class="indicator"/></h4>
       </div>
       <Price :index="index" :price="index.price" />
@@ -161,6 +161,9 @@ export default {
   grid-template-columns: 1fr 3fr 1fr 1fr 1fr;
   width: 100%;
   font-size: 14px;
+  &.grid-header{
+    font-size: 11px;
+  }
   > div, > span {
     padding: 4px;
     border-bottom: 1px solid #e3e3e3;
@@ -249,8 +252,8 @@ export default {
     margin-bottom: 0;
     /* @include number-font; */
     padding-right: 6px;
-    span{
-      margin-right: 10px;
+    span:last-of-type{
+      margin-left: 10px;
     }
   }
   strong:not(.loading) {
