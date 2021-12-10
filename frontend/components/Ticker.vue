@@ -341,6 +341,40 @@ export default {
     background-size: 60%;
   }
 }
+/* #crypto .index .fire .icon{
+  margin-top: -10px;
+  margin-bottom: -10px;
+} */
+.index .fire{
+  position: relative;
+  z-index: 1;
+  &:after, &:before{
+    position: absolute;
+    content: '';
+    background-image: url('./../assets/fire.gif');
+    background-repeat: no-repeat;
+    background-size: cover;
+    left: -8px;
+    top: -24px;
+    width: 43px;
+    height: 57px;
+    z-index: -1;
+  }
+  &:before {
+    background-image: url('./../assets/fire-front.gif');
+    z-index: 2;
+  }
+}
+
+/* .home .index .fire{
+  position: relative;
+  .icon {
+    position: absolute;
+    min-width: 38px;
+    top: -22px;
+    left: -5px;
+  }
+} */
 
 @media(max-width:1430px){
   .ticker{

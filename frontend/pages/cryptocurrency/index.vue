@@ -23,6 +23,11 @@
             @click="showList()"
           />
         </div> -->
+        <!-- <div class="col-12 col-lg-7 offset-lg-5">
+          <div class="col-12 white-well pt-2">
+            <IndexList :data="coins" type="cryptocurrency" indexPage />
+          </div>
+        </div> -->
         <div class="col-12 col-lg-7 offset-lg-5">
           <div class="col-12 white-well pt-2">
             <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
@@ -51,6 +56,7 @@ export default {
         finageApiKey: process.env.finageApiKey,
         cmcApiKey: process.env.cmcApiKey,
         loading: true,
+        coins: [],
         cryptocurrency,
         view: 'list',
         chartData: null,
@@ -113,9 +119,17 @@ export default {
 
     },
     created() {
-      // this.fetchCoinsByMarketCap();
+      let topCoins = localStorage.getItem('crypto');
+      // this.coins = JSON.parse(topCoins)
+      // this.checkMarketStatus();
+      this.$root.$on('updateCoins', (item) => {
+        let itemIndex =  item.indexFound ;
+        this.$set(this.coins[itemIndex], 'price', item.price);
+        this.$set(this.coins[itemIndex], 'difference', item.difference);
+        this.$set(this.coins[itemIndex], 'change', item.change);
+      });
       this.loading = false; // fix news api bug
-      this.$root.$on('updateCrypto', (item) => {        
+      this.$root.$on('updateCrypto', (item) => {
         let i = item.indexFound;//this.cryptocurrency.findIndex(index => index.name === item.name);
         this.$set(this.cryptocurrency[i], 'price', item.price);
         this.$set(this.cryptocurrency[i], 'difference', item.difference);

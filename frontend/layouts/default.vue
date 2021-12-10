@@ -11,7 +11,7 @@
 <script>
 import Ad from "./../components/Ad.vue";
 import {cryptocurrency, currencies, stocks, indices, bonds, rising, commodities} from "./../market.js";
-
+// import { TEClient} from 'tradingeconomics-stream'
 const finageApiKey = process.env.finageApiKey,
       finageSocketKey = process.env.finageSocketKey;
 // import Finage from 'finage';
@@ -51,6 +51,7 @@ export default {
       cryptoWS: new WebSocket(`wss://mZ3Zq4NXbp.finage.ws:6002/?token=${finageSocketKey}`),
       stockWS: new WebSocket(`wss://m2s3swr9mp.finage.ws:7005/?token=${finageSocketKey}`),
       indicesWS: new WebSocket(`wss://8umh1cipe9.finage.ws:9001/?token=${finageSocketKey}`),
+      // commodityWS: new WebSocket(`ws://stream.tradingeconomics.com/?client=bemon3pf6n3khs1:uohemfwf041hnna`),
       cmcApiKey: process.env.cmcApiKey,
       loading: false,
       view: 'list',
@@ -79,25 +80,42 @@ export default {
     }
   },
   methods: {
-    fetchCoinsByMarketCap() {
-      this.$axios.$get(`/api/v1/cryptocurrency/listings/latest?start=1&limit=50&convert=USD&CMC_PRO_API_KEY=${this.cmcApiKey}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        },
-        json: true,
-        gzip: true
-      })
-      .then((response) => {
-        // console.log(response.data)
-        let topCoins = response.data
-        this.$root.$emit('updateCoins', topCoins);
-        // this.writeToFirestore(response)
-        // this.cryptocurrency = response
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    // fetchCoinsByMarketCap() {
+    //   this.$axios.$get(`/api/v1/cryptocurrency/listings/latest?start=1&limit=50&convert=USD&CMC_PRO_API_KEY=${this.cmcApiKey}`, {
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       'Access-Control-Allow-Origin': '*'
+    //     },
+    //     json: true,
+    //     gzip: true
+    //   })
+    //   .then((response) => {
+    //     let topCoins = response.data
+    //     // this.$root.$emit('updateCoins', topCoins);
+    //     this.writeCryptoLists(topCoins)
+    //     // this.writeToFirestore(response)
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
+    // },
+    writeCryptoLists(coins){
+      // create list of symbols for sockets
+      let coinList = [];
+      for (const coin in coins) {
+        if (coins.hasOwnProperty(coin)) {
+          let obj = coins[coin];
+          for (const prop in obj) {
+            if (obj.hasOwnProperty(prop)) {
+              if(prop === 'symbol'){
+                coinList.push(obj[prop] + 'USD')
+              }
+            }
+          }
+        }
+      }
+      localStorage.setItem('coinList', coinList.join());
+      localStorage.setItem('crypto', JSON.stringify(coins));
     },
     // async readFromFirestore() {
     //   const coinRef = this.$fire.firestore.collection('cryptoTop').doc('coins')
@@ -127,13 +145,6 @@ export default {
       }
     },
     connectSockets() {
-      // Number.prototype.toFixed = function(n) {
-      //   return this.toLocaleString(undefined, {
-      //     minimumFractionDigits: n,
-      //     maximumFractionDigits: n
-      //   });
-      // };
-
       // FOREX
       this.forexWS.onopen = () => {
         this.loading = true;
@@ -175,19 +186,19 @@ export default {
       }
 
       // CRYPTO
-
       this.cryptoWS.onopen = () => {
         this.loading = true;
         // console.log("CRYPTO Socket connection established");
-        this.cryptoWS.send(JSON.stringify({"action": "subscribe", "symbols": "BTCUSD,ETHUSD,BNBUSD,ADAUSD,SOLUSD,XRPUSD,DOTUSD,DOGEUSD,SHIBUSD,LUNAUSD,AVAXUSD,LTCUSD,UNIUSD,LINKUSD,MATICUSD,ALGOUSD,VETUSD,XLMUSD,AXSUSD,FILUSD,TRXUSD,ETCUSD,ATOMUSD,THETAUSD,FTTUSD,FTMUSD,HBARUSD,DAIUSD,EGLDUSD,NEARUSD,GRTUSD,XTZUSD,XMRUSD,EOSUSD,MANAUSD,HNTUSD,CAKEUSD,AAVEUSD,LRCUSD,IOTAUSD,NEOUSD,MKRUSD,ENJUSD,DASHUSD,COMPUSD,CRVUSD,BATUSD,SUSHIUSD,ZILUSD,YFIUSD,1INCHUSD"}))
+        let coinList = localStorage.getItem('coinList');
+        this.cryptoWS.send(JSON.stringify({"action": "subscribe", "symbols": coinList}))
+        // this.cryptoWS.send(JSON.stringify({"action": "subscribe", "symbols": "BTCUSD,ETHUSD,BNBUSD,ADAUSD,SOLUSD,XRPUSD,DOTUSD,DOGEUSD,SHIBUSD,LUNAUSD,AVAXUSD,LTCUSD,UNIUSD,LINKUSD,MATICUSD,ALGOUSD,VETUSD,XLMUSD,AXSUSD,FILUSD,TRXUSD,ETCUSD,ATOMUSD,THETAUSD,FTTUSD,FTMUSD,HBARUSD,DAIUSD,EGLDUSD,NEARUSD,GRTUSD,XTZUSD,XMRUSD,EOSUSD,MANAUSD,HNTUSD,CAKEUSD,AAVEUSD,LRCUSD,IOTAUSD,NEOUSD,MKRUSD,ENJUSD,DASHUSD,COMPUSD,CRVUSD,BATUSD,SUSHIUSD,ZILUSD,YFIUSD,1INCHUSD"}))
       }
       this.cryptoWS.onmessage = (msg) => {
         let data = JSON.parse(msg.data);
-
+        // let crypto = JSON.parse(localStorage.getItem('crypto'));
+        // let indexFound = crypto.findIndex(index => index.symbol + 'USD' === data['s']);
         let indexFound = this.cryptocurrency.findIndex(index => index.symbol === data['s']);
-        //if (item) {
         if (indexFound !== -1) {
-
           const item = this.cryptocurrency[indexFound];
           item.indexFound = indexFound;
           if(item.symbol === 'SHIBUSD'){
@@ -202,6 +213,7 @@ export default {
           //item.indexFound = this.cryptocurrency.findIndex(index => index.symbol === item.symbol);
           if (this.cryptocurrency[indexFound].op != item.price ) {
             this.$root.$emit('updateCrypto', item);
+            // this.$root.$emit('updateCoins', item);
             this.cryptocurrency[indexFound].op = item.price;
           }
         }
@@ -316,7 +328,35 @@ export default {
       this.indicesWS.onclose = () => {
         console.log('CLOSED INDICES WEBSOCKET')
       }
+
+       // COMMODITIES
+      // this.commodityWS.onopen = () => {
+      //   this.commodityWS.send({"topic": "subscribe", "to": "EECXM:COM"});
+      // }
+      // this.commodityWS.onmessage = (msg) => {
+      //   console.log(msg)
+      // }
+      // this.commodityWS.onerror = (error) => {
+      //   console.log(error)
+      // }
+      // this.commodityWS.onclose = () => {
+      //   console.log('CLOSED COMMODITIES WEBSOCKET')
+      // }
     },
+    // COMMODITIES
+    // connectCommodities() {
+    //   const subscribe = (asset) => {
+    //     const client = new TEClient({
+    //       key: 'bemon3pf6n3khs1',
+    //       secret: 'uohemfwf041hnna',
+    //     })
+    //     client.subscribe(asset)
+    //     client.on('message', msg => {
+    //       console.log(`Price for ${asset}:`, msg.price)
+    //     })
+    //   }
+    //   subscribe('UKX:IND')
+    // },
     fetchStocks() {
       this.$axios.$get(`https://api.finage.co.uk/last/stocks/?symbols=AAPL,AMZN,BA,BABA,FB,MSFT,MRNA,NIO,NVDA,PFE,PLTR,SAN,TSLA,XPEV,GME,AMC,BB&apikey=${finageApiKey}`)
       .then(response => {
@@ -531,10 +571,11 @@ export default {
 <style lang="scss">
 /* @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap'); */
 @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=Nunito:wght@400;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 html, body {
   font-family: 'Archivo', sans-serif;
   font-size: 16px;
-  word-spacing: 1px;
+  /* word-spacing: 1px; */
   overflow-x: hidden;
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
