@@ -23,16 +23,16 @@
             @click="showList()"
           />
         </div> -->
-        <!-- <div class="col-12 col-lg-7 offset-lg-5">
+        <div class="col-12 col-lg-7 offset-lg-5">
           <div class="col-12 white-well pt-2">
             <IndexList :data="coins" type="cryptocurrency" indexPage />
           </div>
-        </div> -->
-        <div class="col-12 col-lg-7 offset-lg-5">
+        </div>
+        <!-- <div class="col-12 col-lg-7 offset-lg-5">
           <div class="col-12 white-well pt-2">
             <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
           </div>
-        </div>
+        </div> -->
         <!-- <div class="col-12 col-lg-7 offset-lg-5">
           <div class="col-lg-12 mt-4 white-well">
             <News :newsData="newsData"/>
@@ -120,7 +120,7 @@ export default {
     },
     created() {
       let topCoins = localStorage.getItem('crypto');
-      // this.coins = JSON.parse(topCoins)
+      this.coins = JSON.parse(topCoins)
       // this.checkMarketStatus();
       this.$root.$on('updateCoins', (item) => {
         let itemIndex =  item.indexFound ;

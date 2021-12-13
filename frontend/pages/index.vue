@@ -25,18 +25,18 @@
         <div class="col-12 col-lg-8 pr-lg-0">
           <div class="row m-0 justify-content-between main-content">
             <div class="col-lg-6 pl-half">
-              <!-- <div class="col-12 white-well crypto">
-                <h2>Crypto
-                  <NuxtLink class="index-link" to="/cryptocurrency">View all</NuxtLink>
-                </h2>
-                <IndexList :data="coins" type="cryptocurrency" />
-              </div> -->
               <div class="col-12 white-well crypto">
                 <h2>Crypto
                   <NuxtLink class="index-link" to="/cryptocurrency">View all</NuxtLink>
                 </h2>
-                <IndexList :data="cryptocurrency" type="cryptocurrency" />
+                <IndexList :data="coins" type="cryptocurrency" />
               </div>
+              <!-- <div class="col-12 white-well crypto">
+                <h2>Crypto
+                  <NuxtLink class="index-link" to="/cryptocurrency">View all</NuxtLink>
+                </h2>
+                <IndexList :data="cryptocurrency" type="cryptocurrency" />
+              </div> -->
               <!-- <div class="col-12 white-well indices">
                 <h2>Indices
                   <NuxtLink class="index-link" to="/indices">View all</NuxtLink>
@@ -186,7 +186,7 @@ export default {
     // async mounted () {
     created() {
       let topCoins = localStorage.getItem('crypto');
-      // this.coins = JSON.parse(topCoins)
+      this.coins = JSON.parse(topCoins)
       // this.checkMarketStatus();
       this.$root.$on('updateCoins', (item) => {
         let itemIndex = item.indexFound ;

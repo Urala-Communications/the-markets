@@ -80,25 +80,25 @@ export default {
     }
   },
   methods: {
-    // fetchCoinsByMarketCap() {
-    //   this.$axios.$get(`/api/v1/cryptocurrency/listings/latest?start=1&limit=50&convert=USD&CMC_PRO_API_KEY=${this.cmcApiKey}`, {
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //       'Access-Control-Allow-Origin': '*'
-    //     },
-    //     json: true,
-    //     gzip: true
-    //   })
-    //   .then((response) => {
-    //     let topCoins = response.data
-    //     // this.$root.$emit('updateCoins', topCoins);
-    //     this.writeCryptoLists(topCoins)
-    //     // this.writeToFirestore(response)
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
-    // },
+    fetchCoinsByMarketCap() {
+      this.$axios.$get(`/api/v1/cryptocurrency/listings/latest?start=1&limit=50&convert=USD&CMC_PRO_API_KEY=${this.cmcApiKey}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        },
+        json: true,
+        gzip: true
+      })
+      .then((response) => {
+        let topCoins = response.data
+        // this.$root.$emit('updateCoins', topCoins);
+        this.writeCryptoLists(topCoins)
+        // this.writeToFirestore(response)
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    },
     writeCryptoLists(coins){
       // create list of symbols for sockets
       let coinList = [];
@@ -195,11 +195,12 @@ export default {
       }
       this.cryptoWS.onmessage = (msg) => {
         let data = JSON.parse(msg.data);
-        // let crypto = JSON.parse(localStorage.getItem('crypto'));
-        // let indexFound = crypto.findIndex(index => index.symbol + 'USD' === data['s']);
-        let indexFound = this.cryptocurrency.findIndex(index => index.symbol === data['s']);
+        let crypto = JSON.parse(localStorage.getItem('crypto'));
+        let indexFound = crypto.findIndex(index => index.symbol + 'USD' === data['s']);
+        // let indexFound = this.cryptocurrency.findIndex(index => index.symbol === data['s']);
         if (indexFound !== -1) {
-          const item = this.cryptocurrency[indexFound];
+          // const item = this.cryptocurrency[indexFound];
+          const item = crypto[indexFound];
           item.indexFound = indexFound;
           if(item.symbol === 'SHIBUSD'){
             item.price = Number(data['p']);
@@ -211,10 +212,10 @@ export default {
           item.time = data['t'];
           item.marketOpen = true;
           //item.indexFound = this.cryptocurrency.findIndex(index => index.symbol === item.symbol);
-          if (this.cryptocurrency[indexFound].op != item.price ) {
-            this.$root.$emit('updateCrypto', item);
-            // this.$root.$emit('updateCoins', item);
-            this.cryptocurrency[indexFound].op = item.price;
+          if (crypto[indexFound].op != item.price ) {
+            // this.$root.$emit('updateCrypto', item);
+            this.$root.$emit('updateCoins', item);
+            crypto[indexFound].op = item.price;
           }
         }
         this.loading = false;
@@ -541,7 +542,7 @@ export default {
     // setInterval(() => {
     //   this.connect()
     // }, 60000);
-    // this.fetchCoinsByMarketCap()
+    this.fetchCoinsByMarketCap()
     // this.readFromFirestore()
     this.$root.$on('bv::collapse::state', (id, collapsed) => {
       if (id === "sidebar") {
