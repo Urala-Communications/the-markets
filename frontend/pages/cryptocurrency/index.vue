@@ -130,10 +130,11 @@ export default {
       });
       this.loading = false; // fix news api bug
       this.$root.$on('updateCrypto', (item) => {
-        let i = item.indexFound;//this.cryptocurrency.findIndex(index => index.name === item.name);
-        this.$set(this.cryptocurrency[i], 'price', item.price);
-        this.$set(this.cryptocurrency[i], 'difference', item.difference);
-        this.$set(this.cryptocurrency[i], 'change', item.change);
+        
+        //let i = item.indexFound;//this.cryptocurrency.findIndex(index => index.name === item.name);
+        this.$set(this.cryptocurrency[item.indexFound], 'price', item.price);
+        this.$set(this.cryptocurrency[item.indexFound], 'difference', item.difference);
+        this.$set(this.cryptocurrency[item.indexFound], 'change', item.change);
       });
       // this.cryptocurrency.forEach(item => {
       //   this.fetchMarketCap(item.symbol);

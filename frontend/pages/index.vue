@@ -196,10 +196,10 @@ export default {
       });
       this.$root.$on('updateCrypto', (item) => {
         // console.log(item)
-        let itemIndex = item.indexFound ;//this.cryptocurrency.findIndex(index => index.name === item.name);
-        this.$set(this.cryptocurrency[itemIndex], 'price', item.price);
-        this.$set(this.cryptocurrency[itemIndex], 'difference', item.difference);
-        this.$set(this.cryptocurrency[itemIndex], 'change', item.change);
+        //let itemIndex = item.indexFound ;//this.cryptocurrency.findIndex(index => index.name === item.name);
+        this.$set(this.cryptocurrency[item.indexFound], 'price', item.price);
+        this.$set(this.cryptocurrency[item.indexFound], 'difference', item.difference);
+        this.$set(this.cryptocurrency[item.indexFound], 'change', item.change);
       });
       this.$root.$on('updateCurrency', (item) => {
         // console.log(item)

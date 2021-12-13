@@ -40,15 +40,27 @@
                 <span v-if="marketCap"><strong>Marketcap:</strong>${{ marketCap }}</span>
               </div>
             </div>
+
             <chart
-              v-if="chartData.length > 0"
+              v-if="chartData.length > 0 && type !== 'cryptocurrency'"
               :data="chartData"
               :options="chartOptions"
               :chartColour="item.change > 0 ? 'up' : 'down'"
-              :c_symbol="c_symbol"
+              :c_symbol="symbol"
               :new="item"
               ref="Chart"
             />
+            <TradingChart
+              v-if="chartData.length > 0 && type === 'cryptocurrency'"
+              :data="chartData"
+              :options="chartOptions"
+              :chartColour="item.change > 0 ? 'up' : 'down'"
+              :symbol="live"
+              
+              :new="item"
+              ref="TradingChart"
+            />
+
           </div>
           <div v-if="profile.description" class="info row">
             <div class="col-12 col-lg-6 pl-0">
@@ -114,10 +126,13 @@
 
 <script>
 import Chart from '~/components/Chart.vue'
+import TradingChart from '~/components/ohlcv-chart/TradingChart.vue'
+
 export default {
   name: 'Item',
   components: {
-    Chart
+    Chart,
+    TradingChart
   },
   props: {
     item: {
@@ -170,7 +185,10 @@ export default {
     marketStatus: {
       type: String
     },
-    c_symbol: {
+    symbol: {
+      type: String
+    },
+    live: {
       type: String
     }
 

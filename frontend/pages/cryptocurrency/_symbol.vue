@@ -29,10 +29,12 @@
     :yearHigh="yearHigh"
     :yearLow="yearLow"
     :chartData="chartData"
-    :initData="initData"
+    
     :chartOptions="chartOptions"
     :marketStatus="marketStatus"
-    :c_symbol="c_symbol"
+    :symbol="symbol"
+    :live="live"
+    
     ref="Item"
   />
 </template>
@@ -74,7 +76,11 @@ export default {
       tickData: [],
       livegroupData: [],
       chartOptions: null,
-      c_symbol: "",
+
+      live: "",
+      subindex: 2,
+      cryptoWS: new WebSocket(`wss://stream.binance.com/stream`),
+
       yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
       today: new Date(Date.now()).toLocaleDateString("fr-CA"),
     };
@@ -158,255 +164,72 @@ export default {
       // this.$axios.$get(`https://api.finage.co.uk/agg/crypto/${i.symbol}/1/day/${fiveYearsAgo}/${this.today}?limit=5000&apikey=${this.finageApiKey}`)
       this.$axios
         .$get(
-          `https://api.finage.co.uk/agg/crypto/${i.symbol}/1/day/${fiveYearsAgo}/${this.today}?limit=5000&apikey=${this.finageApiKey}`
+          `https://api.binance.com/api/v3/klines?limit=1000&symbol=${i.live}&interval=1d`
         )
         .then((response) => {
           //console.log("Aggregates");
-
-          this.chartData = response.results.map((i) => {
-            return [i.t, i.c];
-          });
-          this.c_symbol = i.symbol;
-          localStorage.setItem(
-            i.symbol + "-All",
-            JSON.stringify(this.chartData)
-          );
-          this.initData = this.chartData;
-          let last = response.results.pop();
-          this.open = last.o;
-          this.high = last.h;
-          this.low = last.l;
-          this.close = last.c;
-          this.volume = last.v;
+          this.chartData = response.map(o => {
+            const [timestamp, openPrice, high, low, close, volume] = [...o];
+            return [timestamp, openPrice, high, low, close, volume].map(n =>
+              Number(n)
+            );
+          })
+          this.symbol = i.symbol;
+          this.live = i.live;         
+          
+          let last = this.chartData.pop();
+          this.open = last[1];
+          this.high = last[2]
+          this.low = last[3];
+          this.close = last[4];
+          this.volume = last[5];
           this.loading = false;
+          this.subscribeTrade();
         })
         .catch((error) => {
           console.log(error);
         });
-    },
-    changeChartData(range, interval = "day") {
-      let i = this.cryptocurrency.find(
-        (item) => item.name.toLowerCase() === this.symbol
-      );
-      let minDate = fiveYearsAgo;
-      let startPoint = date;
-      let lastinterval = new Date();
-      lastinterval.setMilliseconds(0);
-      lastinterval.setSeconds(0);
-      let limit = 500;
-      switch (range) {
-        case "1m":
-          minDate = new Date(
-            new Date().getTime() - 24 * 1000 * 60 * 60
-          ).toLocaleDateString("fr-CA");
-          interval = "second";
-          limit = 100;
-          break;
-        case "5m":
-          minDate = new Date(
-            new Date().getTime() - 24 * 1000 * 60 * 60
-          ).toLocaleDateString("fr-CA");
-          interval = "second";
-          limit = 3000;
-          break;
-        case "10m":
-          minDate = new Date(
-            new Date().getTime() - 24 * 1000 * 60 * 60
-          ).toLocaleDateString("fr-CA");
-          interval = "second";
-          limit = 3000;
-          break;
-        case "30m":
-          minDate = new Date(
-            new Date().getTime() - 24 * 1000 * 60 * 60
-          ).toLocaleDateString("fr-CA");
-          interval = "second";
-          startPoint.setTime(new Date(new Date().getTime() - 1000 * 60 * 30));
-          limit = 3000;
-          break;
-        case "1h":
-          minDate = new Date(
-            new Date().getTime() - 24 * 1000 * 60 * 60
-          ).toLocaleDateString("fr-CA");
-          interval = "minute";
-          startPoint.setTime(new Date(new Date().getTime() - 1000 * 60 * 60));
-          limit = 3000;
-          break;
-        case "2h":
-          minDate = new Date(
-            new Date().getTime() - 24 * 1000 * 60 * 60
-          ).toLocaleDateString("fr-CA");
-          interval = "minute";
-          startPoint.setTime(startPoint.getTime() - 2 * 60 * 60 * 1000);
-          limit = 3000;
-          break;
-        case "4h":
-          minDate = new Date(
-            new Date().getTime() - 24 * 1000 * 60 * 60
-          ).toLocaleDateString("fr-CA");
-          interval = "minute";
-          startPoint.setTime(startPoint.getTime() - 4 * 60 * 60 * 1000);
-          limit = 3000;
-          break;
-        case "1d":
-          minDate = new Date(
-            new Date().getTime() - 24 * 1000 * 60 * 60
-          ).toLocaleDateString("fr-CA");
-          interval = "minute";
-          startPoint = new Date(new Date().getTime() - 24 * 1000 * 60 * 60);
-          limit = 3000;
-          break;
-        case "1w":
-          minDate = new Date(
-            new Date().getTime() - 30 * 24 * 1000 * 60 * 60
-          ).toLocaleDateString("fr-CA");
-          lastinterval.setMinutes(0);
-          startPoint = new Date(new Date().getTime() - 7 * 24 * 1000 * 60 * 60);
-          interval = "hour";
-          break;
-        case "1M":
-          minDate = new Date(
-            new Date().getTime() - 30 * 24 * 1000 * 60 * 60
-          ).toLocaleDateString("fr-CA");
-          lastinterval.setMinutes(0);
-          startPoint = new Date(
-            new Date().getTime() - 30 * 24 * 1000 * 60 * 60
-          );
-          interval = "hour";
-          break;
-        case "3M":
-          minDate = new Date(
-            new Date().getTime() - 365 * 24 * 1000 * 60 * 60
-          ).toLocaleDateString("fr-CA");
-          lastinterval.setMinutes(0);
-          lastinterval.setHours(0);
-          startPoint = new Date(
-            new Date().getTime() - 90 * 24 * 1000 * 60 * 60
-          );
-          interval = "day";
-          break;
-        case "6M":
-          minDate = new Date(
-            new Date().getTime() - 365 * 24 * 1000 * 60 * 60
-          ).toLocaleDateString("fr-CA");
-          lastinterval.setMinutes(0);
-          lastinterval.setHours(0);
-          startPoint = new Date(
-            new Date().getTime() - 180 * 24 * 1000 * 60 * 60
-          );
-          interval = "day";
-          break;
-        case "1y":
-          minDate = new Date(
-            new Date().getTime() - 365 * 24 * 1000 * 60 * 60
-          ).toLocaleDateString("fr-CA");
-          lastinterval.setMinutes(0);
-          lastinterval.setHours(0);
-          startPoint = new Date(
-            new Date().getTime() - 365 * 24 * 1000 * 60 * 60
-          );
-          interval = "day";
-          break;
-        case "All":
-          minDate = fiveYearsAgo;
-          lastinterval.setMinutes(0);
-          lastinterval.setHours(0);
-          interval = "All";
-          break;
-        default:
-          lastinterval.setMinutes(0);
-          lastinterval.setHours(0);
-          interval = "day";
-          break;
+    }, 
+    subscribeTrade(){
+      this.cryptoWS.onopen = () => {
+        this.cryptoWS.send(`{"method":"SUBSCRIBE","params":["${this.live.toLowerCase()}@aggTrade"],"id":${this.subindex}}`);
       }
-      let data = localStorage.getItem(i.symbol + "-" + interval);
-      //console.timeEnd("receivedDat");
-      //console.log(i.symbol + "-" + interval);
-      if (interval !== "second") {
-        // remove old data and add the new one
-        if (data !== null) {
-          data = JSON.parse(data);
-          /* console.log("debug time compare: ", [
-                    data[data.length - 1][0],
-                    lastinterval.getTime(),
-                ]); */
-          if (interval === "All") {
-            this.$root.$emit("update-chart-data", {
-              interval: interval,
-              range: range,
-              data: data,
-            });
-          } else if (data[data.length - 1][0] < lastinterval.getTime()) {
-            this.startUpdateData(
-              i.symbol,
-              range,
-              limit,
-              interval,
-              minDate,
-              startPoint
-            );
-          } else {
-            this.$root.$emit("update-chart-data", {
-              interval: interval,
-              range: range,
-              data: data.filter((a) => a[0] >= startPoint.getTime()),
-            });
-            //this.chartData = data;
-          }
-        } else {
-          this.startUpdateData(
-            i.symbol,
-            range,
-            limit,
-            interval,
-            minDate,
-            startPoint
-          );
-        }
-      } else {
-
-        let url = `${this.liveApiUrl}/${range}/${i.symbol}/1`;
-
-        this.$axios.$get(url).then((response) => {
-          let tempdata = response.map((i) => {
-            return [Date.parse(i._stop), i._value];
-          });
-          this.$root.$emit("update-chart-data", {
-            interval: interval,
-            range: range,
-            data: tempdata,
-          });
-        });
+      this.cryptoWS.onmessage = (msg) => {
+         let data = JSON.parse(msg.data);         
+         if (data.stream == `${this.live.toLowerCase()}@aggTrade`) {         
+           this.$root.$emit("updateTrade", 
+           {
+             symbol: this.live,
+             time: data.data.E,
+             price: Number(data.data.p),
+             volumn: Number(data.data.q),
+           });
+         }
       }
-    },
-    startUpdateData(symbol, range, limit, interval, minDate, startPoint) {
+    }, 
+      
+    updateInterval(symbol, interval){
       this.$axios
         .$get(
-          `https://api.finage.co.uk/agg/crypto/${symbol}/1/${interval}/${minDate}/${this.today}?&apikey=${this.finageApiKey}&limit=${limit}`
+          `https://api.binance.com/api/v3/klines?limit=1000&symbol=${symbol}&interval=${interval}`
         )
         .then((response) => {
-          let tempdata = response.results.map((i) => {
-            return [i.t, i.c];
-          });
+          
+          this.chartData = response.map(o => {
+            const [timestamp, openPrice, high, low, close, volume] = [...o];
+            return [timestamp, openPrice, high, low, close, volume].map(n =>
+              Number(n)
+            );
+          });          
 
-          this.$root.$emit("update-chart-data", {
-            interval: interval,
-            range: range,
-            data:
-              range !== "All"
-                ? tempdata.filter((a) => a[0] >= startPoint.getTime())
-                : tempdata,
-          });
-          //this.chartData = response.results.map(i => { return [ i.t ,i.c ]});
-          localStorage.setItem(
-            symbol + "-" + interval,
-            JSON.stringify(tempdata)
-          );
+          this.$root.$emit("updatedInterval", {symbol, interval});
         })
         .catch((error) => {
           console.log(error);
-        });
+        });    
     },
+    
+    
     fetchNews() {
       let i = this.cryptocurrency.find(
         (item) => item.name.toLowerCase() === this.symbol.replace("-", " ")
@@ -437,32 +260,38 @@ export default {
   },
   created() {
     this.$root.$on("updateCrypto", (item) => {
-      //console.log(item)
-      if (item.name.toLowerCase() === this.symbol.replace("-", " ")) {
+      
+      if (item.symbol === this.symbol.replace("-", " ")) {
         /* let i =  this.cryptocurrency.findIndex(
            (index) => index.name.toLowerCase() === item.name.toLowerCase()
         ); */
         this.$set(this.item, "name", this.cryptocurrency[item.indexFound].name);
-        this.$set(this.item, "price", item.price);
+        //this.$set(this.item, "price", item.price);
         this.$set(this.item, "difference", item.difference);
         this.$set(this.item, "change", item.change);
         this.$set(this.item, "icon", item.icon);
         this.$set(this.item, "time", item.time);
       }
     });
-
-    this.$root.$on("changeRangeData", ([item, range, interval]) => {
-      //console.log("received emit data: ", [item, range, interval]);
-      //console.time("receivedDat");
-      if (item.name === this.c_symbol) {
-        this.changeChartData(range, interval);
+    this.$root.$on("updateTrade", ({symbol, time, price, volumn}) => {
+      
+      if (symbol === this.live) {
+        this.$set(this.item, "price", price);
       }
-    });
+    })
+    
 
     this.fetchDetails();
     this.checkMarketStatus();
     this.fetchAggregates();
     this.fetchPrice();
+
+    this.$root.$on("changeInterval", ({symbol, interval}) => {
+      this.updateInterval(symbol, interval);
+    })
+    
+    
+
     // this.fetchNews();
     // setInterval(() => {
     //     this.fetchNews();

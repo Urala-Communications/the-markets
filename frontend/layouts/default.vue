@@ -48,7 +48,7 @@ export default {
   data() {
     return {
       forexWS: new WebSocket(`wss://w29hxx2ndd.finage.ws:8001/?token=${finageSocketKey}`),
-      cryptoWS: new WebSocket(`wss://mZ3Zq4NXbp.finage.ws:6002/?token=${finageSocketKey}`),
+      cryptoWS: new WebSocket(`wss://stream.binance.com/stream`),
       stockWS: new WebSocket(`wss://m2s3swr9mp.finage.ws:7005/?token=${finageSocketKey}`),
       indicesWS: new WebSocket(`wss://8umh1cipe9.finage.ws:9001/?token=${finageSocketKey}`),
       // commodityWS: new WebSocket(`ws://stream.tradingeconomics.com/?client=bemon3pf6n3khs1:uohemfwf041hnna`),
@@ -191,32 +191,35 @@ export default {
         // console.log("CRYPTO Socket connection established");
         // let coinList = localStorage.getItem('coinList');
         // this.cryptoWS.send(JSON.stringify({"action": "subscribe", "symbols": coinList}))
-        this.cryptoWS.send(JSON.stringify({"action": "subscribe", "symbols": "BTCUSD,ETHUSD,BNBUSD,ADAUSD,SOLUSD,XRPUSD,DOTUSD,DOGEUSD,SHIBUSD,LUNAUSD,AVAXUSD,LTCUSD,UNIUSD,LINKUSD,MATICUSD,ALGOUSD,VETUSD,XLMUSD,AXSUSD,FILUSD,TRXUSD,ETCUSD,ATOMUSD,THETAUSD,FTTUSD,FTMUSD,HBARUSD,DAIUSD,EGLDUSD,NEARUSD,GRTUSD,XTZUSD,XMRUSD,EOSUSD,MANAUSD,HNTUSD,CAKEUSD,AAVEUSD,LRCUSD,IOTAUSD,NEOUSD,MKRUSD,ENJUSD,DASHUSD,COMPUSD,CRVUSD,BATUSD,SUSHIUSD,ZILUSD,YFIUSD,1INCHUSD"}))
+        //this.cryptoWS.send(JSON.stringify({"action": "subscribe", "symbols": "BTCUSD,ETHUSD,BNBUSD,ADAUSD,SOLUSD,XRPUSD,DOTUSD,DOGEUSD,SHIBUSD,LUNAUSD,AVAXUSD,LTCUSD,UNIUSD,LINKUSD,MATICUSD,ALGOUSD,VETUSD,XLMUSD,AXSUSD,FILUSD,TRXUSD,ETCUSD,ATOMUSD,THETAUSD,FTTUSD,FTMUSD,HBARUSD,DAIUSD,EGLDUSD,NEARUSD,GRTUSD,XTZUSD,XMRUSD,EOSUSD,MANAUSD,HNTUSD,CAKEUSD,AAVEUSD,LRCUSD,IOTAUSD,NEOUSD,MKRUSD,ENJUSD,DASHUSD,COMPUSD,CRVUSD,BATUSD,SUSHIUSD,ZILUSD,YFIUSD,1INCHUSD"}))
+        this.cryptoWS.send(`{"method":"SUBSCRIBE","params":["${this.cryptocurrency.map(o => o.live.toLowerCase()).join('@ticker","')}@ticker"],"id":1}`)
       }
       this.cryptoWS.onmessage = (msg) => {
         let data = JSON.parse(msg.data);
-        // let crypto = JSON.parse(localStorage.getItem('crypto'));
-        // let indexFound = crypto.findIndex(index => index.symbol + 'USD' === data['s']);
-        let indexFound = this.cryptocurrency.findIndex(index => index.symbol === data['s']);
-        if (indexFound !== -1) {
-          const item = this.cryptocurrency[indexFound];
-          item.indexFound = indexFound;
-          if(item.symbol === 'SHIBUSD'){
-            item.price = Number(data['p']);
-          } else {
-            item.price = Number(data['p']).toFixed(2);
-          }
-          item.difference = Number(data['dd']).toFixed(2);
-          item.change = Number(data['dc']).toFixed(2);
-          item.time = data['t'];
-          item.marketOpen = true;
-          //item.indexFound = this.cryptocurrency.findIndex(index => index.symbol === item.symbol);
-          if (this.cryptocurrency[indexFound].op != item.price ) {
-            this.$root.$emit('updateCrypto', item);
-            // this.$root.$emit('updateCoins', item);
-            this.cryptocurrency[indexFound].op = item.price;
+        if (data.data) {
+
+          let indexFound = this.cryptocurrency.findIndex(index => index.live === data.data.s);
+          if (indexFound !== -1) {
+            const item = this.cryptocurrency[indexFound];
+            item.indexFound = indexFound;
+            if(item.symbol === 'SHIBUSD'){
+              item.price = Number(data.data.c);
+            } else {
+              item.price = Number(data.data.c).toFixed(2);
+            }
+            item.difference = Number(data.data.p).toFixed(2);
+            item.change = Number(data.data.P).toFixed(2);
+            item.time = data.data.E;
+            item.marketOpen = true;
+            
+            if (this.cryptocurrency[indexFound].op != item.price ) {
+              this.$root.$emit('updateCrypto', item);
+              // this.$root.$emit('updateCoins', item);
+              this.cryptocurrency[indexFound].op = item.price;
+            }
           }
         }
+        
         this.loading = false;
       }
       this.cryptoWS.onerror = (error) => {

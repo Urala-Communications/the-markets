@@ -33,6 +33,7 @@
     "moment": "^2.29.0",
     "node-fetch": "^3.1.0",
     "nuxt": "^2.14.6",
+    "trading-vue-js": "^1.0.2",
     "tradingeconomics": "^1.0.12",
     "tradingeconomics-stream": "^0.2.0",
     "vue": "^2.6.14",
