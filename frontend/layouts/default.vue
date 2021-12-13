@@ -80,43 +80,43 @@ export default {
     }
   },
   methods: {
-    fetchCoinsByMarketCap() {
-      this.$axios.$get(`/api/v1/cryptocurrency/listings/latest?start=1&limit=50&convert=USD&CMC_PRO_API_KEY=${this.cmcApiKey}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        },
-        json: true,
-        gzip: true
-      })
-      .then((response) => {
-        let topCoins = response.data
-        // this.$root.$emit('updateCoins', topCoins);
-        this.writeCryptoLists(topCoins)
-        // this.writeToFirestore(response)
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    },
-    writeCryptoLists(coins){
-      // create list of symbols for sockets
-      let coinList = [];
-      for (const coin in coins) {
-        if (coins.hasOwnProperty(coin)) {
-          let obj = coins[coin];
-          for (const prop in obj) {
-            if (obj.hasOwnProperty(prop)) {
-              if(prop === 'symbol'){
-                coinList.push(obj[prop] + 'USD')
-              }
-            }
-          }
-        }
-      }
-      localStorage.setItem('coinList', coinList.join());
-      localStorage.setItem('crypto', JSON.stringify(coins));
-    },
+    // fetchCoinsByMarketCap() {
+    //   this.$axios.$get(`/api/v1/cryptocurrency/listings/latest?start=1&limit=50&convert=USD&CMC_PRO_API_KEY=${this.cmcApiKey}`, {
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       'Access-Control-Allow-Origin': '*'
+    //     },
+    //     json: true,
+    //     gzip: true
+    //   })
+    //   .then((response) => {
+    //     let topCoins = response.data
+    //     // this.$root.$emit('updateCoins', topCoins);
+    //     this.writeCryptoLists(topCoins)
+    //     // this.writeToFirestore(response)
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
+    // },
+    // writeCryptoLists(coins){
+    //   // create list of symbols for sockets
+    //   let coinList = [];
+    //   for (const coin in coins) {
+    //     if (coins.hasOwnProperty(coin)) {
+    //       let obj = coins[coin];
+    //       for (const prop in obj) {
+    //         if (obj.hasOwnProperty(prop)) {
+    //           if(prop === 'symbol'){
+    //             coinList.push(obj[prop] + 'USD')
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
+    //   localStorage.setItem('coinList', coinList.join());
+    //   localStorage.setItem('crypto', JSON.stringify(coins));
+    // },
     // async readFromFirestore() {
     //   const coinRef = this.$fire.firestore.collection('cryptoTop').doc('coins')
     //   try {
@@ -189,9 +189,9 @@ export default {
       this.cryptoWS.onopen = () => {
         this.loading = true;
         // console.log("CRYPTO Socket connection established");
-        let coinList = localStorage.getItem('coinList');
-        this.cryptoWS.send(JSON.stringify({"action": "subscribe", "symbols": coinList}))
-        // this.cryptoWS.send(JSON.stringify({"action": "subscribe", "symbols": "BTCUSD,ETHUSD,BNBUSD,ADAUSD,SOLUSD,XRPUSD,DOTUSD,DOGEUSD,SHIBUSD,LUNAUSD,AVAXUSD,LTCUSD,UNIUSD,LINKUSD,MATICUSD,ALGOUSD,VETUSD,XLMUSD,AXSUSD,FILUSD,TRXUSD,ETCUSD,ATOMUSD,THETAUSD,FTTUSD,FTMUSD,HBARUSD,DAIUSD,EGLDUSD,NEARUSD,GRTUSD,XTZUSD,XMRUSD,EOSUSD,MANAUSD,HNTUSD,CAKEUSD,AAVEUSD,LRCUSD,IOTAUSD,NEOUSD,MKRUSD,ENJUSD,DASHUSD,COMPUSD,CRVUSD,BATUSD,SUSHIUSD,ZILUSD,YFIUSD,1INCHUSD"}))
+        // let coinList = localStorage.getItem('coinList');
+        // this.cryptoWS.send(JSON.stringify({"action": "subscribe", "symbols": coinList}))
+        this.cryptoWS.send(JSON.stringify({"action": "subscribe", "symbols": "BTCUSD,ETHUSD,BNBUSD,ADAUSD,SOLUSD,XRPUSD,DOTUSD,DOGEUSD,SHIBUSD,LUNAUSD,AVAXUSD,LTCUSD,UNIUSD,LINKUSD,MATICUSD,ALGOUSD,VETUSD,XLMUSD,AXSUSD,FILUSD,TRXUSD,ETCUSD,ATOMUSD,THETAUSD,FTTUSD,FTMUSD,HBARUSD,DAIUSD,EGLDUSD,NEARUSD,GRTUSD,XTZUSD,XMRUSD,EOSUSD,MANAUSD,HNTUSD,CAKEUSD,AAVEUSD,LRCUSD,IOTAUSD,NEOUSD,MKRUSD,ENJUSD,DASHUSD,COMPUSD,CRVUSD,BATUSD,SUSHIUSD,ZILUSD,YFIUSD,1INCHUSD"}))
       }
       this.cryptoWS.onmessage = (msg) => {
         let data = JSON.parse(msg.data);
@@ -199,7 +199,6 @@ export default {
         // let indexFound = crypto.findIndex(index => index.symbol + 'USD' === data['s']);
         let indexFound = this.cryptocurrency.findIndex(index => index.symbol === data['s']);
         if (indexFound !== -1) {
-          // const item = this.cryptocurrency[indexFound];
           const item = this.cryptocurrency[indexFound];
           item.indexFound = indexFound;
           if(item.symbol === 'SHIBUSD'){

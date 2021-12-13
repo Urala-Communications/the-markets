@@ -128,29 +128,29 @@ export default {
     }
   },
 
-  axios: {
-    proxy: true
-  },
+  // axios: {
+  //   proxy: true
+  // },
 
-  publicRuntimeConfig: {
-    axios: {
-      browserBaseURL: process.env.BROWSER_BASE_URL
-    }
-  },
+  // publicRuntimeConfig: {
+  //   axios: {
+  //     browserBaseURL: process.env.BROWSER_BASE_URL
+  //   }
+  // },
 
-  privateRuntimeConfig: {
-    axios: {
-      baseURL: process.env.BASE_URL
-    }
-  },
+  // privateRuntimeConfig: {
+  //   axios: {
+  //     baseURL: process.env.BASE_URL
+  //   }
+  // },
 
-  proxy: {
-    '/api': {
-      target: 'https://pro-api.coinmarketcap.com',
-      changeOrigin: true,
-      pathRewrite: { '^/api': '/' },
-    },
-  },
+  // proxy: {
+  //   '/api': {
+  //     target: 'https://pro-api.coinmarketcap.com',
+  //     changeOrigin: true,
+  //     pathRewrite: { '^/api': '/' },
+  //   },
+  // },
 
   strapi: {
     url: strapiBaseUri,

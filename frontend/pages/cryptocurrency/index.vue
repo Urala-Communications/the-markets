@@ -123,7 +123,7 @@ export default {
       // this.coins = JSON.parse(topCoins)
       // this.checkMarketStatus();
       this.$root.$on('updateCoins', (item) => {
-        let itemIndex =  item.indexFound ;
+        let itemIndex = item.indexFound ;
         this.$set(this.coins[itemIndex], 'price', item.price);
         this.$set(this.coins[itemIndex], 'difference', item.difference);
         this.$set(this.coins[itemIndex], 'change', item.change);
