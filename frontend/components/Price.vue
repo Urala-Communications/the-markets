@@ -14,10 +14,10 @@
     </div>
     <span v-else-if="change" class="change">{{ change }}</span>
     <span v-else-if="difference" class="difference">{{ difference }}</span>
-    <div v-else-if="index.quote">
+    <!-- <div v-else-if="index.quote">
       <strong>{{ index.quote["USD"].price.toFixed(2) }}</strong>
       <p><span>{{ index.quote["USD"].percent_change_24h.toFixed(2) }}%</span></p>
-    </div>
+    </div> -->
     <div v-else-if="index.ask || index.price">
       <strong v-if="index.ask">{{ index.ask }}</strong>
       <strong v-if="price">{{ price }}</strong>

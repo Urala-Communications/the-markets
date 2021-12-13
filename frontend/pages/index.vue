@@ -26,13 +26,13 @@
           <div class="row m-0 justify-content-between main-content">
             <div class="col-lg-6 pl-half">
               <!-- <div class="col-12 white-well crypto">
-                <h2>Top 50 Coins
+                <h2>Crypto
                   <NuxtLink class="index-link" to="/cryptocurrency">View all</NuxtLink>
                 </h2>
                 <IndexList :data="coins" type="cryptocurrency" />
               </div> -->
               <div class="col-12 white-well crypto">
-                <h2>Cryptocurrencies
+                <h2>Crypto
                   <NuxtLink class="index-link" to="/cryptocurrency">View all</NuxtLink>
                 </h2>
                 <IndexList :data="cryptocurrency" type="cryptocurrency" />
@@ -185,13 +185,18 @@ export default {
     },
     // async mounted () {
     created() {
+      // let topCoins = localStorage.getItem('crypto');
+      // this.coins = JSON.parse(topCoins)
       // this.checkMarketStatus();
-      // this.$root.$on('updateCoins', (update) => {
-      //   this.coins = update;
-      // });
+      this.$root.$on('updateCoins', (item) => {
+        let itemIndex = item.indexFound ;
+        this.$set(this.coins[itemIndex], 'price', item.price);
+        this.$set(this.coins[itemIndex], 'difference', item.difference);
+        this.$set(this.coins[itemIndex], 'change', item.change);
+      });
       this.$root.$on('updateCrypto', (item) => {
         // console.log(item)
-        let itemIndex =  item.indexFound ;//this.cryptocurrency.findIndex(index => index.name === item.name);
+        let itemIndex = item.indexFound ;//this.cryptocurrency.findIndex(index => index.name === item.name);
         this.$set(this.cryptocurrency[itemIndex], 'price', item.price);
         this.$set(this.cryptocurrency[itemIndex], 'difference', item.difference);
         this.$set(this.cryptocurrency[itemIndex], 'change', item.change);
@@ -373,7 +378,11 @@ export default {
 
 h2 {
   font-family: 'Nunito', serif;
-  font-size: 20px;
+  font-family: 'Press Start 2P', sans-serif;
+  letter-spacing: -1px;
+  text-transform: uppercase;
+  /* font-size: 20px; */
+  font-size: 16px;
   font-weight: 800;
   margin-bottom: 1rem;
   display: flex;
@@ -384,7 +393,8 @@ h2 {
 .index-link{
   display: inline-flex;
   align-items: center;
-  font-size: 12px;
+  font-size: 10px;
+  letter-spacing: 0;
   @include main-font();
   color: #fff;
   font-weight: 700;

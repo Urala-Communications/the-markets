@@ -157,6 +157,20 @@ export default {
     }
   },
   created() {
+    this.$root.$on('updateCoins', (item) => {
+      const btc = this.tickerItems.find(item => item.name === 'Bitcoin');
+      const eth = this.tickerItems.find(item => item.name === 'Ethereum');
+      if(item.name === btc.name){
+        this.$set(btc, 'price', item.price);
+        this.$set(btc, 'difference', item.difference);
+        this.$set(btc, 'change', item.change);
+      }
+      if(item.name === eth.name){
+        this.$set(eth, 'price', item.price);
+        this.$set(eth, 'difference', item.difference);
+        this.$set(eth, 'change', item.change);
+      }
+    });
     this.$root.$on('updateCrypto', (item) => {
       const btc = this.tickerItems.find(item => item.name === 'Bitcoin');
       const eth = this.tickerItems.find(item => item.name === 'Ethereum');

@@ -34,6 +34,7 @@
     "node-fetch": "^3.1.0",
     "nuxt": "^2.14.6",
     "tradingeconomics": "^1.0.12",
+    "tradingeconomics-stream": "^0.2.0",
     "vue": "^2.6.14",
     "vue-server-renderer": "^2.6.14",
     "vue-snip": "^1.2.0",

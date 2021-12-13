@@ -211,6 +211,7 @@ export default {
 @media(max-width: 992px){
   .news {
     justify-content: center !important;
+    padding-right: 10px;
   }
   .card{
     .card-img{

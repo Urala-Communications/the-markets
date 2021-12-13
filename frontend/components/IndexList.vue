@@ -23,11 +23,13 @@
         <div>{{ index.symbol }}</div>
         <div>
           <NuxtLink
-            class="instrument index d-flex icon-wrapper"
+            class="instrument index d-flex"
             :to="`/${type}/${index.name.replace(/\s+|[' '\/]/g, '-').toLowerCase()}`"
           >
-            <i class="icon" :class="index.icon ? index.icon : index.symbol" />
-            <!-- :style="{backgroundImage:`url(./_nuxt/assets/${index.icon}.png)`}" would be nice if all imgs were same type png/svg-->
+            <div class="icon-wrapper" :class="index.change > 3 && type === 'cryptocurrency' ? 'fire' : ''">
+              <i class="icon" :class="index.icon ? index.icon : index.symbol.toLowerCase()" />
+              <!-- :style="{backgroundImage:`url(./_nuxt/assets/${index.icon}.png)`}" would be nice if all imgs were same type png/svg-->
+            </div>
             {{ index.name }}
             <span v-if="index.marketOpen" class="indicator"/>
           </NuxtLink>
@@ -48,7 +50,7 @@
       :key="index.symbol"
       class="mover index"
     >
-      <h4>{{ index.company_name }}&nbsp;<span class="green">{{Number(index.change_percentage).toFixed(2)}}</span></h4>
+      <h4><span v-snip="1">{{ index.company_name }}</span>&nbsp;<span class="green">{{Number(index.change_percentage).toFixed(2)}}</span></h4>
       <Price :index="index" :price="index.price" class="mover-price"/>
     </div>
   </div>
@@ -60,7 +62,7 @@
       :class="index.change > 0 ? 'up' : 'down'"
       :to="`/${type}/${index.name.replace(/\s+|[' '\/]/g, '-').toLowerCase()}`"
     >
-      <div class="d-flex icon-wrapper">
+      <div class="d-flex icon-wrapper" :class="index.change > 3 && type === 'cryptocurrency' ? 'fire' : ''">
         <div class="icon" :class="index.icon ? index.icon : index.symbol.toLowerCase()"/>
         <h4>{{ index.name }}<span v-if="index.marketOpen" class="indicator"/></h4>
       </div>
@@ -158,7 +160,7 @@ export default {
 
 .grid {
   display: grid;
-  grid-template-columns: 1fr 3fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 2fr 1fr 1fr 1fr;
   width: 100%;
   font-size: 14px;
   &.grid-header{
@@ -226,11 +228,16 @@ export default {
   width: 100%;
   padding: 8px 0;
   font-size: 14px;
+  max-height: 42px;
   /* border-bottom: 1px solid #e3e3e3; */
   transition: 0.2s ease-in-out;
   h4 {
+    font-family: 'Press Start 2P', sans-serif;
+    letter-spacing: -1px;
+    word-spacing: -4px;
     display: inline-flex;
-    font-size: 14px;
+    /* font-size: 14px; */
+    font-size: 10px;
     margin-top: 0;
     align-items: center;
     margin-bottom: 0;
@@ -252,8 +259,12 @@ export default {
     margin-bottom: 0;
     /* @include number-font; */
     padding-right: 6px;
-    span:last-of-type{
+    // cmc price fallback
+    /* span:last-of-type{
       margin-left: 10px;
+    } */
+    span{
+      margin-right: 10px;
     }
   }
   strong:not(.loading) {
@@ -463,7 +474,8 @@ export default {
       background-size: 70% !important;
     }
     h2{
-      font-size: 28px;
+      /* font-size: 28px; */
+      font-size: 18px;
       &:after{bottom: 0;}
     }
     .news-section {
@@ -472,7 +484,7 @@ export default {
         padding: 0 8px;
       }
       h2 {
-        padding: 20px 26px 0;
+        padding: 20px 16px 0;
       }
     }
   }
