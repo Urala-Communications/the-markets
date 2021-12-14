@@ -184,30 +184,39 @@ export default {
           this.close = last[4];
           this.volume = last[5];
           this.loading = false;
-          this.subscribeTrade();
+          
+          if (this.cryptoWS.readyState === 1) {
+            this.cryptoWS.send(`{"method":"SUBSCRIBE","params":["${this.live.toLowerCase()}@aggTrade"],"id":${this.subindex}}`);
+          }
+
         })
         .catch((error) => {
           console.log(error);
         });
     }, 
     subscribeTrade(){
-      this.cryptoWS.onopen = () => {
-        this.cryptoWS.send(`{"method":"SUBSCRIBE","params":["${this.live.toLowerCase()}@aggTrade"],"id":${this.subindex}}`);
-      }
+      this.cryptoWS.onopen = () => {        
+        if (this.live)
+          this.cryptoWS.send(`{"method":"SUBSCRIBE","params":["${this.live.toLowerCase()}@aggTrade"],"id":${this.subindex}}`);
+      }      
+    },
+    listenTrade(){      
       this.cryptoWS.onmessage = (msg) => {
-         let data = JSON.parse(msg.data);         
-         if (data.stream == `${this.live.toLowerCase()}@aggTrade`) {         
-           this.$root.$emit("updateTrade", 
-           {
-             symbol: this.live,
-             time: data.data.E,
-             price: Number(data.data.p),
-             volumn: Number(data.data.q),
-           });
-         }
+        let data = JSON.parse(msg.data);            
+        if (data.stream == `${this.live.toLowerCase()}@aggTrade`) {         
+          this.$root.$emit("updateTrade", 
+          {
+            symbol: this.live,
+            time: data.data.E,
+            price: Number(data.data.p),
+            volumn: Number(data.data.q),
+          });
+        }
       }
     }, 
-      
+    unsubscribeTrade(){      
+      this.cryptoWS.send(`{"method":"UNSUBSCRIBE","params":["${this.live.toLowerCase()}@aggTrade"],"id":${this.subindex}}`);      
+    },   
     updateInterval(symbol, interval){
       this.$axios
         .$get(
@@ -289,7 +298,8 @@ export default {
     this.$root.$on("changeInterval", ({symbol, interval}) => {
       this.updateInterval(symbol, interval);
     })
-    
+    this.subscribeTrade();
+    this.listenTrade();
     
 
     // this.fetchNews();
@@ -299,6 +309,10 @@ export default {
     setInterval(() => {
       this.checkMarketStatus();
     }, 300000);
+  },
+  beforeDestroy() {
+    this.unsubscribeTrade();
+    this.cryptoWS.close();
   },
 };
 </script>

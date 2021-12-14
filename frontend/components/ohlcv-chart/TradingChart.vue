@@ -39,7 +39,7 @@ export default {
             this.width = document.querySelector('.graph').offsetWidth - 20          
         },
         on_selected(tf) {
-            console.log(tf)
+            
             this.$root.$emit("changeInterval", {symbol: this.symbol, interval: tf.name})            
         }
     },
@@ -49,7 +49,7 @@ export default {
         }
     },
     mounted() {
-        console.log(this.symbol)
+        
         window.addEventListener('resize', this.onResize); 
         
         this.$root.$on("updateKline", (updateData) => {})
