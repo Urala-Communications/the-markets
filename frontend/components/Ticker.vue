@@ -105,14 +105,9 @@ export default {
 .icon {
   min-width: 34px;
   height: 34px;
-  /* border: #f2f2f2 5px solid; */
-  /* border: #fff 4px solid; */
   background-repeat: no-repeat;
-  /* background-color: #f2f2f2; */
-  background-color: #fff;
   background-size: cover;
   background-position: center;
-  /* box-shadow: rgb(51 51 51 / 30%) 1px 1px 3px 0px; */
   border-radius: 50%;
   margin-right: 10px;
   &.usa {
