@@ -80,53 +80,52 @@ export default {
     }
   },
   methods: {
-    // fetchCoinsByMarketCap() {
-    //   this.$axios.$get(`/api/v1/cryptocurrency/listings/latest?start=1&limit=50&convert=USD&CMC_PRO_API_KEY=${this.cmcApiKey}`, {
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //       'Access-Control-Allow-Origin': '*'
-    //     },
-    //     json: true,
-    //     gzip: true
-    //   })
-    //   .then((response) => {
-    //     let topCoins = response.data
-    //     // this.$root.$emit('updateCoins', topCoins);
-    //     this.writeCryptoLists(topCoins)
-    //     // this.writeToFirestore(response)
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
-    // },
-    // writeCryptoLists(coins){
-    //   // create list of symbols for sockets
-    //   let coinList = [];
-    //   for (const coin in coins) {
-    //     if (coins.hasOwnProperty(coin)) {
-    //       let obj = coins[coin];
-    //       for (const prop in obj) {
-    //         if (obj.hasOwnProperty(prop)) {
-    //           if(prop === 'symbol'){
-    //             coinList.push(obj[prop] + 'USD')
-    //           }
-    //         }
-    //       }
-    //     }
-    //   }
-    //   localStorage.setItem('coinList', coinList.join());
-    //   localStorage.setItem('crypto', JSON.stringify(coins));
-    // },
-    // async readFromFirestore() {
-    //   const coinRef = this.$fire.firestore.collection('cryptoTop').doc('coins')
-    //   try {
-    //     const coinDoc = await coinRef.get()
-    //     console.log(coinDoc.data().topFifty)
-    //   } catch(e) {
-    //     console.log(e)
-    //     return
-    //   }
-    // },
+    fetchCoinsByMarketCap() {
+      // this.$axios.$get(`/api/v1/cryptocurrency/listings/latest?start=1&limit=50&convert=USD&CMC_PRO_API_KEY=${this.cmcApiKey}`, {
+      this.$axios.$get(`https://api.coinmarketcap.com/data-api/v3/map/all?listing_status=active&exchangeAux=is_active,status&cryptoAux=is_active,status&start=1&limit=50`, {
+        headers: {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+        json: true,
+        gzip: true
+      })
+      .then((response) => {
+        console.log(response)
+        let topCoins = response.data
+        // this.$root.$emit('updateCoins', topCoins);
+        this.writeCryptoLists(topCoins)
+        // this.writeToFirestore(response)
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    },
+    writeCryptoLists(coins){
+      // create list of symbols for sockets
+      let coinList = [];
+      for (const coin in coins) {
+        if (coins.hasOwnProperty(coin)) {
+          let obj = coins[coin];
+          for (const prop in obj) {
+            if (obj.hasOwnProperty(prop)) {
+              if(prop === 'symbol'){
+                coinList.push(obj[prop] + 'USD')
+              }
+            }
+          }
+        }
+      }
+      localStorage.setItem('coinList', coinList.join());
+      localStorage.setItem('crypto', JSON.stringify(coins));
+    },
+    async readFromFirestore() {
+      const coinRef = this.$fire.firestore.collection('cryptoTop').doc('coins')
+      try {
+        const coinDoc = await coinRef.get()
+        console.log(coinDoc.data().topFifty)
+      } catch(e) {
+        console.log(e)
+        return
+      }
+    },
     // async writeToFirestore(coinArray) {
     //   const coinRef = this.$fire.firestore.collection('cryptoTop').doc('coins')
     //   try {
@@ -211,7 +210,7 @@ export default {
             item.change = Number(data.data.P).toFixed(2);
             item.time = data.data.E;
             item.marketOpen = true;
-            
+
             if (this.cryptocurrency[indexFound].op != item.price ) {
               this.$root.$emit('updateCrypto', item);
               // this.$root.$emit('updateCoins', item);
@@ -219,7 +218,7 @@ export default {
             }
           }
         }
-        
+
         this.loading = false;
       }
       this.cryptoWS.onerror = (error) => {
@@ -541,10 +540,7 @@ export default {
   },
   created() {
     this.connect();
-    // setInterval(() => {
-    //   this.connect()
-    // }, 60000);
-    // this.fetchCoinsByMarketCap()
+    this.fetchCoinsByMarketCap()
     // this.readFromFirestore()
     this.$root.$on('bv::collapse::state', (id, collapsed) => {
       if (id === "sidebar") {
