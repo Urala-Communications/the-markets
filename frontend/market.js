@@ -132,20 +132,35 @@ export let bonds = [
   {name: 'US 20 Year Bond', symbol: 'DGS20', icon: 'usa', type: 'homeBond'},
   {name: 'US 30 Year Bond', symbol: 'DGS30', icon: 'usa', type: 'homeBond'},
 ];
-export let rising = [
-  // {name: 'Tesla', symbol: 'TSLA', icon: 'tesla'},
-  // {name: 'Gamestop', symbol: 'GME', icon: 'gme'},
-  // {name: 'AMC', symbol: 'AMC', icon: 'amc'},
-  // {name: 'BlackBerry', symbol: 'BB', icon: 'blackberry'},
-  // {name: 'Dogecoin', symbol: 'DOGEUSD', icon: 'doge'},
-];
+
+export let rising = []
+// export let commodities = [
+//   // {name: 'Carbon Emissions', symbol: 'CARBON', icon: 'carbon'},
+//   {name: 'Gold', symbol: 'XAUUSD', icon: 'gold'},
+//   {name: 'Silver', symbol: 'XAGUSD', icon: 'silver'},
+//   // {name: 'Bitcoin Futures', symbol: 'BTCUSD', icon: 'btc'},
+//   // {name: 'Natural Gas', symbol: 'NGAS', icon: 'natgas'},
+//   {name: 'Crude Oil', symbol: 'WTIUSD', icon: 'crude-oil'},
+//   {name: 'Brent Oil', symbol: 'XBRUSD', icon: 'brent-oil'},
+//   // {name: 'US Coffee C', symbol: 'USCOFFEEC', icon: 'coffee'},
+// ];
+
 export let commodities = [
-  // {name: 'Carbon Emissions', symbol: 'CARBON', icon: 'carbon'},
-  {name: 'Gold', symbol: 'XAUUSD', icon: 'gold'},
-  {name: 'Silver', symbol: 'XAGUSD', icon: 'silver'},
-  // {name: 'Bitcoin Futures', symbol: 'BTCUSD', icon: 'btc'},
-  // {name: 'Natural Gas', symbol: 'NGAS', icon: 'natgas'},
-  {name: 'Crude Oil', symbol: 'WTIUSD', icon: 'crude-oil'},
-  {name: 'Brent Oil', symbol: 'XBRUSD', icon: 'brent-oil'},
-  // {name: 'US Coffee C', symbol: 'USCOFFEEC', icon: 'coffee'},
+  {name: 'EU Carbon Emissions', symbol: 'EECXM:IND', icon: 'carbon'},
+  {name: 'Platinum', symbol: 'XPTUSD:CUR', icon: 'platinum'},
+  {name: 'Gold', symbol: 'XAUUSD:CUR', icon: 'gold'},
+  // {name: 'Silver', symbol: 'XAGUSD:CUR', icon: 'silver'},
+  // {name: 'Natural Gas', symbol: 'NG1:COM', icon: 'natgas'},
+  // {name: 'Crude Oil', symbol: 'CL1:COM', icon: 'crude-oil'},
+  // {name: 'Brent Oil', symbol: 'CO1:COM', icon: 'brent-oil'},
+  // {name: 'Coffee Futures', symbol: 'KC1:COM', icon: 'coffee'},
 ];
+
+// Solar Energy Index
+// Wind Energy Index
+
+// Coffee *
+// Cobalt *
+// CRB Index *
+// LME Index *
+

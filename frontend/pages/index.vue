@@ -96,7 +96,6 @@
 
 <script>
 import {cryptocurrency, currencies, stocks, indices, bonds, rising, commodities} from "./../market.js";
-// import IndexList from '../components/IndexList.vue';
 import Ad from "./../components/Ad.vue";
 export default {
     components: {
