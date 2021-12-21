@@ -212,6 +212,7 @@ export default {
         this.$set(this.commodities[itemIndex], 'price', item.price);
         this.$set(this.commodities[itemIndex], 'difference', item.difference);
         this.$set(this.commodities[itemIndex], 'change', item.change);
+        this.loading = false;
       });
       // this.$root.$on('updateEconCommodities', (item) => {
       //   console.log(item)
@@ -229,7 +230,6 @@ export default {
       this.$root.$on('updateRising', (update) => {
         this.rising = update;
         this.$nextTick(() => {
-          this.loading = false;
         });
       });
       this.$root.$on('updateIndice', (item) => {

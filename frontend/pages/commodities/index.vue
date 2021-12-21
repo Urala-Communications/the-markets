@@ -23,7 +23,7 @@
             @click="showList()"
           />
         </div> -->
-        <div class="col-12 col-lg-7 offset-lg-5">
+        <div class="col-12 col-lg-8 offset-lg-4">
           <div class="col-12 white-well pt-2">
             <IndexList :data="commodities" indexPage type="commodities" />
           </div>
