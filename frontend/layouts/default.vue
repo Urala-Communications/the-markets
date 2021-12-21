@@ -457,7 +457,7 @@ export default {
       this.$axios.$get(`https://api.tradingeconomics.com/markets/commodities?c=${tradingEconKey}&f=json`)
       .then(response => {
         this.commodities.forEach(item => {
-          let match = response.filter(element => element["Symbol"] === item["Symbol"]);
+          let match = response.filter(element => element["Symbol"] === item.symbol);
           if(match.length > 0){
             item.price = match[0]['Last'];
             item.change = match[0]['DailyChange'];

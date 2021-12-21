@@ -39,10 +39,10 @@ export default {
       type: [ String, Number ]
     },
     change: {
-      type: String
+      type: [ String, Number ]
     },
     difference: {
-      type: String
+      type: [ String, Number ]
     }
   },
   data() {
