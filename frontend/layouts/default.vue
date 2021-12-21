@@ -11,17 +11,9 @@
 <script>
 import Ad from "./../components/Ad.vue";
 import {cryptocurrency, currencies, stocks, indices, bonds, rising, commodities} from "./../market.js";
-// import { TEClient} from 'tradingeconomics-stream'
 const finageApiKey = process.env.finageApiKey,
-      finageSocketKey = process.env.finageSocketKey;
-// import Finage from 'finage';
-// const client = new Finage({ apiKey: finageApiKey });
-// async function test() {
-//   const res = await client.stocks.us.lastQuote({
-//     params: { symbol: 'AAPL' }, queries: { ts: 'ns' }
-//   })
-//   console.log(res)
-// }
+      finageSocketKey = process.env.finageSocketKey,
+      tradingEconKey = process.env.tradingEconKey;
 
 export default {
   components: {
@@ -30,21 +22,20 @@ export default {
     CookieNotice: () => import('./../components/CookieNotice'),
     Ad
   },
-  async asyncData () {
-    let topCoins = [];
-    await this.$fire.firestore()
-      .collection('cryptoTop')
-      .get()
-      .then(querySnapshot => {
-        querySnapshot.forEach(doc => {
-          topCoins.push(doc.data());
-        });
-        // console.log(topCoins)
-      });
-    return {
-      topCoins
-    }
-  },
+  // async asyncData () {
+  //   // let topCoins = [];
+  //   // await this.$fire.firestore()
+  //   //   .collection('cryptoTop')
+  //   //   .get()
+  //   //   .then(querySnapshot => {
+  //   //     querySnapshot.forEach(doc => {
+  //   //       topCoins.push(doc.data());
+  //   //     });
+  //   //   });
+  //   // return {
+  //   //   topCoins
+  //   // }
+  // },
   data() {
     return {
       forexWS: new WebSocket(`wss://w29hxx2ndd.finage.ws:8001/?token=${finageSocketKey}`),
@@ -81,7 +72,7 @@ export default {
   },
   methods: {
     // fetchCoinsByMarketCap() {
-    //   this.$axios.$get(`/api/v1/cryptocurrency/listings/latest?start=1&limit=50&convert=USD&CMC_PRO_API_KEY=${this.cmcApiKey}`, {
+    //   this.$axios.$get(`/cmcapi/v1/cryptocurrency/listings/latest?start=1&limit=50&convert=USD&CMC_PRO_API_KEY=${this.cmcApiKey}`, {
     //     headers: {
     //       'Content-Type': 'application/json',
     //       'Access-Control-Allow-Origin': '*'
@@ -160,21 +151,21 @@ export default {
           item.difference = Number(data.dd).toFixed(2);
           item.change = Number(data.dc).toFixed(2);
           item.time = data['t'];
-          if(item.type === 'commodity'){
-            item.price = Number(data.a).toFixed(2);
-            item.marketOpen = true;
-            if (this.currencies[indexFound].mdOldPrice != item.price ) {
-              this.$root.$emit('updateCommodity', item);
-              this.currencies[indexFound].mdOldPrice = item.price;
-            }
-          } else {
+          // if(item.type === 'commodity'){
+          //   item.price = Number(data.a).toFixed(2);
+          //   item.marketOpen = true;
+          //   if (this.currencies[indexFound].mdOldPrice != item.price ) {
+          //     this.$root.$emit('updateCommodity', item);
+          //     this.currencies[indexFound].mdOldPrice = item.price;
+          //   }
+          // } else {
             item.price = Number(data.a).toFixed(4);
             item.marketOpen = true;
             if (this.currencies[indexFound].rcOldPrice != item.price ) {
               this.$root.$emit('updateCurrency', item);
               this.currencies[indexFound].rcOldPrice = item.price;
             }
-          }
+          // }
         }
         this.loading = false;
       }
@@ -211,7 +202,7 @@ export default {
             item.change = Number(data.data.P).toFixed(2);
             item.time = data.data.E;
             item.marketOpen = true;
-            
+
             if (this.cryptocurrency[indexFound].op != item.price ) {
               this.$root.$emit('updateCrypto', item);
               // this.$root.$emit('updateCoins', item);
@@ -219,7 +210,7 @@ export default {
             }
           }
         }
-        
+
         this.loading = false;
       }
       this.cryptoWS.onerror = (error) => {
@@ -346,20 +337,6 @@ export default {
       //   console.log('CLOSED COMMODITIES WEBSOCKET')
       // }
     },
-    // COMMODITIES
-    // connectCommodities() {
-    //   const subscribe = (asset) => {
-    //     const client = new TEClient({
-    //       key: 'bemon3pf6n3khs1',
-    //       secret: 'uohemfwf041hnna',
-    //     })
-    //     client.subscribe(asset)
-    //     client.on('message', msg => {
-    //       console.log(`Price for ${asset}:`, msg.price)
-    //     })
-    //   }
-    //   subscribe('UKX:IND')
-    // },
     fetchStocks() {
       this.$axios.$get(`https://api.finage.co.uk/last/stocks/?symbols=AAPL,AMZN,BA,BABA,FB,MSFT,MRNA,NIO,NVDA,PFE,PLTR,SAN,TSLA,XPEV,GME,AMC,BB&apikey=${finageApiKey}`)
       .then(response => {
@@ -401,13 +378,13 @@ export default {
         let indexFound = this.currencies.findIndex(currency => currency.symbol === response.symbol );
         let i = this.currencies[indexFound];
         i.indexFound = indexFound;
-        if(i.type === 'commodity'){
-          i.price = Number(response.price).toFixed(2);
-          this.$root.$emit('updateCommodity', i);
-        } else {
+        // if(i.type === 'commodity'){
+        //   i.price = Number(response.price).toFixed(2);
+        //   this.$root.$emit('updateCommodity', i);
+        // } else {
           i.price = Number(response.price).toFixed(4);
           this.$root.$emit('updateCurrency', i);
-        }
+        // }
       })
       .catch(error => {
         console.log(error);
@@ -477,22 +454,26 @@ export default {
     },
     fetchCommodities() {
       // Trading Economics
-      this.$axios.$get(`https://api.tradingeconomics.com/markets/commodities?c=${tradingEconKey}`)
+      this.$axios.$get(`/tecapi/markets/commodities?c=${tradingEconKey}&f=json`)
       .then(response => {
-        console.log(response)
-        let data = Object.keys(response).map(key => data[key]);
-        response.forEach(item => {
-          this.$root.$emit('updateEconCommodities', item);
+        this.commodities.forEach(item => {
+          let match = response.filter(element => element["Symbol"] === item["Symbol"]);
+          if(match.length > 0){
+            item.price = match[0]['Last'];
+            item.change = match[0]['DailyChange'];
+            item.difference = match[0]['DailyPercentualChange'];
+            item.ticker = match[0]['Ticker'];
+            this.$root.$emit('updateCommodity', item);
+          }
         });
+      })
+      .catch(error => {
+        console.log(error);
       })
     },
     fetchMovers() {
       this.$axios.$get(`https://api.finage.co.uk/market-information/us/most-gainers?apikey=${finageApiKey}`)
       .then(response => {
-        // console.log(response)
-        // this.rising = response;
-        // let i = this.indices.find( indice => indice.symbol === response.symbol );
-        // i.price = Number(response.value).toFixed(2);
         this.$root.$emit('updateRising', response);
       })
       .catch(error => {
@@ -526,10 +507,11 @@ export default {
       this.cryptocurrency.forEach(item => {
         this.fetchCrypto(item.symbol);
       });
+      this.fetchCommodities();
+      // setInterval(() => {
+      //   this.fetchCommodities()
+      // }, 60000);
       this.fetchMovers();
-      setInterval(() => {
-        this.fetchMovers()
-      }, 300000)
       this.checkMarketStatus();
     },
     showGrid() {

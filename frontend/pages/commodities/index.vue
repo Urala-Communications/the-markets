@@ -11,14 +11,6 @@
     >
      <div class="row m-0 index-list" id="commodities">
         <h2 class="col-12">Commodities</h2>
-        <!-- <div>{{ econCommodities }}</div> -->
-        <!-- <div v-if="Object.entries(econCommodities).length > 0" >
-        <div v-for="item in econCommodities" :key="item.name">
-          <p>{{ item.ticker }}</p>
-          <p>{{ item.name }}</p>
-          <p>{{ item.last }}</p>
-        </div>
-        </div> -->
         <!-- <div class="toggle col-12">
           <button
             class="grid btn-outline-dark btn mb-4 mr-2"
@@ -31,22 +23,17 @@
             @click="showList()"
           />
         </div> -->
-        <!-- <div class="col-12 col-lg-7 offset-lg-5">
-          <div class="col-12 white-well pt-2">
-            <IndexList :data="econCommodities" indexPage type="commodities" />
-          </div>
-        </div> -->
         <div class="col-12 col-lg-7 offset-lg-5">
           <div class="col-12 white-well pt-2">
             <IndexList :data="commodities" indexPage type="commodities" />
           </div>
         </div>
-        <div class="col-12 col-lg-7 offset-lg-5">
+        <!-- <div class="col-12 col-lg-7 offset-lg-5">
           <div class="col-lg-12 mt-4 white-well">
             <News :newsData="newsData"/>
             <Ad feedAd/>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -54,17 +41,15 @@
 
 <script>
 import {commodities} from "./../../market.js";
-import IndexList from './../../components/IndexList.vue'
 export default {
     components: {
-      IndexList
+      IndexList: () => import('./../../components/IndexList'),
     },
     data() {
       return {
         finageApiKey: process.env.finageApiKey,
         loading: true,
         commodities,
-        econCommodities: {},
         view: 'list',
         chartData: null,
         chartOptions: null,
@@ -104,20 +89,12 @@ export default {
     },
     created() {
       this.$root.$on('updateCommodity', (item) => {
-        this.loading = false;
-        let i = this.commodities.findIndex(index => index.symbol === item.symbol);
-        this.$set(this.commodities[i], 'price', item.price);
-        this.$set(this.commodities[i], 'difference', item.difference);
-        this.$set(this.commodities[i], 'change', item.change);
+        this.loading = false; // ONLY ONCE ALL FETCHED
+        let itemIndex = this.commodities.findIndex(index => index["Symbol"] === item["Symbol"]);
+        this.$set(this.commodities[itemIndex], 'price', item.price);
+        this.$set(this.commodities[itemIndex], 'difference', item.difference);
+        this.$set(this.commodities[itemIndex], 'change', item.change);
       });
-      // this.$root.$on('updateEconCommodities', (item) => {
-      //   console.log(item)
-      //   this.econCommodities = item
-      //   // let itemIndex = this.commodities.findIndex(index => index.symbol === item.symbol);
-      //   // this.$set(this.commodities[itemIndex], 'price', item.price);
-      //   // this.$set(this.commodities[itemIndex], 'difference', item.difference);
-      //   // this.$set(this.commodities[itemIndex], 'change', item.change);
-      // });
       // this.commodities.forEach(item => {
       //   this.fetchNews(item.symbol);
       // });

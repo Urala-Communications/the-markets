@@ -132,20 +132,31 @@ export let bonds = [
   {name: 'US 20 Year Bond', symbol: 'DGS20', icon: 'usa', type: 'homeBond'},
   {name: 'US 30 Year Bond', symbol: 'DGS30', icon: 'usa', type: 'homeBond'},
 ];
-export let rising = [
-  // {name: 'Tesla', symbol: 'TSLA', icon: 'tesla'},
-  // {name: 'Gamestop', symbol: 'GME', icon: 'gme'},
-  // {name: 'AMC', symbol: 'AMC', icon: 'amc'},
-  // {name: 'BlackBerry', symbol: 'BB', icon: 'blackberry'},
-  // {name: 'Dogecoin', symbol: 'DOGEUSD', icon: 'doge'},
-];
+
+export let rising = []
+// export let commodities = [
+//   // {name: 'Carbon Emissions', symbol: 'CARBON', icon: 'carbon'},
+//   {name: 'Gold', symbol: 'XAUUSD', icon: 'gold'},
+//   {name: 'Silver', symbol: 'XAGUSD', icon: 'silver'},
+//   // {name: 'Bitcoin Futures', symbol: 'BTCUSD', icon: 'btc'},
+//   // {name: 'Natural Gas', symbol: 'NGAS', icon: 'natgas'},
+//   {name: 'Crude Oil', symbol: 'WTIUSD', icon: 'crude-oil'},
+//   {name: 'Brent Oil', symbol: 'XBRUSD', icon: 'brent-oil'},
+//   // {name: 'US Coffee C', symbol: 'USCOFFEEC', icon: 'coffee'},
+// ];
+
 export let commodities = [
-  // {name: 'Carbon Emissions', symbol: 'CARBON', icon: 'carbon'},
-  {name: 'Gold', symbol: 'XAUUSD', icon: 'gold'},
-  {name: 'Silver', symbol: 'XAGUSD', icon: 'silver'},
-  // {name: 'Bitcoin Futures', symbol: 'BTCUSD', icon: 'btc'},
-  // {name: 'Natural Gas', symbol: 'NGAS', icon: 'natgas'},
-  {name: 'Crude Oil', symbol: 'WTIUSD', icon: 'crude-oil'},
-  {name: 'Brent Oil', symbol: 'XBRUSD', icon: 'brent-oil'},
-  // {name: 'US Coffee C', symbol: 'USCOFFEEC', icon: 'coffee'},
+  {name: 'EU Carbon Emissions', Symbol: 'EECXM:IND', icon: 'carbon'},
+  {name: 'Gold', Symbol: 'XAUUSD:CUR', icon: 'gold'},
+  {name: 'Silver', Symbol: 'XAGUSD:CUR', icon: 'silver'},
+  {name: 'Natural Gas', Symbol: 'NG1:COM', icon: 'natgas'},
+  {name: 'Crude Oil', Symbol: 'CL1:COM', icon: 'crude-oil'},
+  {name: 'Brent Oil', Symbol: 'CO1:COM', icon: 'brent-oil'},
+  {name: 'Coffee', Symbol: 'KC1:COM', icon: 'coffee'},
+  {name: 'Platinum', Symbol: 'XPTUSD:CUR', icon: 'platinum'},
+  {name: 'Cobalt', Symbol: 'LCO1:COM', icon: 'cobalt'},
+  {name: 'Solar Energy Index ', Symbol: 'SOLARNTR:IND', icon: 'solar'},
+  {name: 'Wind Energy Index ', Symbol: 'GWETR:IND', icon: 'wind'},
+  {name: 'CRB Index', Symbol: 'CRYTR:IND', icon: 'crb'},
+  {name: 'LME Index', Symbol: 'LME:IND', icon: 'lme'},
 ];
