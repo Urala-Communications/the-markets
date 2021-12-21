@@ -90,7 +90,7 @@ export default {
     created() {
       this.$root.$on('updateCommodity', (item) => {
         this.loading = false; // ONLY ONCE ALL FETCHED
-        let itemIndex = this.commodities.findIndex(index => index.symbol === item.symbol);
+        let itemIndex = this.commodities.findIndex(index => index["Symbol"] === item["Symbol"]);
         this.$set(this.commodities[itemIndex], 'price', item.price);
         this.$set(this.commodities[itemIndex], 'difference', item.difference);
         this.$set(this.commodities[itemIndex], 'change', item.change);

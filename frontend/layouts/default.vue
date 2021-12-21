@@ -22,20 +22,20 @@ export default {
     CookieNotice: () => import('./../components/CookieNotice'),
     Ad
   },
-  async asyncData () {
-    let topCoins = [];
-    await this.$fire.firestore()
-      .collection('cryptoTop')
-      .get()
-      .then(querySnapshot => {
-        querySnapshot.forEach(doc => {
-          topCoins.push(doc.data());
-        });
-      });
-    return {
-      topCoins
-    }
-  },
+  // async asyncData () {
+  //   // let topCoins = [];
+  //   // await this.$fire.firestore()
+  //   //   .collection('cryptoTop')
+  //   //   .get()
+  //   //   .then(querySnapshot => {
+  //   //     querySnapshot.forEach(doc => {
+  //   //       topCoins.push(doc.data());
+  //   //     });
+  //   //   });
+  //   // return {
+  //   //   topCoins
+  //   // }
+  // },
   data() {
     return {
       forexWS: new WebSocket(`wss://w29hxx2ndd.finage.ws:8001/?token=${finageSocketKey}`),
@@ -452,18 +452,20 @@ export default {
         console.log(error);
       })
     },
-    fetchCommodities(symbol) {
+    fetchCommodities() {
       // Trading Economics
-      // 409 error - use async fetch
-      this.$axios.$get(`/tecapi/markets/symbol/${symbol}?c=${tradingEconKey}&f=json`)
+      this.$axios.$get(`/tecapi/markets/commodities?c=${tradingEconKey}&f=json`)
       .then(response => {
-        // console.log(response)
-        let i = this.commodities.find(c => c.symbol === response[0]['Symbol']);
-        i.price = response[0]['Last'];
-        i.change = response[0]['DailyChange'];
-        i.difference = response[0]['DailyPercentualChange'];
-        i.ticker = response[0]['Ticker'];
-        this.$root.$emit('updateCommodity', i);
+        this.commodities.forEach(item => {
+          let match = response.filter(element => element["Symbol"] === item["Symbol"]);
+          if(match.length > 0){
+            item.price = match[0]['Last'];
+            item.change = match[0]['DailyChange'];
+            item.difference = match[0]['DailyPercentualChange'];
+            item.ticker = match[0]['Ticker'];
+            this.$root.$emit('updateCommodity', item);
+          }
+        });
       })
       .catch(error => {
         console.log(error);
@@ -505,9 +507,10 @@ export default {
       this.cryptocurrency.forEach(item => {
         this.fetchCrypto(item.symbol);
       });
-      this.commodities.forEach(item => {
-        this.fetchCommodities(item.symbol);
-      });
+      this.fetchCommodities();
+      // setInterval(() => {
+      //   this.fetchCommodities()
+      // }, 60000);
       this.fetchMovers();
       this.checkMarketStatus();
     },

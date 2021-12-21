@@ -146,21 +146,17 @@ export let rising = []
 // ];
 
 export let commodities = [
-  {name: 'EU Carbon Emissions', symbol: 'EECXM:IND', icon: 'carbon'},
-  {name: 'Platinum', symbol: 'XPTUSD:CUR', icon: 'platinum'},
-  {name: 'Gold', symbol: 'XAUUSD:CUR', icon: 'gold'},
-  // {name: 'Silver', symbol: 'XAGUSD:CUR', icon: 'silver'},
-  // {name: 'Natural Gas', symbol: 'NG1:COM', icon: 'natgas'},
-  // {name: 'Crude Oil', symbol: 'CL1:COM', icon: 'crude-oil'},
-  // {name: 'Brent Oil', symbol: 'CO1:COM', icon: 'brent-oil'},
-  // {name: 'Coffee Futures', symbol: 'KC1:COM', icon: 'coffee'},
+  {name: 'EU Carbon Emissions', Symbol: 'EECXM:IND', icon: 'carbon'},
+  {name: 'Gold', Symbol: 'XAUUSD:CUR', icon: 'gold'},
+  {name: 'Silver', Symbol: 'XAGUSD:CUR', icon: 'silver'},
+  {name: 'Natural Gas', Symbol: 'NG1:COM', icon: 'natgas'},
+  {name: 'Crude Oil', Symbol: 'CL1:COM', icon: 'crude-oil'},
+  {name: 'Brent Oil', Symbol: 'CO1:COM', icon: 'brent-oil'},
+  {name: 'Coffee', Symbol: 'KC1:COM', icon: 'coffee'},
+  {name: 'Platinum', Symbol: 'XPTUSD:CUR', icon: 'platinum'},
+  {name: 'Cobalt', Symbol: 'LCO1:COM', icon: 'cobalt'},
+  {name: 'Solar Energy Index ', Symbol: 'SOLARNTR:IND', icon: 'solar'},
+  {name: 'Wind Energy Index ', Symbol: 'GWETR:IND', icon: 'wind'},
+  {name: 'CRB Index', Symbol: 'CRYTR:IND', icon: 'crb'},
+  {name: 'LME Index', Symbol: 'LME:IND', icon: 'lme'},
 ];
-
-// Solar Energy Index
-// Wind Energy Index
-
-// Coffee *
-// Cobalt *
-// CRB Index *
-// LME Index *
-

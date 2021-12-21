@@ -65,30 +65,6 @@ export default {
       }
     },
     methods: {
-      // fetchCoinsByMarketCap() {
-      //   Number.prototype.toFixed = function (n) {
-      //     return this.toLocaleString(undefined, {
-      //         minimumFractionDigits: n,
-      //         maximumFractionDigits: n,
-      //     });
-      //   };
-      //   this.$axios.$get(`/api/v1/cryptocurrency/listings/latest?start=1&limit=50&convert=USD&CMC_PRO_API_KEY=${this.cmcApiKey}`, {
-      //     headers: {
-      //       'Content-Type': 'application/json',
-      //       'Access-Control-Allow-Origin': '*'
-      //     },
-      //     json: true,
-      //     gzip: true
-      //   })
-      //   .then((response) => {
-      //     console.log(response)
-      //     // let i = this.cryptocurrency.findIndex(index => index.name === coin.name);
-      //     // this.$set(this.cryptocurrency[i], 'marketCap', response.marketCap.toFixed(2));
-      //   })
-      //   .catch((error) => {
-      //     console.log(error);
-      //   });
-      // },
       fetchNews(symbol){
         this.$axios.$get(`https://api.finage.co.uk/news/cryptocurrency/${symbol}?apikey=${this.finageApiKey}&limit=1`)
         .then(response => {
@@ -130,24 +106,13 @@ export default {
       });
       this.loading = false; // fix news api bug
       this.$root.$on('updateCrypto', (item) => {
-        
-        //let i = item.indexFound;//this.cryptocurrency.findIndex(index => index.name === item.name);
         this.$set(this.cryptocurrency[item.indexFound], 'price', item.price);
         this.$set(this.cryptocurrency[item.indexFound], 'difference', item.difference);
         this.$set(this.cryptocurrency[item.indexFound], 'change', item.change);
       });
       // this.cryptocurrency.forEach(item => {
-      //   this.fetchMarketCap(item.symbol);
-      // });
-      // this.cryptocurrency.forEach(item => {
       //   this.fetchNews(item.icon);
       // });
-      // setInterval(() => {
-      //   this.cryptocurrency.forEach(item => {
-      //     this.fetchNews(item.icon);
-      //   });
-      //   // every 5 minutes
-      // }, 300000)
     },
   }
 </script>
