@@ -95,9 +95,6 @@ export default {
         this.$set(this.commodities[itemIndex], 'difference', item.difference);
         this.$set(this.commodities[itemIndex], 'change', item.change);
       });
-      // this.commodities.forEach(item => {
-      //   this.fetchNews(item.symbol);
-      // });
     },
   }
 </script>
