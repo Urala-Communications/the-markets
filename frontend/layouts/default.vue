@@ -454,7 +454,7 @@ export default {
     },
     fetchCommodities() {
       // Trading Economics
-      this.$axios.$get(`/tecapi/markets/commodities?c=${tradingEconKey}&f=json`)
+      this.$axios.$get(`https://api.tradingeconomics.com/markets/commodities?c=${tradingEconKey}&f=json`)
       .then(response => {
         this.commodities.forEach(item => {
           let match = response.filter(element => element["Symbol"] === item["Symbol"]);

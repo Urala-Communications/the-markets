@@ -50,10 +50,10 @@
                 <IndexList :data="currencies" type="currencies" />
               </div>
               <div class="col-12 white-well">
-                <h2>Commodities
-                  <NuxtLink class="index-link" to="/commodities">View all</NuxtLink>
+                <h2>Bonds
+                  <NuxtLink class="index-link" to="/bonds">View all</NuxtLink>
                 </h2>
-                <IndexList :data="commodities" type="commodities" />
+                <IndexList :data="bonds" type="bonds" />
               </div>
             </div>
             <div class="col-lg-6">
@@ -64,10 +64,10 @@
                 <IndexList :data="rising" type="rising" />
               </div>
               <div class="col-12 white-well">
-                <h2>Bonds
-                  <NuxtLink class="index-link" to="/bonds">View all</NuxtLink>
+                <h2>Commodities
+                  <NuxtLink class="index-link" to="/commodities">View all</NuxtLink>
                 </h2>
-                <IndexList :data="bonds" type="bonds" />
+                <IndexList :data="commodities" type="commodities" />
               </div>
               <div class="col-12 white-well">
                 <h2>Stocks
