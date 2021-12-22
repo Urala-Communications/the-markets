@@ -1,4 +1,4 @@
-# The Markets
+![logo](https://user-images.githubusercontent.com/4670058/147123484-9f43b7a7-6ffb-4eaa-a991-bd9a716a0f4a.png)
 
 [themarkets.io](https://themarkets.io/)
 
