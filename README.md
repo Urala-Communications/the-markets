@@ -2,10 +2,11 @@
 
 [themarkets.io](https://themarkets.io/)
 
-## Build Setup
+## Build Setup 
 
 ```bash
 # install dependencies
+$ cd frontend
 $ npm install
 
 # run from root folder not `frontend`
