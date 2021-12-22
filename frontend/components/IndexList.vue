@@ -50,7 +50,7 @@
       :key="index.symbol"
       class="mover index"
     >
-      <h4><span v-snip="1">{{ index.company_name }}</span>&nbsp;<span class="green">{{Number(index.change_percentage).toFixed(2)}}</span></h4>
+      <h4><span v-snip="1">{{ index.company_name }}</span>&nbsp;<span class="green">+{{Number(index.change_percentage).toFixed(2)}}%</span></h4>
       <Price :index="index" :price="index.price" class="mover-price"/>
     </div>
   </div>
@@ -137,6 +137,10 @@ export default {
     .mover-price{
       width: 100%;
       strong{padding: 0;}
+    }
+    .green{
+      @include main-font();
+      font-size: 14px;
     }
   }
 }
