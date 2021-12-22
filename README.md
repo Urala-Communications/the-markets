@@ -36,7 +36,7 @@ Our app started off focussing on the traditional markets but we're now shifting 
 
 ### Data
 
-Currently our main data provider is finage for stocks, crypto, indices, bonds, forex and news. We also use coinmarketcap to fetch to the top 50 crypto coins by market cap since finage does not provide this data. Recently we added Trading Economics api data to collect commodities including EU Carbon Offsets.
+Currently our main data provider is finage for stocks, crypto, indices, bonds, forex and news. We also use coinmarketcap to fetch the top 50 crypto coins by market cap since finage does not provide this data. Recently we added Trading Economics api data to collect commodities including EU Carbon Offsets.
 
 We are trialling [Stockpulse](https://stockpulse.ai/) as a potential replacement to finage. We have a free trial which expires on January 31st 2022. Their data also includes market sentiment analysis which they call 'buzz'. This could be useful for further developing our app.
 
