@@ -8,17 +8,16 @@
 # install dependencies
 $ cd frontend
 $ npm install
+$ cd ..
+$ cd backend
+$ npm install
 
-# run from root folder not `frontend`
+# run from root folder not `frontend` or 'backend'
 $ cd ..
 $ yarn develop
 
-# build for production and launch server
+# build for production
 $ npm run build
-$ npm run start
-
-# generate static project
-$ npm run generate
 
 # deploy
 $ cd frontend
