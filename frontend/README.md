@@ -8,17 +8,16 @@
 # install dependencies
 $ cd frontend
 $ npm install
+$ cd ..
+$ cd backend
+$ npm install
 
-# run from root folder not `frontend`
+# run from root folder not `frontend` or 'backend'
 $ cd ..
 $ yarn develop
 
-# build for production and launch server
+# build for production
 $ npm run build
-$ npm run start
-
-# generate static project
-$ npm run generate
 
 # deploy
 $ cd frontend
@@ -58,15 +57,15 @@ Within the pages directory we have subdirectories for each market category i.e. 
 
 I will just cover the most important, heavily-used components.
 
-IndexList > Price
+##### IndexList > Price
 
 The IndexList render the lists of each category on the homepage and each category index page. They require different style depending on which page and category they are rendered. For index pages we use a grid style and for movers/rising lists the style is also slightly different. A sub component of the IndexList is Price, this is necessary for updating the price data and show visual changes, i.e. flashing green/red. The Price layout varies dependant on the list in which it has been rendered as well.
 
-Item > Chart
+##### Item > Chart
 
 The Item component is used on every _symbol page to render the main content of the page. This helps maintain consistentcy across the categories. Some pages also render the latest news on their symbol and info about the instrument such as market cap for a coin. The main feature of each symbol page is the Chart. Originally we used highcharts for this, however, we have recently switched to using TradingView since they provide Candlestick charts which update in real-time. When users select a short time range such as 1/5/15 minutes we fetch new aggregate data so the charts can update in real-time.
 
-Header > Ticker > TickerItem
+##### Header > Ticker > TickerItem
 
 The Header contains the desktop and mobile navigation menus and the Ticker bar. The Ticker displays a small number of top symbols. Each symbol is rendered via the TickerItem component. The Ticker component is also used for styling the icons throughout the site. The icon class is set via the market.js file. It would be nice to set class names dynamically instead of hardcoding, however, we use PNG , SVGs and GIfs depending on the category so this is currently the best way of styling icons. Ideally the data provider would include icon data instead.
 
