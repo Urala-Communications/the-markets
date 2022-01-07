@@ -12,6 +12,7 @@
         </h1>
       </NuxtLink>
     </b-navbar-brand>
+
     <b-sidebar id="sidebar" backdrop shadow>
       <div class="sidebar-inner">
         <b-navbar-nav>
@@ -55,6 +56,11 @@
         </b-navbar-nav>
       </div>
     </b-sidebar>
+    <b-collapse class="collapse" is-nav>
+      <b-navbar-nav class="ml-1">
+        <Search />
+      </b-navbar-nav>
+      </b-collapse>
     <b-collapse id="nav-text-collapse" is-nav class="justify-content-end collapse">
       <b-navbar-nav>
         <b-navbar-toggle target="nav-text-collapse mobile" ></b-navbar-toggle>
@@ -77,11 +83,12 @@
 
 <script>
 import Ticker from "./Ticker.vue";
-
+import Search from "./Search.vue";
 export default {
   name: 'Header',
   components: {
-    Ticker
+    Ticker,
+    Search
   },
   data() {
     return {
