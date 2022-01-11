@@ -1,33 +1,29 @@
 <template>
-  <ais-instant-search :search-client="searchClient" :index-name="indexName" >
+  <ais-instant-search :search-client="searchClient" :index-name="indexName"  >
     <ais-configure
-      :hits-per-page.camel="4"      
-      :analytics="false"
-      :typoTolerance="false"
-      :enable-personalization.camel="false"          
+      :hits-per-page.camel="4"               
     />
     <div>
-
-    <ais-search-box placeholder="Search here…" class="searchbox" />
+      <ais-search-box  class="searchbox" show-loading-indicator />
     </div>
-    
-        <ais-hits  >
-          <template v-slot:item="{ item}" >          
-              
+    <ais-state-results>
+      <template slot-scope="{ query, hits }" >   
+        <!-- First condition -->
+        <div v-if="!hits.length"></div>     
+        <ais-hits   v-else-if="query.length > 0" >
+          <template v-slot:item="{ item}" >   
               <NuxtLink
-              :to="item.url">
-              {{item.title?item.title:item.name}}
-
-              </NuxtLink>
-                          
+                :to="item.url">
+                {{item.title?item.title:item.name?item.name:item.symbol}}
+              </NuxtLink>                          
           </template>
         </ais-hits>
-    
-  </ais-instant-search>
-  
-
+        <div v-else />
+        
+      </template>
+    </ais-state-results> 
+  </ais-instant-search> 
 </template>
-
 <script>
 
 import algoliasearch from 'algoliasearch/lite';
@@ -36,9 +32,10 @@ import 'instantsearch.css/themes/satellite-min.css';
 import aa from 'search-insights';
 import { createInsightsMiddleware } from 'instantsearch.js/es/middlewares'
 
+
 const insightsMiddleware = createInsightsMiddleware({
   insightsClient: aa,
-})
+}) 
 
 const indexName = process.env.ALGOLIA_INDEXNAME;
 
@@ -50,11 +47,7 @@ const algoliaClient = algoliasearch(
 const searchClient = {
   async search(requests) {
     // eslint-disable-next-line no-console
-    console.log(
-      "change conditional if any of the other facets are faked",
-      requests
-    );
-    
+        
     if (requests.every(({ params: { query } }) => Boolean(query) === false)) {
       return {
         results: requests.map(params => {
@@ -102,6 +95,9 @@ body {
   a {
     padding: 1rem;
     width: 100%;
+  }
+  :hover{
+    background-color: rgb(243 243 255);
   }
 }
 .ais-Hits {

@@ -55,7 +55,7 @@ export default {
     '~/plugins/vue-directives',
     { src: "~/plugins/gtag.js", mode: 'client' },
     { src: "~/plugins/highcharts.js", ssr: true },
-    { src: "~/plugins/vue-instantsearch.js", ssr: true },
+    { src: "~/plugins/vue-instantsearch.js" },
   ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
