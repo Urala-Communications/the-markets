@@ -14,9 +14,9 @@ async function getCryptos(){
             const resp = await axios.get(`https://api.finage.co.uk/detail/cryptocurrency/${crypto.icon}?apikey=${process.env.FINAGE_API_KEY}`)
             const res = resp.data;
     
-            return {...res, objectID: `crypto_${res.name.toLowerCase()}` , type: "cryptocurrency", url: `/cryptocurrency/${crypto.name.toLowerCase()}`};
+            return {...res, objectID: `crypto_${res.name.replace(/\W+(?!$)/g,"-").toLowerCase()}` , type: "cryptocurrency", url: `/cryptocurrency/${crypto.name.toLowerCase()}`};
         } catch (error) {
-            return {...crypto, objectID: `crypto_${crypto.name.toLowerCase()}`, type: "cryptocurrency", url: `/cryptocurrency/${crypto.name.toLowerCase()}` }
+            return {...crypto, objectID: `crypto_${crypto.name.replace(/\W+(?!$)/g,"-").toLowerCase()}`, type: "cryptocurrency", url: `/cryptocurrency/${crypto.name.toLowerCase()}` }
         }
         
     }));
@@ -54,7 +54,7 @@ async function getArticles(){
 async function getMovers(){
     
         const risings = await axios.get(`https://api.finage.co.uk/market-information/us/most-gainers?apikey=${process.env.FINAGE_API_KEY}`);
-        return await risings.data.filter(res => res !== null).map(res => ({...res, objectID: `mover_${res.name}`, type: "mover", url: "/movers"}));        
+        return await risings.data.map(res => ({...res, objectID: `mover_${res.name?res.name:res.symbol}`, type: "mover", url: "/movers"}));        
     
 }
 
