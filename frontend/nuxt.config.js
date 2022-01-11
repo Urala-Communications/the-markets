@@ -65,7 +65,8 @@ export default {
   buildModules: [
     // '@nuxtjs/dotenv',
     // '@nuxtjs/fontawesome'
-    '@/modules/generator'
+    '@/modules/sitemapgenerator',
+    '@/modules/algoliaindex'
   ],
 
   dev: process.env.NODE_ENV !== 'production',

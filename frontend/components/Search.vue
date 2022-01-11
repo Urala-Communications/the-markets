@@ -1,31 +1,44 @@
 <template>
-  <ais-instant-search :search-client="searchClient" :index-name="indexName"  >
-    <ais-search-box     
-      submit-title="Submit the query"
-      reset-title="Remove the query"
-      show-loading-indicator
-     />       
-         
-    <ais-hits  >
-      <template v-slot:item="{ item }">
-        <p>
-          <ais-highlight attribute="name" :hit="item"    />
-          <a :href="item.url">
-          {{item.title}}
-          </a>
-        </p>  
-        <span></span>
-      </template>
-    </ais-hits>
+  <ais-instant-search :search-client="searchClient" :index-name="indexName" >
+    <ais-configure
+      :hits-per-page.camel="4"      
+      :analytics="false"
+      :typoTolerance="false"
+      :enable-personalization.camel="false"          
+    />
+    <div>
+
+    <ais-search-box placeholder="Search here…" class="searchbox" />
+    </div>
+    
+        <ais-hits  >
+          <template v-slot:item="{ item}" >          
+              
+              <NuxtLink
+              :to="item.url">
+              {{item.title?item.title:item.name}}
+
+              </NuxtLink>
+                          
+          </template>
+        </ais-hits>
+    
   </ais-instant-search>
+  
+
 </template>
 
 <script>
 
 import algoliasearch from 'algoliasearch/lite';
-import { autocomplete, getAlgoliaResults } from '@algolia/autocomplete-js';
+//import { autocomplete, getAlgoliaResults } from '@algolia/autocomplete-js';
 import 'instantsearch.css/themes/satellite-min.css';
+import aa from 'search-insights';
+import { createInsightsMiddleware } from 'instantsearch.js/es/middlewares'
 
+const insightsMiddleware = createInsightsMiddleware({
+  insightsClient: aa,
+})
 
 const indexName = process.env.ALGOLIA_INDEXNAME;
 
@@ -33,6 +46,7 @@ const algoliaClient = algoliasearch(
   process.env.ALGOLIA_APPID,
   process.env.ALGOLIA_APIKEY
 );
+
 const searchClient = {
   async search(requests) {
     // eslint-disable-next-line no-console
@@ -40,8 +54,7 @@ const searchClient = {
       "change conditional if any of the other facets are faked",
       requests
     );
-    console.log(requests);
-    requests.hitsPerPage = 10;
+    
     if (requests.every(({ params: { query } }) => Boolean(query) === false)) {
       return {
         results: requests.map(params => {
@@ -69,10 +82,11 @@ export default {
     return {
       searchClient,
       indexName,     
+      middlewares: [insightsMiddleware],
       
     };
   },
-    
+  
 };
 </script>
 <style lang="scss"  >
@@ -82,6 +96,13 @@ body {
 }
 .ais-InstantSearch {
   position: relative;
+}
+.ais-Hits-item {
+  padding: 0;
+  a {
+    padding: 1rem;
+    width: 100%;
+  }
 }
 .ais-Hits {
   position: absolute;

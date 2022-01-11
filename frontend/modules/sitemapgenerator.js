@@ -12,7 +12,7 @@ module.exports = function() {
         routes.push(`/cryptocurrency/${e.name.toLowerCase()}`)
     })
     stocks.forEach(function(e){
-        routes.push(`/stocks/${e.icon}`)
+        routes.push(`/stocks/${e.name.toLowerCase().replace(/\W+(?!$)/g,"-")}`)
     })
     currencies.forEach(function(e){
         routes.push(`/currencies/${e.name.toLowerCase().replace(/\W+(?!$)/g,"-")}`)
