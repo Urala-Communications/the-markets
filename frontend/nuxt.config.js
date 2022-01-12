@@ -3,6 +3,11 @@ const finageSocketKey = process.env.FINAGE_SOCKET_KEY;
 const tradingEconKey = process.env.TRADING_ECON_API_KEY;
 const liveApiUrl = process.env.LIVE_API_URL;
 const cmcApiKey = process.env.CMC_KEY;
+const ALGOLIA_APPID = process.env.ALGOLIA_APPID;
+const ALGOLIA_APIKEY = process.env.ALGOLIA_APIKEY;
+const ALGOLIA_INDEXNAME = process.env.ALGOLIA_INDEXNAME;
+
+
 // const strapiBaseUri = process.env.STRAPI_URL || "http://localhost:1337";
 // const strapiBaseUri = process.env.NODE_ENV === 'development' ? "http://localhost:1337" : "https://the-markets-cms.herokuapp.com";
 const strapiBaseUri = "https://the-markets-cms.herokuapp.com";
@@ -16,7 +21,10 @@ export default {
     cmcApiKey,
     tradingEconKey,
     strapiBaseUri,
-    liveApiUrl
+    liveApiUrl,
+    ALGOLIA_APPID,
+    ALGOLIA_APIKEY,
+    ALGOLIA_INDEXNAME
   },
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
@@ -47,6 +55,7 @@ export default {
     '~/plugins/vue-directives',
     { src: "~/plugins/gtag.js", mode: 'client' },
     { src: "~/plugins/highcharts.js", ssr: true },
+    { src: "~/plugins/vue-instantsearch.js" },
   ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
@@ -56,6 +65,8 @@ export default {
   buildModules: [
     // '@nuxtjs/dotenv',
     // '@nuxtjs/fontawesome'
+    '@/modules/sitemapgenerator',
+    '@/modules/algoliaindex'
   ],
 
   dev: process.env.NODE_ENV !== 'production',
@@ -100,6 +111,7 @@ export default {
     "@nuxtjs/markdownit",
     "@nuxtjs/strapi",
     '@nuxtjs/firebase',
+    '@nuxtjs/sitemap'
   ],
 
   firebase: {
@@ -230,5 +242,16 @@ export default {
     //     prettify: false
     //   }
     // },
+    transpile: ['vue-instantsearch', 'instantsearch.js/es'],
   },
+  sitemap: {
+    hostname: 'https://themarkets.io',
+    gzip: true,
+    routes: [      
+    ]
+  },
+  generate: {
+    crawler: false // default - true
+  }
+  
 }
