@@ -403,7 +403,7 @@ export default {
   }
 }
 
-@media(max-width: 750px){
+@media(max-width: 768px){
   .ticker{
     display: none;
   }

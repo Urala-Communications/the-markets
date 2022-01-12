@@ -579,9 +579,9 @@ body{
     margin-top: 95px;
   }
 }
-@media(max-width: 750px){
+@media(max-width: 768px){
   body{
-    margin-top: 59px;
+    margin-top: 108px;
   }
 }
 

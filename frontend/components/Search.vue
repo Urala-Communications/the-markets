@@ -1,28 +1,29 @@
 <template>
   <ais-instant-search :search-client="searchClient" :index-name="indexName"  >
     <ais-configure
-      :hits-per-page.camel="4"               
+      :hits-per-page.camel="8"
     />
     <div>
-      <ais-search-box  class="searchbox" show-loading-indicator />
+      <ais-search-box class="searchbox" show-loading-indicator placeholder="Search..." />
     </div>
     <ais-state-results>
-      <template slot-scope="{ query, hits }" >   
+      <template slot-scope="{ query, hits }">
         <!-- First condition -->
-        <div v-if="!hits.length"></div>     
-        <ais-hits   v-else-if="query.length > 0" >
-          <template v-slot:item="{ item}" >   
-              <NuxtLink
-                :to="item.url">
-                {{item.title?item.title:item.name?item.name:item.symbol}}
-              </NuxtLink>                          
+        <div v-if="!hits.length"></div>
+        <ais-hits ref="searchHits" v-else-if="query.length > 0">
+          <template v-slot:item="{item}" >
+            <NuxtLink
+              :to="item.url"
+              @click.native="resetSearch"
+            >
+              {{item.title?item.title:item.name?item.name:item.symbol}}
+            </NuxtLink>
           </template>
         </ais-hits>
         <div v-else />
-        
       </template>
-    </ais-state-results> 
-  </ais-instant-search> 
+    </ais-state-results>
+  </ais-instant-search>
 </template>
 <script>
 
@@ -32,10 +33,9 @@ import 'instantsearch.css/themes/satellite-min.css';
 import aa from 'search-insights';
 import { createInsightsMiddleware } from 'instantsearch.js/es/middlewares'
 
-
 const insightsMiddleware = createInsightsMiddleware({
   insightsClient: aa,
-}) 
+})
 
 const indexName = process.env.ALGOLIA_INDEXNAME;
 
@@ -47,12 +47,11 @@ const algoliaClient = algoliasearch(
 const searchClient = {
   async search(requests) {
     // eslint-disable-next-line no-console
-        
     if (requests.every(({ params: { query } }) => Boolean(query) === false)) {
       return {
         results: requests.map(params => {
           // eslint-disable-next-line no-console
-          console.log("fake something of the result if necessary", params);
+          // console.log("fake something of the result if necessary", params);
           return {
             processingTimeMS: 0,
             nbHits: 0,
@@ -70,28 +69,42 @@ const searchClient = {
 };
 
 export default {
-  
   data() {
     return {
       searchClient,
-      indexName,     
+      indexName,
       middlewares: [insightsMiddleware],
-      
     };
   },
-  
+  methods: {
+    resetSearch() {
+      // clear the search input
+      document
+        .querySelectorAll('.ais-SearchBox-input')
+        .forEach((e) => (e.value = ''))
+      document.querySelectorAll('.ais-Hits-item').forEach((e) => e.remove())
+      // also clear the hits from the component, otherwise subsequent searches throw exceptions
+      this.$refs.searchHits.state.hits = []
+    },
+  },
 };
 </script>
-<style lang="scss"  >
-body {
-  font-family: sans-serif;
-  padding: 1em;
-}
+
+<style lang="scss">
 .ais-InstantSearch {
   position: relative;
+  &.mobile{
+    position: absolute;
+    right: 16px;
+    top: 2px;
+  }
+}
+.ais-SearchBox-form{
+  line-height: 1;
 }
 .ais-Hits-item {
   padding: 0;
+  overflow: hidden;
   a {
     padding: 1rem;
     width: 100%;
@@ -103,5 +116,14 @@ body {
 .ais-Hits {
   position: absolute;
   width: 100%;
+}
+
+@media(max-width:768px){
+  .ais-InstantSearch.mobile{
+    position: relative;
+    right: initial;
+    top: initial;
+    margin-top: 8px;
+  }
 }
 </style>

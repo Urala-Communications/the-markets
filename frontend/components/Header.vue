@@ -11,6 +11,7 @@
           <img src="./../assets/logo.png" alt="The Markets Logo">
         </h1>
       </NuxtLink>
+      <Search class="mobile" />
     </b-navbar-brand>
 
     <b-sidebar id="sidebar" backdrop shadow>
@@ -56,13 +57,8 @@
         </b-navbar-nav>
       </div>
     </b-sidebar>
-    <b-collapse class="collapse" is-nav>
-      <b-navbar-nav class="ml-1">
-        <Search />
-      </b-navbar-nav>
-      </b-collapse>
-    <b-collapse id="nav-text-collapse" is-nav class="justify-content-end collapse">
-      <b-navbar-nav>
+    <b-collapse id="nav-text-collapse" is-nav class="justify-content-end align-items-center collapse">
+      <b-navbar-nav class="align-items-center">
         <b-navbar-toggle target="nav-text-collapse mobile" ></b-navbar-toggle>
         <NuxtLink class="nav-link" to="/movers">Movers</NuxtLink>
         <NuxtLink class="nav-link" to="/cryptocurrency">Crypto</NuxtLink>
@@ -75,6 +71,7 @@
         <NuxtLink class="nav-link" to="/trading-101">Trading 101</NuxtLink> -->
         <NuxtLink class="nav-link" to="/personal-finance">Personal Finance</NuxtLink>
         <!-- <NuxtLink class="nav-link" to="/magazine">Magazine</NuxtLink> -->
+        <Search />
       </b-navbar-nav>
     </b-collapse>
     <Ticker :tickerItems="tickerItems" />
@@ -364,6 +361,8 @@ export default {
       }
     }
     .navbar-brand{
+      padding: 0 1rem;
+      background: white;
       position: absolute;
       top: 0.5rem;
       left: 0;
@@ -371,7 +370,8 @@ export default {
       margin: auto;
       border: none;
       img {
-        margin: 0 0.5rem 0 0;
+        /* margin: 0 0.5rem 0 0; */
+        margin: 0;
       }
       h1.title{
         justify-content: center;
@@ -382,10 +382,12 @@ export default {
   .mobile{display: block;}
 }
 
-@media(max-width: 750px){
+@media(max-width: 768px){
   .navbar{
     padding: 0 0 1rem;
+    box-shadow: 0px 2.5px 9px 0 rgb(218 226 239 / 50%);
     .navbar-brand{
+      padding: 0 1rem 0.5rem;
       h1.title{
         font-size: 0;
       }

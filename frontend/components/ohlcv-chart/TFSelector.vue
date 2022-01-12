@@ -28,7 +28,7 @@ export default {
     },
     methods: {
         on_click(tf, i) {
-            
+
             this.selected = i
             this.$emit('selected', {
                 name: this.timeframes[this.selected].value,
@@ -48,9 +48,8 @@ export default {
 .tf-selector {
     position: absolute;
     top: 0;
-    left: 55px;
+    left: 16px;
     font-size: 16px;
-    background: #34363b;
     color: #ccc;
     padding: 5px;
     border-radius: 3px;
@@ -66,6 +65,6 @@ export default {
     max-width: 10px;
 }
 .timeframe:hover {
-    color: #fff;
+    color: rgb(68, 199, 103);
 }
 </style>
