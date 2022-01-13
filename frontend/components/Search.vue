@@ -16,7 +16,9 @@
               :to="item.url"
               @click.native="resetSearch"
             >
-              {{item.title?item.title:item.name?item.name:item.symbol}}
+              <span v-if="item.icon || item.symbol" class="icon" :class="item.icon ? item.icon : item.symbol.toLowerCase()"/>
+              {{item.title ? item.title : item.name ? item.name : item.symbol}}
+              <span>{{item.symbol}}</span>
             </NuxtLink>
           </template>
         </ais-hits>
@@ -108,6 +110,21 @@ export default {
   a {
     padding: 1rem;
     width: 100%;
+    color: #000;
+    display: flex;
+    align-items: center;
+    span{
+      font-size: 12px;
+      color: #3335cf;
+      margin-left: 5px;
+      &.icon{
+        display: inline-block;
+        min-width: 24px;
+        height: 24px;
+        margin-right: 5px;
+        margin-left: 0;
+      }
+    }
   }
   :hover{
     background-color: rgb(243 243 255);
