@@ -11,7 +11,8 @@
             <b-card-text>
               <h5 id="title" class="card-title">{{ article.title }}</h5>
               <p>{{ article.author.name }}</p>
-              <p class="date mt-lg-3 mt-2 ">{{ getDate(article.updated_at) }}</p>
+              <p class="date my-1 ">{{ getDate(article.updated_at) }}</p>
+              <div v-snip="4" id="editor" v-html="$md.render(article.content.replaceAll('](/uploads/', `](${apiUrl}/uploads/`))"/>
               <!-- <div>
                 <img
                   v-if="article.author.picture"

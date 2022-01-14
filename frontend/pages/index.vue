@@ -90,6 +90,14 @@
           </div>
         </div>
       </div>
+      <div class="row justify-content-center">
+        <div class="col-12 col-lg-6">
+          <div class="col-12 white-well pt-2">
+            <h2 class="pt-3">Personal Finance</h2>
+            <Articles :articles="articles" />
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -97,10 +105,17 @@
 <script>
 import {cryptocurrency, currencies, stocks, indices, bonds, rising, commodities} from "./../market.js";
 import Ad from "./../components/Ad.vue";
+import Articles from "./../components/Articles";
 export default {
     components: {
       IndexList: () => import('./../components/IndexList'),
-      Ad
+      Ad,
+      Articles
+    },
+    async asyncData({ $strapi }) {
+      return {
+        articles: await $strapi.find("articles"),
+      };
     },
     data() {
       return {
