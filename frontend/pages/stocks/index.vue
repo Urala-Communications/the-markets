@@ -77,6 +77,7 @@ export default {
         })
         .catch(error => {
           console.log(error);
+          this.loading = false;
         })
       },
       showGrid() {
@@ -88,7 +89,7 @@ export default {
     },
     created() {
       this.$root.$on('updateStock', (item) => {
-        let i = item.indexFound;//this.stocks.findIndex(index => index.name === item.name);        
+        let i = item.indexFound;//this.stocks.findIndex(index => index.name === item.name);
         this.$set(this.stocks[i], 'price', item.price);
         this.$set(this.stocks[i], 'difference', item.difference);
         this.$set(this.stocks[i], 'change', item.change);

@@ -16,7 +16,7 @@
         <span>{{ index.symbol }}</span>
         <span>{{ index.company_name }}</span>
         <span :class="index.change > 0 ? 'up' : 'down'"><span v-if="type !== 'indices'">$</span>{{ index.price }}</span>
-        <span class="justify-content-center green font-weight-bold">{{ index.change_percentage }}</span>
+        <span class="justify-content-center green font-weight-bold">+{{ Number(index.change_percentage).toFixed(2) }}</span>
         <span class="justify-content-center">{{ index.change }}</span>
       </div>
       <div v-else class="grid" :class="priceStatus(index.change)">
