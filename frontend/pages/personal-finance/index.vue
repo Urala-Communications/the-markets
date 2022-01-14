@@ -44,59 +44,59 @@ export default {
     };
   },
   mounted(){
-    console.log(this.articles)
+    // console.log(this.articles)
   }
 };
 </script>
 
 <style lang="scss" scoped>
-    p {
-        font-size: 14px;
-        margin-bottom: 0.3rem;
+  p {
+      font-size: 14px;
+      margin-bottom: 0.3rem;
+  }
+  hr {
+      border-top: 1px solid rgb(198 198 198 / 41%);
+      display: block;
+      width: 100%;
+  }
+  .posts {
+    justify-content: space-around;
+  }
+  .article-link {
+    display: inline-block;
+    max-width: 18rem;
+  }
+  .card {
+    flex-direction: column;
+    .card-img-top {
+      width: 100%;
+      height: 15vw;
+      object-fit: cover;
     }
-    hr {
-        border-top: 1px solid rgb(198 198 198 / 41%);
-        display: block;
-        width: 100%;
+    h4 {
+      min-height: 32px;
     }
+  }
+  @media(max-width: 991px){
     .posts {
-      justify-content: space-around;
-    }
-    .article-link {
-      display: inline-block;
-      max-width: 18rem;
-    }
-    .card {
       flex-direction: column;
-      .card-img-top {
+      align-items: center;
+      .article-link {
+        margin-bottom: 1rem;
         width: 100%;
-        height: 15vw;
-        object-fit: cover;
-      }
-      h4 {
-        min-height: 32px;
-      }
-    }
-    @media(max-width: 991px){
-      .posts {
-        flex-direction: column;
-        align-items: center;
-        .article-link {
-          margin-bottom: 1rem;
-          width: 100%;
-          .card {
-            .card-body{
-              margin: 0;
-              padding: 10px !important;
-            }
-            .card-img-top {
-              height: 180px;
-            }
-            h4 {
-              min-height: auto;
-            }
+        .card {
+          .card-body{
+            margin: 0;
+            padding: 10px !important;
+          }
+          .card-img-top {
+            height: 180px;
+          }
+          h4 {
+            min-height: auto;
           }
         }
       }
     }
+  }
 </style>
