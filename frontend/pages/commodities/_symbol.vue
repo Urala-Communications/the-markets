@@ -117,7 +117,8 @@ export default {
       },
       fetchAggregates(){
         let i = this.commodities.find( item => item.icon.toLowerCase() === this.symbol);
-        this.$axios.$get(`https://api.finage.co.uk/agg/forex/${i.symbol}/1/day/2021-01-01/${this.yesterday}?limit=1825&apikey=${this.finageApiKey}&sort=desc`)
+        let last = new Date(Date.now() - 864e5 * 30).toLocaleDateString("fr-CA");
+        this.$axios.$get(`https://api.finage.co.uk/agg/forex/${i.symbol}/1/hour/${last}/${this.today}?limit=1825&apikey=${this.finageApiKey}&sort=desc`)
         .then(response => {          
           this.chartData = response.results.map(o => {
             const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];

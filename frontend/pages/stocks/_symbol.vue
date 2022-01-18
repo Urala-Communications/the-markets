@@ -76,15 +76,16 @@ export default {
             console.log(error);
           })
       },
-      fetchPrice() {        
+      async fetchPrice() {        
         let i = this.stocks.find(item => item.name.toLowerCase() === this.symbol);
-        this.$axios.$get(`https://api.finage.co.uk/last/stock/${i.symbol}?apikey=${this.finageApiKey}`)
+        return this.$axios.$get(`https://api.finage.co.uk/last/stock/${i.symbol}?apikey=${this.finageApiKey}`)
         .then(response => {
           this.item.price = response.ask.toFixed(2);
           this.$set(this.item, 'icon', i.icon);
           this.loading = false;
           this.lastTradeDate = new Date(Number(response.timestamp)).toLocaleDateString("fr-CA");
           this.yesterday = new Date(Number(response.timestamp) - 864e5 ).toLocaleDateString("fr-CA");
+          return response;
         })
         .catch(error => {
           console.log(error);
@@ -101,7 +102,8 @@ export default {
       },
       fetchAggregates(){
         let i = this.stocks.find( item => item.name.toLowerCase() === this.symbol);
-        this.$axios.$get(`https://api.finage.co.uk/agg/stock/${i.symbol}/1/day/2021-01-01/${this.today}?limit=3000&apikey=${this.finageApiKey}&sort=desc`)
+        let last = new Date(Date.now() - 864e5 * 30).toLocaleDateString("fr-CA");
+        this.$axios.$get(`https://api.finage.co.uk/agg/stock/${i.symbol}/1/hour/${last}/${this.lastTradeDate}?limit=3000&apikey=${this.finageApiKey}&sort=desc`)
           .then(response => {            
             this.chartData = response.results.map(o => {
               const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
@@ -204,9 +206,10 @@ export default {
         this.updateInterval(symbol, interval, text);
       })
       this.fetchDetails();
-      this.fetchPrice();
+      this.fetchPrice().then(res => {
+        this.fetchAggregates();
+      });
       this.checkMarketStatus();
-      this.fetchAggregates();
       this.fetchNews();
       this.checkMarketStatus();
       setInterval(() => {

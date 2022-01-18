@@ -10,6 +10,7 @@
         :color-grid="colors.colorGrid"
         :color-text="colors.colorText"
         :overlays="overlays"
+        :timezone="this.timezone"
         ref="tradingChart">
         </trading-vue>
         
@@ -94,7 +95,7 @@ export default {
                     type: "Candles",
                     data: this.data,
                     indexBased: true,
-                    tf: "1d"   
+                    tf: "1h"   
                 }
             }),
             width: document.querySelector('.row').offsetWidth - 30,

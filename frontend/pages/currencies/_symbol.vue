@@ -52,8 +52,7 @@ export default {
         chartData: [],
         chartOptions: null,
         yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
-        today: new Date(Date.now()).toLocaleDateString("fr-CA"),
-        
+        today: new Date(Date.now()).toLocaleDateString("fr-CA"),        
       }
     },
     head() {
@@ -92,7 +91,7 @@ export default {
         .then(response => {
 
           this.item.price = response.price.toFixed(4);
-          this.$set(this.item, 'icon', i.icon);
+          this.$set(this.item, 'icon', this.item.icon);
           this.loading = false;
         })
         .catch(error => {
@@ -111,7 +110,8 @@ export default {
       fetchAggregates(){
         let itemSymbol = this.symbol.replace('-', '').toUpperCase();        
         if(itemSymbol !== 'DOLLARINDEX'){
-          this.$axios.$get(`https://api.finage.co.uk/agg/forex/${itemSymbol}/1/day/2021-01-01/${this.today}?limit=1825&apikey=${this.finageApiKey}&sort=desc`)
+          let last = new Date(Date.now() - 864e5 * 7).toLocaleDateString("fr-CA");
+          this.$axios.$get(`https://api.finage.co.uk/agg/forex/${itemSymbol}/1/hour/${last}/${this.today}?limit=1825&apikey=${this.finageApiKey}&sort=desc`)
           .then(response => {            
             this.chartData = response.results.map(o => {
               const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];

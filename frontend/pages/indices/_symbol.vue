@@ -108,7 +108,8 @@ export default {
       },
       fetchAggregates(){
         let i = this.indices.find( item => item.name === this.symbol.replace('-', ' ').toUpperCase());
-        this.$axios.$get(`https://api.finage.co.uk/agg/index/${i.symbol}/1day/2021-01-01/${this.today}?limit=1825&apikey=${this.finageApiKey}&sort=desc`)
+        last = new Date(Date.now() - 864e5 * 30).toLocaleDateString("fr-CA");
+        this.$axios.$get(`https://api.finage.co.uk/agg/index/${i.symbol}/1day/${last}/${this.today}?limit=1825&apikey=${this.finageApiKey}&sort=desc`)
         .then(response => {          
           this.chartData = response.results.map(o => {
             const [ timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
