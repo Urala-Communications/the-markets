@@ -40,7 +40,7 @@ export default {
         },
         on_selected(tf) {
             
-            this.$root.$emit("changeInterval", {symbol: this.symbol, interval: tf.name})            
+            this.$root.$emit("changeInterval", {symbol: this.symbol, interval: tf.name, text: tf.text})            
         }
     },
     watch: {
@@ -67,7 +67,7 @@ export default {
 
         });
         this.$root.$on("updatedInterval", ({symbol, interval}) => {
-            if (this.data.length > 0 && this.$refs.tradingChart) {
+            if (this.data.length > 0 && this.$refs.tradingChart && symbol == this.symbol) {
                 this.$refs.tradingChart.resetChart();
             }
         })
@@ -79,20 +79,21 @@ export default {
         return {
             
             charts:[
-                {label: "1m", value:"1m"},
-                {label: "5m", value:"5m"},
-                {label: "15m", value:"15m"},
-                {label: "30m", value:"30m"},
-                {label: "1h", value:"1h"},
-                {label: "4h", value:"4h"},
-                {label: "1d", value:"1d"},
-                {label: "1W", value:"1w"},
-                {label: "1M", value:"1M"},
+                {label: "1m", value:"1m", text: "1/minute"},
+                {label: "5m", value:"5m", text: "5/minute"},
+                {label: "15m", value:"15m", text: "15/minute"},
+                {label: "30m", value:"30m", text: "30/minute"},
+                {label: "1h", value:"1h", text: "1/hour"},
+                {label: "4h", value:"4h", text: "4/hour"},
+                {label: "1d", value:"1d", text: "1/day"},
+                {label: "1W", value:"1w", text: "1/week"},
+                {label: "1M", value:"1M", text: "1/month"},
             ],
             chart: new DataCube({ 
                 chart: {
                     type: "Candles",
                     data: this.data,
+                    indexBased: true,
                     tf: "1d"   
                 }
             }),

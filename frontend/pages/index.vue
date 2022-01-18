@@ -145,8 +145,7 @@ export default {
             let newsfeed = type === 'rising' ? this.risingNews : this.stockNews;
             let index = newsfeed.findIndex(x => x.title === response[0].title);
             let newsItem = response[0]
-            if(index === -1){
-              // console.log(response)
+            if(index === -1){              
               newsItem.symbol = symbol
               newsItem.type = 'stocks'
               newsfeed.push(newsItem)

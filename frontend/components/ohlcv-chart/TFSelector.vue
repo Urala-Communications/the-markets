@@ -18,7 +18,8 @@ export default {
     mounted() {
         this.$emit('selected', {
             name: this.timeframes[this.selected].value,
-            i: this.selected
+            i: this.selected,
+            text: this.timeframes[this.selected].text,
         })
     },
     computed: {
@@ -32,6 +33,7 @@ export default {
             this.selected = i
             this.$emit('selected', {
                 name: this.timeframes[this.selected].value,
+                text: this.timeframes[this.selected].text,
                 i: this.selected
             })
         }

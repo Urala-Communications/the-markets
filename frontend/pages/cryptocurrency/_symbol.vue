@@ -1,16 +1,6 @@
 <template>
   <div v-if="loading">
-    <div
-      class="
-        container
-        d-flex
-        justify-content-around
-        w-50
-        pt-5
-        vh-100
-        text-center
-      "
-    >
+    <div class="container d-flex justify-content-around w-50 pt-5 vh-100 text-center">
       <div class="loading-logo mt-5" role="status" />
     </div>
   </div>
@@ -28,13 +18,11 @@
     :marketCap="marketCap"
     :yearHigh="yearHigh"
     :yearLow="yearLow"
-    :chartData="chartData"
-    
+    :chartData="chartData"    
     :chartOptions="chartOptions"
     :marketStatus="marketStatus"
     :symbol="symbol"
-    :live="live"
-    
+    :live="live"    
     ref="Item"
   />
 </template>
@@ -71,16 +59,11 @@ export default {
       symbol: "",
       marketStatus: "",
       cryptocurrency,
-      chartData: [],
-      initData: [],
-      tickData: [],
-      livegroupData: [],
+      chartData: [], 
       chartOptions: null,
-
       live: "",
       subindex: 2,
       cryptoWS: new WebSocket(`wss://stream.binance.com/stream`),
-
       yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
       today: new Date(Date.now()).toLocaleDateString("fr-CA"),
     };
@@ -100,8 +83,7 @@ export default {
     return { symbol };
   },
   methods: {
-    fetchDetails() {
-      // let i = this.cryptocurrency.find( item => item.name.toLowerCase() === this.symbol);
+    fetchDetails() {      
       let i = this.cryptocurrency.find(
         (item) => item.name.toLowerCase() === this.symbol.replace("-", " ")
       );
@@ -109,21 +91,14 @@ export default {
         .$get(
           `https://api.finage.co.uk/detail/cryptocurrency/${i.icon}?apikey=${this.finageApiKey}`
         )
-        .then((response) => {
-          // console.log("Details")
+        .then((response) => {         
           this.profile = response;
         })
         .catch((error) => {
           console.log(error);
         });
     },
-    fetchPrice() {
-      // Number.prototype.toFixed = function (n) {
-      //   return this.toLocaleString(undefined, {
-      //     minimumFractionDigits: n,
-      //     maximumFractionDigits: n,
-      //   });
-      // };
+    fetchPrice() {      
       let i = this.cryptocurrency.find(
         (item) => item.name.toLowerCase() === this.symbol.replace("-", " ")
       );
@@ -166,8 +141,7 @@ export default {
         .$get(
           `https://api.binance.com/api/v3/klines?limit=1000&symbol=${i.live}&interval=1d`
         )
-        .then((response) => {
-          //console.log("Aggregates");
+        .then((response) => {          
           this.chartData = response.map(o => {
             const [timestamp, openPrice, high, low, close, volume] = [...o];
             return [timestamp, openPrice, high, low, close, volume].map(n =>
@@ -175,20 +149,17 @@ export default {
             );
           })
           this.symbol = i.symbol;
-          this.live = i.live;         
-          
+          this.live = i.live; 
           let last = this.chartData.pop();
           this.open = last[1];
           this.high = last[2]
           this.low = last[3];
           this.close = last[4];
           this.volume = last[5];
-          this.loading = false;
-          
+          this.loading = false;          
           if (this.cryptoWS.readyState === 1) {
             this.cryptoWS.send(`{"method":"SUBSCRIBE","params":["${this.live.toLowerCase()}@aggTrade"],"id":${this.subindex}}`);
           }
-
         })
         .catch((error) => {
           console.log(error);
@@ -217,8 +188,9 @@ export default {
     unsubscribeTrade(){      
       this.cryptoWS.send(`{"method":"UNSUBSCRIBE","params":["${this.live.toLowerCase()}@aggTrade"],"id":${this.subindex}}`);      
     },   
-    updateInterval(symbol, interval){
-      this.$axios
+    updateInterval(symbol, interval){      
+      if (symbol === this.live) {
+        this.$axios
         .$get(
           `https://api.binance.com/api/v3/klines?limit=1000&symbol=${symbol}&interval=${interval}`
         )
@@ -235,10 +207,9 @@ export default {
         })
         .catch((error) => {
           console.log(error);
-        });    
-    },
-    
-    
+        }); 
+      }   
+    },    
     fetchNews() {
       let i = this.cryptocurrency.find(
         (item) => item.name.toLowerCase() === this.symbol.replace("-", " ")
@@ -270,10 +241,7 @@ export default {
   created() {
     this.$root.$on("updateCrypto", (item) => {
       
-      if (item.symbol === this.symbol.replace("-", " ")) {
-        /* let i =  this.cryptocurrency.findIndex(
-           (index) => index.name.toLowerCase() === item.name.toLowerCase()
-        ); */
+      if (item.symbol === this.symbol.replace("-", " ")) {        
         this.$set(this.item, "name", this.cryptocurrency[item.indexFound].name);
         //this.$set(this.item, "price", item.price);
         this.$set(this.item, "difference", item.difference);
@@ -282,26 +250,20 @@ export default {
         this.$set(this.item, "time", item.time);
       }
     });
-    this.$root.$on("updateTrade", ({symbol, time, price, volumn}) => {
-      
+    this.$root.$on("updateTrade", ({symbol, time, price, volumn}) => {      
       if (symbol === this.live) {
         this.$set(this.item, "price", price);
       }
     })
-    
-
     this.fetchDetails();
     this.checkMarketStatus();
     this.fetchAggregates();
-    this.fetchPrice();
-
-    this.$root.$on("changeInterval", ({symbol, interval}) => {
-      this.updateInterval(symbol, interval);
+    //this.fetchPrice();
+    this.$root.$on("changeInterval", ({symbol, interval, text}) => {
+      this.updateInterval(symbol, interval, text);
     })
     this.subscribeTrade();
     this.listenTrade();
-    
-
     // this.fetchNews();
     // setInterval(() => {
     //     this.fetchNews();

@@ -17,7 +17,8 @@
     :chartData="chartData"
     :chartOptions="chartOptions"
     :marketStatus="marketStatus"
-    :c_symbol="c_symbol"
+    :symbol="symbol"
+    :live="live"
   />
 </template>
 
@@ -45,11 +46,11 @@ export default {
         news: [],
         loading: true,
         symbol: '',
+        live: '',
         marketStatus: '',
         commodities,
         chartData: [],
-        chartOptions: null,
-        c_symbol: "",
+        chartOptions: null,        
         yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
         today: new Date(Date.now()).toLocaleDateString("fr-CA"),
       }
@@ -79,18 +80,10 @@ export default {
             console.log(error);
           })
       },
-      fetchPrice() {
-        // Number.prototype.toLocaleFixed = function(n) {
-        //   return this.toLocaleString(undefined, {
-        //     minimumFractionDigits: n,
-        //     maximumFractionDigits: n
-        //   });
-        // };
+      fetchPrice() {        
         let i = this.commodities.find( item => item.icon.toLowerCase() === this.symbol);
         this.$axios.$get(`https://api.finage.co.uk/last/trade/forex/${i.symbol}?apikey=${this.finageApiKey}`)
-        .then(response => {
-          //console.log("Price")
-          //console.log(response)
+        .then(response => {         
           this.item.price = response.price.toFixed(2);
           this.$set(this.item, 'icon', i.icon);
           this.loading = false;
@@ -103,9 +96,7 @@ export default {
         let i = this.commodities.find(item => item.name.toLowerCase() === this.symbol.replace(/-/g, ' '));
         this.$axios.$get(`https://api.finage.co.uk/news/forex/${i.symbol}?apikey=${this.finageApiKey}`)
         .then(response => {
-          let filteredNews = response.news.filter((v,i,a)=>a.findIndex(t=>(t.title === v.title))===i); // filter duplicates from API - may need to also filter this.news on each fetch
-          //console.log('NEWS')
-          //console.log(filteredNews)
+          let filteredNews = response.news.filter((v,i,a)=>a.findIndex(t=>(t.title === v.title))===i); // filter duplicates from API - may need to also filter this.news on each fetch          
           this.news = filteredNews;
           if(this.news.length > 10){
             this.news.pop()
@@ -126,238 +117,75 @@ export default {
       },
       fetchAggregates(){
         let i = this.commodities.find( item => item.icon.toLowerCase() === this.symbol);
-        this.$axios.$get(`https://api.finage.co.uk/agg/forex/${i.symbol}/1/day/2021-01-01/${this.yesterday}?limit=1825&apikey=${this.finageApiKey}`)
-        .then(response => {
-          //console.log("Aggregates")
-          //console.log(response.results)
-          this.chartData = response.results.map(i => i.c);
+        this.$axios.$get(`https://api.finage.co.uk/agg/forex/${i.symbol}/1/day/2021-01-01/${this.yesterday}?limit=1825&apikey=${this.finageApiKey}&sort=desc`)
+        .then(response => {          
+          this.chartData = response.results.map(o => {
+            const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
+            return [timestamp, openPrice, high, low, close, volume].map(n =>
+              Number(n)
+            );
+          }).sort((a, b) => {
+            return a[0] - b[0];
+          });
+          this.symbol = i.symbol;
+          this.live = i.symbol;
+          let last = this.chartData.pop();
+          this.open = last[0];
+          this.high = last[1]
+          this.low = last[2];
+          this.close = last[3];
+          this.volume = last[4];
+          this.loading = false;
         })
         .catch(error => {
           console.log(error);
         })
       },
-      changeChartData(range, interval = "day") {
-          let i = this.commodities.find(
-              (item) => item.name.toLowerCase() === this.symbol
-          );
-          let minDate = "2021-01-01";
-          let date = new Date();
-          let startPoint = date;
-          let lastinterval = new Date();
-          lastinterval.setMilliseconds(0);
-          lastinterval.setSeconds(0);
-          let limit = 500;
-          switch (range) {
-              case "1m":
-                  minDate = new Date(
-                      new Date().getTime() - 24 * 1000 * 60 * 60
-                  ).toLocaleDateString("fr-CA");
-                  interval = "second";
-                  limit = 100;
-                  break;
-              case "5m":
-                  minDate = new Date(
-                      new Date().getTime() - 24 * 1000 * 60 * 60
-                  ).toLocaleDateString("fr-CA");
-                  interval = "second";
-                  limit = 3000;
-                  break;
-              case "10m":
-                  minDate = new Date(
-                      new Date().getTime() - 24 * 1000 * 60 * 60
-                  ).toLocaleDateString("fr-CA");
-                  interval = "second";
-                  limit = 3000;
-                  break;
-              case "30m":
-                  minDate = new Date(
-                      new Date().getTime() - 24 * 1000 * 60 * 60
-                  ).toLocaleDateString("fr-CA");
-                  interval = "second";
-                  startPoint.setTime(
-                      new Date(new Date().getTime() - 1000 * 60 * 30)
-                  );
-                  limit = 3000;
-                  break;
-              case "1h":
-                  minDate = new Date(
-                      new Date().getTime() - 30 * 24 * 1000 * 60 * 60
-                  ).toLocaleDateString("fr-CA");
-                  interval = "minute";
-                  startPoint = 1000 * 60 * 60;
-                  limit = 3000;
-                  break;
-              case "2h":
-                  minDate = new Date(
-                      new Date().getTime() - 30 * 24 * 1000 * 60 * 60
-                  ).toLocaleDateString("fr-CA");
-                  interval = "minute";
-                  startPoint = 2 * 60 * 60 * 1000;
-                  limit = 3000;
-                  break;
-              case "4h":
-                  minDate = new Date(
-                      new Date().getTime() - 30 * 24 * 1000 * 60 * 60
-                  ).toLocaleDateString("fr-CA");
-                  interval = "minute";
-                  startPoint = 4 * 60 * 60 * 1000;
-                  limit = 3000;
-                  break;
-              case "1d":
-                  minDate = new Date(
-                      new Date().getTime() - 30 * 24 * 1000 * 60 * 60
-                  ).toLocaleDateString("fr-CA");
-                  interval = "minute";
-                  startPoint = 24 * 1000 * 60 * 60;
-                  limit = 3000;
-                  break;
-              case "1w":
-                  minDate = new Date(
-                      new Date().getTime() - 30 * 24 * 1000 * 60 * 60
-                  ).toLocaleDateString("fr-CA");
-                  lastinterval.setMinutes(0);
-                  startPoint = 7 * 24 * 1000 * 60 * 60;
-                  interval = "minute";
-                  break;
-              case "1M":
-                  minDate = new Date(
-                      new Date().getTime() - 30 * 24 * 1000 * 60 * 60
-                  ).toLocaleDateString("fr-CA");
-                  lastinterval.setMinutes(0);
-                  startPoint = 30 * 24 * 1000 * 60 * 60;
-                  interval = "minute";
-                  break;
-              case "3M":
-                  minDate = new Date(
-                      new Date().getTime() - 365 * 24 * 1000 * 60 * 60
-                  ).toLocaleDateString("fr-CA");
-                  lastinterval.setMinutes(0);
-                  lastinterval.setHours(0);
-                  startPoint =  90 * 24 * 1000 * 60 * 60;
-                  interval = "day";
-                  break;
-              case "6M":
-                  minDate = new Date(
-                      new Date().getTime() - 365 * 24 * 1000 * 60 * 60
-                  ).toLocaleDateString("fr-CA");
-                  lastinterval.setMinutes(0);
-                  lastinterval.setHours(0);
-                  startPoint =  180 * 24 * 1000 * 60 * 60;
-                  interval = "day";
-                  break;
-              case "1y":
-                  minDate = new Date(
-                      new Date().getTime() - 365 * 24 * 1000 * 60 * 60
-                  ).toLocaleDateString("fr-CA");
-                  lastinterval.setMinutes(0);
-                  lastinterval.setHours(0);
-                  startPoint =  365 * 24 * 1000 * 60 * 60;
-                  interval = "day";
-                  break;
-              case "All":
-                  //minDate = fiveYearsAgo;
-                  lastinterval.setMinutes(0);
-                  lastinterval.setHours(0);
-                  interval = "All";
-                  break;
-              default:
-                  lastinterval.setMinutes(0);
-                  lastinterval.setHours(0);
-                  interval = "day";
-                  break;
+      updateInterval(symbol, interval, text){
+        if (symbol === this.live) {
+          let last = this.yesterday;
+          switch (interval) {
+            case '1m':              
+            case '5m':              
+            case '15m':
+              last = this.yesterday;
+              break;
+            case '30m':
+              last = new Date(Date.now() - 864e5 * 7).toLocaleDateString("fr-CA");
+              break;
+            case '1h':              
+            case '4h':
+              last = new Date(Date.now() - 864e5 * 30).toLocaleDateString("fr-CA");
+              break;
+            case '1d':             
+            case '1w':
+              last = new Date(Date.now() - 864e5 * 365).toLocaleDateString("fr-CA");
+              break;
+            case '1M':
+              last = new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString("fr-CA");
+              break;          
+            default:
+              break;
           }
-          let data = localStorage.getItem(i.symbol + "-" + range);
-
-          if (interval !== "second") {
-          // remove old data and add the new one
-          if (data !== null) {
-              data = JSON.parse(data);
-
-              if (interval === "All") {
-                  this.$root.$emit("update-chart-data", {
-                      interval: interval,
-                      range: range,
-                      data: data,
-                  });
-              } else if (data[data.length - 1][0] < lastinterval.getTime()) {
-                  this.startUpdateData(
-                      i.symbol,
-                      range,
-                      limit,
-                      interval,
-                      minDate,
-                      startPoint
-                  );
-              } else {
-                  this.$root.$emit("update-chart-data", {
-                      interval: interval,
-                      range: range,
-                      data: data.filter((a) => a[0] >= (new Date(data[data.length-1]).getTime() - startPoint) ),
-                  });
-                  //this.chartData = data;
-              }
-          } else {
-              this.startUpdateData(
-                  i.symbol,
-                  range,
-                  limit,
-                  interval,
-                  minDate,
-                  startPoint
-              );
-          }
-          } else {
-              let url = `${this.liveApiUrl}/${range}/${i.symbol}/1`;
-
-              this.$axios
-              .$get(
-                  url
-              )
-              .then((response) => {
-                  let tempdata = response.map((i) => {
-                      return [Date.parse(i._stop), i._value];
-                  });
-                  this.$root.$emit("update-chart-data", {
-                      interval: interval,
-                      range: range,
-                      data: tempdata,
-                  });
-              })
-
-          }
-      },
-      startUpdateData(symbol, range, limit, interval, minDate, startPoint) {
-
-
           this.$axios
-              .$get(
-                  `https://api.finage.co.uk/agg/forex/${symbol}/1/${interval}/${minDate}/${this.today}?&apikey=${this.finageApiKey}&limit=${limit}`
-              )
-              .then((response) => {
-                  //console.log("Aggregates");
-                  //console.log(response.results);
-                  let tempdata = response.results.map((i) => {
-                      return [i.t, i.c];
-                  });
-
-                  this.$root.$emit("update-chart-data", {
-                      interval: interval,
-                      range: range,
-                      data: range !== "All"
-                                ? tempdata.filter(
-                                      (a) => a[0] >= ( new Date(tempdata[tempdata.length-1][0]).getTime() - startPoint)
-                                  )
-                                : tempdata,
-                  });
-                  //this.chartData = response.results.map(i => { return [ i.t ,i.c ]});
-                  localStorage.setItem(
-                      symbol + "-" + range,
-                      JSON.stringify(tempdata)
-                  );
-              })
-              .catch((error) => {
-                  console.log(error);
-              });
+          .$get(
+            `https://api.finage.co.uk/agg/forex/${symbol}/${text}/${last}/${this.today}?limit=3000&apikey=${this.finageApiKey}&sort=desc`
+          )
+          .then((response) => {            
+            this.chartData = response.results.map(o => {
+              const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
+              return [timestamp, openPrice, high, low, close, volume].map(n =>
+                Number(n)
+              );
+            }).sort((a, b) => {
+              return a[0] - b[0];
+            }); 
+            this.$root.$emit("updatedInterval", {symbol, interval});
+          })
+          .catch((error) => {
+            console.log(error);
+          });  
+        }  
       },
     },
     created() {
@@ -372,13 +200,9 @@ export default {
           this.loading = false;
         }
       });
-      this.$root.$on("changeRangeData", ([item, range, interval]) => {
-          //console.log("received emit data: ", [item, range, interval]);
-          //console.time("receivedDat");
-          if (item.name === this.c_symbol) {
-              this.changeChartData(range, interval);
-          }
-      });
+      this.$root.$on("changeInterval", ({symbol, interval, text}) => {
+        this.updateInterval(symbol, interval, text);
+      })
       this.fetchDetails();
       this.fetchPrice();
       this.checkMarketStatus();
