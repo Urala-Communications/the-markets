@@ -33,12 +33,12 @@
             <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
           </div>
         </div>
-        <!-- <div class="col-12 col-lg-7 offset-lg-5">
+        <div class="col-12 col-lg-7 offset-lg-5">
           <div class="col-lg-12 mt-4 white-well">
             <News :newsData="newsData"/>
             <Ad feedAd/>
           </div>
-        </div> -->
+        </div>
       </div>
     </div>
   </div>
@@ -71,13 +71,13 @@ export default {
           if(typeof response.news[0] !== 'undefined'){
             let index = this.newsData.findIndex(x => x.title === response.news[0].title);
             let newsItem = response.news[0];
-            // this.loading = false;
+            this.loading = false;
             if(index === -1){
               newsItem.symbol = symbol
               newsItem.type = 'cryptocurrency'
               this.newsData.push(newsItem)
             }
-            if(this.newsData.length > 10){
+            if(this.newsData.length > 30){
               this.newsData.pop()
             }
           }
@@ -110,9 +110,9 @@ export default {
         this.$set(this.cryptocurrency[item.indexFound], 'difference', item.difference);
         this.$set(this.cryptocurrency[item.indexFound], 'change', item.change);
       });
-      // this.cryptocurrency.forEach(item => {
-      //   this.fetchNews(item.icon);
-      // });
+      this.cryptocurrency.forEach(item => {
+        this.fetchNews(item.icon);
+      });
     },
   }
 </script>
