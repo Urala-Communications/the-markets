@@ -45,6 +45,11 @@ export default {
       default: () => ({}),
     },
   },
+  data() {
+    return {
+      apiUrl: process.env.strapiBaseUri,
+    };
+  },
   methods: {
     getStrapiMedia,
     getDate(d){
