@@ -94,10 +94,10 @@ The full backlog of issues and requested features can be found [here](https://ur
 - MVP launched October 2021
 - Strapi CMS added November 2021
 - Candlestick charts added December 2021
+- Search function for all symbols with autosuggest added January 2022
 
 #### Future milestones
 - Add indice CFDs and Futures
-- Add a search function for all symbols with autosuggest
 - Refactor data collection via node.js app and GraphQL
 - Toggle index list to cards
 - Add crypto coin categories DeFi, GameFi, DAO, Memecoins, NFTs
