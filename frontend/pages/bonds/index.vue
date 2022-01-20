@@ -60,8 +60,7 @@ export default {
     methods: {
       fetchNews(symbol){
         this.$axios.$get(`https://api.finage.co.uk/news/forex/${symbol}?apikey=${this.finageApiKey}`)
-        .then(response => {
-          // console.log('News')
+        .then(response => {          
           // console.log(response.news)
           if(typeof response.news[0] !== 'undefined'){
             let index = this.newsData.findIndex(x => x.title === response.news[0].title);

@@ -163,6 +163,12 @@ export default {
             item.marketOpen = true;
             if (this.currencies[indexFound].rcOldPrice != item.price ) {
               this.$root.$emit('updateCurrency', item);
+              this.$root.$emit("updateTrade",  {
+                symbol: item.symbol,
+                time: Number(item.time),
+                price: Number(item.price),
+                volumn: 0,
+              });
               this.currencies[indexFound].rcOldPrice = item.price;
             }
           // }
@@ -241,6 +247,12 @@ export default {
           }
            if (this.stocks[indexFound].stOldPrice != item.price ) {
             this.$root.$emit('updateStock', item);
+            this.$root.$emit("updateTrade",  {
+                symbol: item.symbol,
+                time: Number(item.time),
+                price: Number(item.price),
+                volumn: 0,
+            });
             this.stocks[indexFound].stOldPrice = item.price;
           }
         }
@@ -284,6 +296,12 @@ export default {
             // console.log("")
             if (this.indices[indexFound].idOldPrice != item.price ) {
               this.$root.$emit('updateIndice', item);
+              this.$root.$emit("updateTrade",  {
+                symbol: item.symbol,
+                time: Number(item.time),
+                price: Number(item.price),
+                volumn: 0,
+              });
               this.indices[indexFound].idOldPrice = item.price;
             }
           }
@@ -310,6 +328,12 @@ export default {
             // }
             if (this.indices[indexFound].idOldPrice != item.price ) {
               this.$root.$emit('updateIndice', item);
+              this.$root.$emit("updateTrade",  {
+                symbol: item.symbol,
+                time: Number(item.time),
+                price: Number(item.price),
+                volumn: 0,
+            });
               this.indices[indexFound].idOldPrice = item.price;
             }
           }

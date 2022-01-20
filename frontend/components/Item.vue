@@ -41,7 +41,7 @@
               </div>
             </div>
 
-            <chart
+            <!-- <chart
               v-if="chartData.length > 0 && type !== 'cryptocurrency'"
               :data="chartData"
               :options="chartOptions"
@@ -49,9 +49,9 @@
               :c_symbol="symbol"
               :new="item"
               ref="Chart"
-            />
+            /> -->
             <TradingChart
-              v-if="chartData.length > 0 && type === 'cryptocurrency'"
+              v-if="chartData.length > 0"
               :data="chartData"
               :options="chartOptions"
               :chartColour="item.change > 0 ? 'up' : 'down'"
