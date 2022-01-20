@@ -82,10 +82,10 @@
           <div class="row m-0 justify-content-between">
             <div class="col-lg-12 white-well">
               <h2 class="mt-0">News</h2>
+              <News :newsData="cryptoNews"/>
               <News :newsData="stockNews"/>
               <!-- <Ad feedAd/> -->
               <!-- <Ad feedAd/> -->
-              <!-- <News :newsData="cryptoNews"/> -->
             </div>
           </div>
         </div>
@@ -141,16 +141,17 @@ export default {
       fetchNews(symbol, type){
         this.$axios.$get(`https://api.finage.co.uk/news/market/${symbol}?apikey=${this.finageApiKey}`)
         .then(response => {
-          if(typeof response[0] !== 'undefined'){
+          // console.log(response)
+          if(typeof response.news[0] !== 'undefined'){
             let newsfeed = type === 'rising' ? this.risingNews : this.stockNews;
-            let index = newsfeed.findIndex(x => x.title === response[0].title);
-            let newsItem = response[0]
-            if(index === -1){              
+            let index = newsfeed.findIndex(x => x.title === response.news[0].title);
+            let newsItem = response.news[0]
+            if(index === -1){
               newsItem.symbol = symbol
               newsItem.type = 'stocks'
               newsfeed.push(newsItem)
             }
-            if(newsfeed.length > 14){
+            if(newsfeed.length > 7){
               newsfeed.pop()
             }
           }
@@ -171,7 +172,7 @@ export default {
               newsItem.type = 'cryptocurrency'
               newsfeed.push(newsItem)
             }
-            if(newsfeed.length > 5){
+            if(newsfeed.length > 7){
               newsfeed.pop()
             }
           }
@@ -267,19 +268,9 @@ export default {
           this.fetchNews(item.symbol);
         }
       });
-      // setInterval(() => {
-      //   this.stocks.forEach(item => {
-      //     this.fetchNews(item.symbol);
-      //   });
-      // }, 300000);
-      // this.cryptocurrency.forEach(item => {
-      //   this.fetchCryptoNews(item.icon);
-      // });
-      // setInterval(() => {
-      //   this.cryptocurrency.forEach(item => {
-      //     this.fetchCryptoNews(item.icon);
-      //   });
-      // }, 300000)
+      this.cryptocurrency.forEach(item => {
+        this.fetchCryptoNews(item.icon);
+      });
     }
   }
 </script>

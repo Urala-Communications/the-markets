@@ -66,7 +66,7 @@ export default {
     // '@nuxtjs/dotenv',
     // '@nuxtjs/fontawesome'
     '@/modules/sitemapgenerator',
-    //'@/modules/algoliaindex'
+    // '@/modules/algoliaindex'
   ],
 
   dev: process.env.NODE_ENV !== 'production',
@@ -247,11 +247,11 @@ export default {
   sitemap: {
     hostname: 'https://themarkets.io',
     gzip: true,
-    routes: [      
+    routes: [
     ]
   },
   generate: {
     crawler: false // default - true
   }
-  
+
 }

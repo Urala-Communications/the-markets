@@ -61,9 +61,9 @@ export default {
       fetchNews(symbol){
         this.$axios.$get(`https://api.finage.co.uk/news/market/${symbol}?apikey=${this.finageApiKey}`)
         .then(response => {
-          if(typeof response[0] !== 'undefined'){
-            let index = this.newsData.findIndex(x => x.title === response[0].title);
-            let newsItem = response[0]
+          if(typeof response.news[0] !== 'undefined'){
+            let index = this.newsData.findIndex(x => x.title === response.news[0].title);
+            let newsItem = response.news[0]
             if(index === -1){
               newsItem.symbol = symbol
               newsItem.type = 'stocks'
@@ -77,7 +77,7 @@ export default {
         })
         .catch(error => {
           console.log(error);
-          this.loading = false;
+          // this.loading = false;
         })
       },
       showGrid() {
