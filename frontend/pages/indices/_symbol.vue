@@ -52,7 +52,7 @@ export default {
         chartData: [],
         chartOptions: null,
         yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
-        today: new Date(Date.now()).toLocaleDateString("fr-CA"),        
+        today: new Date(Date.now()).toLocaleDateString("fr-CA"),
       }
     },
     head() {
@@ -80,11 +80,10 @@ export default {
       //     console.log(error);
       //   })
       // },
-      fetchPrice() {        
-        let i = this.indices.find( item => item.name === this.symbol.replace('-', ' ').toUpperCase());
+      fetchPrice() {
+        let i = this.indices.find( item => item.name.replace(/ /g, '-').toLowerCase() === this.symbol);
         this.$axios.$get(`https://api.finage.co.uk/last/index/${i.symbol}?apikey=${this.finageApiKey}`)
         .then(response => {
-
           this.item.price = response.price.toFixed(2);
           this.item.priceNumber = response.price;
           this.$set(this.item, 'icon', i.icon);
@@ -107,10 +106,10 @@ export default {
         })
       },
       fetchAggregates(){
-        let i = this.indices.find( item => item.name === this.symbol.replace('-', ' ').toUpperCase());
+        let i = this.indices.find( item => item.name.replace(/ /g, '-').toLowerCase() === this.symbol);
         last = new Date(Date.now() - 864e5 * 30).toLocaleDateString("fr-CA");
         this.$axios.$get(`https://api.finage.co.uk/agg/index/${i.symbol}/1day/${last}/${this.today}?limit=1825&apikey=${this.finageApiKey}&sort=desc`)
-        .then(response => {          
+        .then(response => {
           this.chartData = response.results.map(o => {
             const [ timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
             return [ timestamp, openPrice, high, low, close, volume].map(n =>
@@ -137,25 +136,25 @@ export default {
         if (symbol === this.live) {
           let last = this.yesterday;
           switch (interval) {
-            case '1m':              
-            case '5m':              
+            case '1m':
+            case '5m':
             case '15m':
               last = this.yesterday;
               break;
             case '30m':
               last = new Date(Date.now() - 864e5 * 7).toLocaleDateString("fr-CA");
               break;
-            case '1h':             
+            case '1h':
             case '4h':
               last = new Date(Date.now() - 864e5 * 30).toLocaleDateString("fr-CA");
               break;
-            case '1d':             
+            case '1d':
             case '1w':
               last = new Date(Date.now() - 864e5 * 365).toLocaleDateString("fr-CA");
               break;
             case '1M':
               last = new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString("fr-CA");
-              break;          
+              break;
             default:
               break;
           }
@@ -163,7 +162,7 @@ export default {
           .$get(
             `https://api.finage.co.uk/agg/index/${symbol}/${text}/${last}/${this.today}?limit=3000&apikey=${this.finageApiKey}&sort=desc`
           )
-          .then((response) => {            
+          .then((response) => {
             this.chartData = response.results.map(o => {
               const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
               return [timestamp, openPrice, high, low, close, volume].map(n =>
@@ -171,14 +170,14 @@ export default {
               );
             }).sort((a, b) => {
               return a[0] - b[0];
-            });   
+            });
             this.$root.$emit("updatedInterval", {symbol, interval});
           })
           .catch((error) => {
             console.log(error);
           });
-        }    
-      },      
+        }
+      },
     },
     created() {
       this.$root.$on('updateIndice', (item) => {
@@ -192,7 +191,7 @@ export default {
           this.loading = false;
         }
       });
-      this.$root.$on("updateTrade", ({symbol, time, price, volumn}) => {      
+      this.$root.$on("updateTrade", ({symbol, time, price, volumn}) => {
         if (symbol === this.live) {
           this.$set(this.item, "price", price);
         }
