@@ -76,6 +76,12 @@
                 <IndexList :data="stocks" type="stocks" />
               </div>
             </div>
+            <div class="col-12">
+              <div class="col-12 white-well">
+                <h2 class="pt-3">Personal Finance</h2>
+                <Articles :articles="articles" />
+              </div>
+            </div>
           </div>
         </div>
         <div class="col-12 col-lg-4 mb-5 news-section">
@@ -87,14 +93,6 @@
               <!-- <Ad feedAd/> -->
               <!-- <Ad feedAd/> -->
             </div>
-          </div>
-        </div>
-      </div>
-      <div class="row justify-content-center">
-        <div class="col-12 col-lg-6">
-          <div class="col-12 white-well pt-2">
-            <h2 class="pt-3">Personal Finance</h2>
-            <Articles :articles="articles" />
           </div>
         </div>
       </div>
@@ -151,7 +149,7 @@ export default {
               newsItem.type = 'stocks'
               newsfeed.push(newsItem)
             }
-            if(newsfeed.length > 7){
+            if(newsfeed.length > 41){
               newsfeed.pop()
             }
           }
@@ -172,7 +170,7 @@ export default {
               newsItem.type = 'cryptocurrency'
               newsfeed.push(newsItem)
             }
-            if(newsfeed.length > 7){
+            if(newsfeed.length > 41){
               newsfeed.pop()
             }
           }
