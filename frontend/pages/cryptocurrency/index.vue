@@ -28,12 +28,88 @@
             <IndexList :data="coins" type="cryptocurrency" indexPage />
           </div>
         </div> -->
-        <div class="col-12 col-lg-7 offset-lg-5">
-          <div class="col-12 white-well pt-2">
-            <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
+        <div class="col-12">
+          <div class="col-12 white-well p-0">
+            <b-tabs pills card vertical lazy>
+              <b-tab title="All" active>
+                <b-card-text>
+                  <IndexList :data="coins" type="cryptocurrency" indexPage />
+                </b-card-text>
+              </b-tab>
+              <b-tab title="DeFi">
+                <b-card-text>
+                  <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
+                </b-card-text>
+              </b-tab>
+              <b-tab title="Metaverse">
+                <b-card-text>
+                  <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
+                </b-card-text>
+              </b-tab>
+              <b-tab title="NFTs">
+                <b-card-text>
+                  <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
+                </b-card-text>
+              </b-tab>
+              <b-tab title="Memes">
+                <b-card-text>
+                  <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
+                </b-card-text>
+              </b-tab>
+              <b-tab title="GameFi">
+                <b-card-text>
+                  <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
+                </b-card-text>
+              </b-tab>
+              <b-tab title="Solana">
+                <b-card-text>
+                  <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
+                </b-card-text>
+              </b-tab>
+              <b-tab title="Avalanche">
+                <b-card-text>
+                  <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
+                </b-card-text>
+              </b-tab>
+              <b-tab title="Polkadot">
+                <b-card-text>
+                  <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
+                </b-card-text>
+              </b-tab>
+              <b-tab title="Fantom">
+                <b-card-text>
+                  <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
+                </b-card-text>
+              </b-tab>
+              <b-tab title="Exchange">
+                <b-card-text>
+                  <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
+                </b-card-text>
+              </b-tab>
+              <b-tab title="eSports">
+                <b-card-text>
+                  <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
+                </b-card-text>
+              </b-tab>
+              <b-tab title="Stablecoins">
+                <b-card-text>
+                  <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
+                </b-card-text>
+              </b-tab>
+              <b-tab title="Open Sea">
+                <b-card-text>
+                  <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
+                </b-card-text>
+              </b-tab>
+              <b-tab title="Web3">
+                <b-card-text>
+                  <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
+                </b-card-text>
+              </b-tab>
+            </b-tabs>
           </div>
         </div>
-        <div class="col-12 col-lg-7 offset-lg-5">
+        <div class="col-12">
           <div class="col-lg-12 mt-4 white-well">
             <News :newsData="newsData"/>
             <Ad feedAd/>
@@ -95,14 +171,24 @@ export default {
 
     },
     created() {
-      // let topCoins = localStorage.getItem('crypto');
-      // this.coins = JSON.parse(topCoins)
+      let topCoins = localStorage.getItem('crypto');
+      this.coins = JSON.parse(topCoins)
+      this.coins.forEach((item) => {
+        let indexFound = item.cmc_rank - 1;
+        let i = this.coins[indexFound];
+        i.indexFound = indexFound;
+        i.price = Number(item.quote["USD"].price).toFixed(2);
+        i.change = Number(item.quote["USD"].percent_change_24h).toFixed(2);
+        i.marketcap = Number(item.quote["USD"].market_cap).toFixed(2);
+        this.$root.$emit('updateCoins', i);
+      });
       // this.checkMarketStatus();
       this.$root.$on('updateCoins', (item) => {
         let itemIndex = item.indexFound ;
         this.$set(this.coins[itemIndex], 'price', item.price);
         this.$set(this.coins[itemIndex], 'difference', item.difference);
         this.$set(this.coins[itemIndex], 'change', item.change);
+        this.$set(this.coins[itemIndex], 'marketcap', item.marketcap);
       });
       this.loading = false; // fix news api bug
       this.$root.$on('updateCrypto', (item) => {
@@ -118,5 +204,10 @@ export default {
 </script>
 
 <style lang="scss">
-
+  .nav-pills .nav-link{
+    padding: 0.25rem 1rem;
+  }
+  .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    background-color: #191c5f;
+  }
 </style>

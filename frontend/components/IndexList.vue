@@ -5,7 +5,8 @@
       <div class="pb-2"><strong>Name</strong></div>
       <div class="pb-2"><strong>Price</strong></div>
       <div class="pb-2 justify-content-center"><strong>% Change</strong></div>
-      <div class="pb-2 justify-content-center"><strong>$ Change</strong></div>
+      <div v-if="type === 'cryptocurrency'" class="pb-2 justify-content-center"><strong>Marketcap</strong></div>
+      <div v-else class="pb-2 justify-content-center"><strong>$ Change</strong></div>
     </div>
     <div
       v-for="index in data"
@@ -40,6 +41,7 @@
         </div>
         <div class="justify-content-center number-font">
           <Price v-if="index.difference" :index="index" :difference="index.difference" />
+          <Price v-if="index.marketcap" :index="index" :difference="index.marketcap" />
         </div>
       </div>
     </div>
