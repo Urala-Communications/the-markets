@@ -271,12 +271,14 @@ export default {
         // console.log("INDICES Socket connection established");
         this.indicesWS.send(JSON.stringify({"action": "subscribe", "symbols": "DJI,GSPC,IXIC,GDAXI,N225,HSI,SSEC,KS11,IBEX,FTSE,XU100"}));
         this.indicesWS.send(JSON.stringify({"action": "subscribe", "symbols": "DJI,GSPC,IXIC,GDAXI,N225,HSI,SSEC,KS11,IBEX,FTSE,XU100,DGS2,DGS5,DGS10,DGS20,DGS30,DXY", "isCFD": false}));
+
       }
       this.indicesWS.onmessage = (msg) => {
         let data = JSON.parse(msg.data);
-
+        if(data.s !== 'DXY'){
+          console.log(data)
+        }
         if(typeof data.p !== 'undefined'){
-
             // console.log('non-CFD')
             // console.log(data.p)
             // console.log(data)
@@ -306,7 +308,6 @@ export default {
             }
           }
         } else {
-
             // console.log('CFD')
             // console.log(data.s)
             // console.log(data)

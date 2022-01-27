@@ -326,7 +326,7 @@ export default {
     background: none;
   }
   50%, 70% {
-    background: #e7e7fc;
+    background: #b6fae4;
     color: $green;
   }
 }
@@ -336,7 +336,7 @@ export default {
     background: none;
   }
   50%, 70% {
-    background: #fff3ef;
+    background: #f4c0c9;
     color: $red;
   }
 }
