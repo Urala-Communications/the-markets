@@ -275,9 +275,9 @@ export default {
       }
       this.indicesWS.onmessage = (msg) => {
         let data = JSON.parse(msg.data);
-        if(data.s !== 'DXY'){
-          console.log(data)
-        }
+        // if(data.s !== 'DXY'){
+        //   console.log(data)
+        // }
         if(typeof data.p !== 'undefined'){
             // console.log('non-CFD')
             // console.log(data.p)
