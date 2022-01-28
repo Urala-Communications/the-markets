@@ -37,26 +37,32 @@
                 </h2>
                 <IndexList :data="cryptocurrency" type="cryptocurrency" />
               </div>
-              <div class="col-12 white-well indices">
-                <h2>Indices
-                  <NuxtLink class="index-link" to="/indices">View all</NuxtLink>
-                </h2>
-                <IndexList :data="indices" type="indices" />
-              </div>
               <div class="col-12 white-well">
                 <h2>Currencies
                   <NuxtLink class="index-link" to="/currencies">View all</NuxtLink>
                 </h2>
                 <IndexList :data="currencies" type="currencies" />
               </div>
+              <div class="col-12 white-well bonds">
+                <h2>Bonds
+                  <NuxtLink class="index-link" to="/bonds">View all</NuxtLink>
+                </h2>
+                <IndexList :data="bonds" type="bonds" />
+              </div>
             </div>
             <div class="col-lg-6">
-              <div class="col-12 white-well">
+              <div class="col-12 white-well indices">
+                <h2>Indices
+                  <NuxtLink class="index-link" to="/indices">View all</NuxtLink>
+                </h2>
+                <IndexList :data="indices" type="indices" />
+              </div>
+              <!-- <div class="col-12 white-well">
                 <h2>Movers
                   <NuxtLink class="index-link" to="/movers">View all</NuxtLink>
                 </h2>
                 <IndexList :data="rising" type="rising" />
-              </div>
+              </div> -->
               <div class="col-12 white-well">
                 <h2>Commodities
                   <NuxtLink class="index-link" to="/commodities">View all</NuxtLink>
@@ -68,12 +74,6 @@
                   <NuxtLink class="index-link" to="/stocks">View all</NuxtLink>
                 </h2>
                 <IndexList :data="stocks" type="stocks" />
-              </div>
-              <div class="col-12 white-well">
-                <h2>Bonds
-                  <NuxtLink class="index-link" to="/bonds">View all</NuxtLink>
-                </h2>
-                <IndexList :data="bonds" type="bonds" />
               </div>
             </div>
             <div class="col-12">
@@ -340,6 +340,7 @@ export default {
   .white-well{
     margin-bottom: 30px;
     padding-top: 19px;
+    &.bonds{min-height: 332px;}
   }
 }
 
