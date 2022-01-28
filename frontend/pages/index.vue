@@ -25,31 +25,25 @@
         <div class="col-12 col-lg-8 pr-lg-0">
           <div class="row m-0 justify-content-between main-content">
             <div class="col-lg-6 pl-half">
-              <div class="col-12 white-well crypto">
-                <h2>Crypto
-                  <NuxtLink class="index-link" to="/cryptocurrency">View all</NuxtLink>
-                </h2>
-                <IndexList :data="coins" type="cryptocurrency" />
-              </div>
               <!-- <div class="col-12 white-well crypto">
                 <h2>Crypto
                   <NuxtLink class="index-link" to="/cryptocurrency">View all</NuxtLink>
                 </h2>
-                <IndexList :data="cryptocurrency" type="cryptocurrency" />
+                <IndexList :data="coins" type="cryptocurrency" />
               </div> -->
-              <!-- <div class="col-12 white-well indices">
-                <h2>Indices
-                  <NuxtLink class="index-link" to="/indices">View all</NuxtLink>
+              <div class="col-12 white-well crypto">
+                <h2>Crypto
+                  <NuxtLink class="index-link" to="/cryptocurrency">View all</NuxtLink>
                 </h2>
-                <IndexList :data="indices" type="indices" />
-              </div> -->
+                <IndexList :data="cryptocurrency" type="cryptocurrency" />
+              </div>
               <div class="col-12 white-well">
                 <h2>Currencies
                   <NuxtLink class="index-link" to="/currencies">View all</NuxtLink>
                 </h2>
                 <IndexList :data="currencies" type="currencies" />
               </div>
-              <div class="col-12 white-well">
+              <div class="col-12 white-well bonds">
                 <h2>Bonds
                   <NuxtLink class="index-link" to="/bonds">View all</NuxtLink>
                 </h2>
@@ -57,12 +51,18 @@
               </div>
             </div>
             <div class="col-lg-6">
-              <div class="col-12 white-well">
+              <div class="col-12 white-well indices">
+                <h2>Indices
+                  <NuxtLink class="index-link" to="/indices">View all</NuxtLink>
+                </h2>
+                <IndexList :data="indices" type="indices" />
+              </div>
+              <!-- <div class="col-12 white-well">
                 <h2>Movers
                   <NuxtLink class="index-link" to="/movers">View all</NuxtLink>
                 </h2>
                 <IndexList :data="rising" type="rising" />
-              </div>
+              </div> -->
               <div class="col-12 white-well">
                 <h2>Commodities
                   <NuxtLink class="index-link" to="/commodities">View all</NuxtLink>
@@ -198,22 +198,22 @@ export default {
     // async mounted () {
     created() {
       let topCoins = localStorage.getItem('crypto');
-      this.coins = JSON.parse(topCoins)
-      this.coins.forEach((item) => {
-        let indexFound = item.cmc_rank - 1;
-        let i = this.coins[indexFound];
+      this.cryptocurrency = JSON.parse(topCoins)
+      this.cryptocurrency.forEach((item) => {
+        let indexFound = item.order - 1;
+        let i = this.cryptocurrency[indexFound];
         i.indexFound = indexFound;
-        i.price = Number(item.quote["USD"].price).toFixed(2);
-        i.change = Number(item.quote["USD"].percent_change_24h).toFixed(2);
+        i.symbol = i.symbol.toUpperCase()
+        // i.marketcap = Number(item.market_cap).toFixed(2);
         this.$root.$emit('updateCoins', i);
       });
-      // this.checkMarketStatus();
-      this.$root.$on('updateCoins', (item) => {
-        let itemIndex = item.indexFound ;
-        this.$set(this.coins[itemIndex], 'price', item.price);
-        this.$set(this.coins[itemIndex], 'difference', item.difference);
-        this.$set(this.coins[itemIndex], 'change', item.change);
-      });
+
+      // this.$root.$on('updateCoins', (item) => {
+      //   let itemIndex = item.indexFound ;
+      //   this.$set(this.coins[itemIndex], 'price', item.price);
+      //   this.$set(this.coins[itemIndex], 'difference', item.difference);
+      //   this.$set(this.coins[itemIndex], 'change', item.change);
+      // });
       this.$root.$on('updateCrypto', (item) => {
         // console.log(item)
         //let itemIndex = item.indexFound ;//this.cryptocurrency.findIndex(index => index.name === item.name);
@@ -342,13 +342,13 @@ export default {
   padding: 20px 26px 24px;
   border-radius: 18px;
   box-shadow: 0px 2.5px 9px 0 rgba(218, 226, 239, 0.5);
-  overflow: hidden;
 }
 
 .main-content{
   .white-well{
     margin-bottom: 30px;
     padding-top: 19px;
+    &.bonds{min-height: 332px;}
   }
 }
 

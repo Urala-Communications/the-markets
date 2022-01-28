@@ -15,7 +15,7 @@
 
 <script>
 import Ad from "./../components/Ad.vue";
-import {cryptocurrency, currencies, stocks, indices, bonds, rising, commodities} from "./../market.js";
+import {cryptocurrency, defi, currencies, stocks, indices, bonds, rising, commodities} from "./../market.js";
 const finageApiKey = process.env.finageApiKey,
       finageSocketKey = process.env.finageSocketKey,
       tradingEconKey = process.env.tradingEconKey;
@@ -44,7 +44,8 @@ export default {
   data() {
     return {
       forexWS: new WebSocket(`wss://w29hxx2ndd.finage.ws:8001/?token=${finageSocketKey}`),
-      cryptoWS: new WebSocket(`wss://stream.binance.com/stream`),
+      // cryptoWS: new WebSocket(`wss://stream.binance.com/stream`),
+      cryptoWS: new WebSocket(`wss://mz3zq4nxbp.finage.ws:6002/?token=${finageSocketKey}`),
       stockWS: new WebSocket(`wss://m2s3swr9mp.finage.ws:7005/?token=${finageSocketKey}`),
       indicesWS: new WebSocket(`wss://8umh1cipe9.finage.ws:9001/?token=${finageSocketKey}`),
       // commodityWS: new WebSocket(`ws://stream.tradingeconomics.com/?client=bemon3pf6n3khs1:uohemfwf041hnna`),
@@ -53,6 +54,7 @@ export default {
       view: 'list',
       coins: [],
       cryptocurrency,
+      defi,
       currencies,
       stocks,
       indices,
@@ -78,7 +80,7 @@ export default {
   },
   methods: {
     fetchCoinsByMarketCap() {
-      this.$axios.$get(`/cmcapi/v1/cryptocurrency/listings/latest?start=1&limit=50&convert=USD&CMC_PRO_API_KEY=${this.cmcApiKey}`, {
+      this.$axios.$get(`https://api.finage.co.uk/list/cryptocurrency?apikey=${finageApiKey}&limit=50`, {
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*'
@@ -87,8 +89,8 @@ export default {
         gzip: true
       })
       .then((response) => {
-        // console.log(response.data)
-        let topCoins = response.data
+        // console.log(response.results)
+        let topCoins = response.results
         this.writeCryptoLists(topCoins)
         this.coins = topCoins;
         // this.writeToFirestore(response)
@@ -106,7 +108,7 @@ export default {
           for (const prop in obj) {
             if (obj.hasOwnProperty(prop)) {
               if(prop === 'symbol'){
-                coinList.push(obj[prop] + 'USD')
+                coinList.push(obj[prop].toUpperCase() + 'USD')
               }
             }
           }
@@ -192,15 +194,39 @@ export default {
       this.cryptoWS.onopen = () => {
         // console.log("CRYPTO Socket connection established");
         let coinList = localStorage.getItem('coinList');
-        // this.cryptoWS.send(JSON.stringify({"action": "subscribe", "symbols": coinList}))
-        //this.cryptoWS.send(JSON.stringify({"action": "subscribe", "symbols": "BTCUSD,ETHUSD,BNBUSD,ADAUSD,SOLUSD,XRPUSD,DOTUSD,DOGEUSD,SHIBUSD,LUNAUSD,AVAXUSD,LTCUSD,UNIUSD,LINKUSD,MATICUSD,ALGOUSD,VETUSD,XLMUSD,AXSUSD,FILUSD,TRXUSD,ETCUSD,ATOMUSD,THETAUSD,FTTUSD,FTMUSD,HBARUSD,DAIUSD,EGLDUSD,NEARUSD,GRTUSD,XTZUSD,XMRUSD,EOSUSD,MANAUSD,HNTUSD,CAKEUSD,AAVEUSD,LRCUSD,IOTAUSD,NEOUSD,MKRUSD,ENJUSD,DASHUSD,COMPUSD,CRVUSD,BATUSD,SUSHIUSD,ZILUSD,YFIUSD,1INCHUSD"}))
+        this.cryptoWS.send(JSON.stringify({"action": "subscribe", "symbols": coinList + 'CRVUSD,CETHUSD,STETHUSD,CDAIUSD'}))
         // this.cryptoWS.send(`{"method":"SUBSCRIBE","params":["${this.cryptocurrency.map(o => o.live.toLowerCase()).join('@ticker","')}@ticker"],"id":1}`)
-        this.cryptoWS.send(`{"method":"SUBSCRIBE","params":["${coinList}"],"id":1}`)
-        // missing symbols on finage
-        // USDTUSD,USDCUSD,SHIBUSD,USTUSD,WBTCUSD,CROUSD,ICPUSD,LEOUSD,KLAYUSD,MIOTAUSD
+        // this.cryptoWS.send(`{"method":"SUBSCRIBE","params":["${coinList}"],"id":1}`)
       }
       this.cryptoWS.onmessage = (msg) => {
-        // let data = JSON.parse(msg.data);
+        let data = JSON.parse(msg.data);
+        let indexFound = this.coins.findIndex(index => index.symbol.toUpperCase() + "USD" === data.s);
+        if (indexFound !== -1) {
+          const item = this.coins[indexFound];
+          item.indexFound = indexFound;
+          if(item.symbol === 'SHIBUSD'){
+            item.price = Number(data.p);
+          } else {
+            item.price = Number(data.p).toFixed(2);
+          }
+          item.difference = Number(data.dd).toFixed(2);
+          item.change = Number(data.dc).toFixed(2);
+          item.time = data.t;
+          item.marketOpen = true;
+          this.$root.$emit('updateCrypto', item);
+          if(item.symbol === 'crv' || item.symbol === 'luna' || item.symbol === 'link' || item.symbol === 'uni'){
+            indexFound = this.defi.findIndex(index => index.symbol.toUpperCase() + "USD" === data.s);
+            item.indexFound = indexFound;
+            this.$root.$emit('updateDefi', item);
+          }
+          // this.$root.$emit('updateCoins', item);
+        }
+        // only LINK, LUNA, UNI data coming from websockets...
+        // if(data.s === 'LUNAUSD' || data.s === 'LINKUSD' || data.s === 'UNIUSD' || data.s === 'DAIUSD' || data.s === 'CETHUSD'
+        //   || data.s === 'STETHUSD' || data.s === 'GRTUSD' || data.s === 'CDAIUSD' || data.s === 'CAKEUSD' || data.s === 'AAVEUSD'){
+        //   console.log(data.s)
+        // }
+
         // if (data.data) {
         //   let indexFound = this.cryptocurrency.findIndex(index => index.live === data.data.s);
         //   if (indexFound !== -1) {
@@ -276,12 +302,14 @@ export default {
         // console.log("INDICES Socket connection established");
         this.indicesWS.send(JSON.stringify({"action": "subscribe", "symbols": "DJI,GSPC,IXIC,GDAXI,N225,HSI,SSEC,KS11,IBEX,FTSE,XU100"}));
         this.indicesWS.send(JSON.stringify({"action": "subscribe", "symbols": "DJI,GSPC,IXIC,GDAXI,N225,HSI,SSEC,KS11,IBEX,FTSE,XU100,DGS2,DGS5,DGS10,DGS20,DGS30,DXY", "isCFD": false}));
+
       }
       this.indicesWS.onmessage = (msg) => {
         let data = JSON.parse(msg.data);
-
+        // if(data.s !== 'DXY'){
+        //   console.log(data)
+        // }
         if(typeof data.p !== 'undefined'){
-
             // console.log('non-CFD')
             // console.log(data.p)
             // console.log(data)
@@ -311,7 +339,6 @@ export default {
             }
           }
         } else {
-
             // console.log('CFD')
             // console.log(data.s)
             // console.log(data)

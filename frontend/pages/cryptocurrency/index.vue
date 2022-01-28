@@ -29,29 +29,29 @@
           </div>
         </div> -->
         <div class="col-12">
-          <div class="col-12 white-well p-0">
-            <b-tabs pills card vertical lazy>
+          <div class="col-12 white-well p-0 overflow-hidden">
+            <b-tabs pills card lazy :vertical="vertical">
               <b-tab title="All" active>
                 <b-card-text>
-                  <IndexList :data="coins" type="cryptocurrency" indexPage />
+                  <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
                 </b-card-text>
               </b-tab>
               <b-tab title="DeFi">
                 <b-card-text>
-                  <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
+                  <IndexList :data="defi" type="cryptocurrency" indexPage />
                 </b-card-text>
               </b-tab>
-              <b-tab title="Metaverse">
+              <!-- <b-tab title="Metaverse">
                 <b-card-text>
                   <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
                 </b-card-text>
-              </b-tab>
-              <b-tab title="NFTs">
+              </b-tab> -->
+              <!-- <b-tab title="NFTs">
                 <b-card-text>
                   <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
                 </b-card-text>
-              </b-tab>
-              <b-tab title="Memes">
+              </b-tab> -->
+              <!-- <b-tab title="Memes">
                 <b-card-text>
                   <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
                 </b-card-text>
@@ -105,7 +105,7 @@
                 <b-card-text>
                   <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
                 </b-card-text>
-              </b-tab>
+              </b-tab> -->
             </b-tabs>
           </div>
         </div>
@@ -121,28 +121,38 @@
 </template>
 
 <script>
-import {cryptocurrency} from "./../../market.js";
+import {cryptocurrency, defi} from "./../../market.js";
 import IndexList from './../../components/IndexList.vue'
+const finageApiKey = process.env.finageApiKey;
 export default {
     components: {
       IndexList
     },
+    computed: {
+      vertical() {
+        if (this.windowWidth > 992){
+          return true
+        }
+        return false
+      }
+    },
     data() {
       return {
-        finageApiKey: process.env.finageApiKey,
         cmcApiKey: process.env.cmcApiKey,
         loading: true,
         coins: [],
         cryptocurrency,
+        defi,
         view: 'list',
         chartData: null,
         chartOptions: null,
-        newsData: []
+        newsData: [],
+        windowWidth: 0
       }
     },
     methods: {
       fetchNews(symbol){
-        this.$axios.$get(`https://api.finage.co.uk/news/cryptocurrency/${symbol}?apikey=${this.finageApiKey}&limit=1`)
+        this.$axios.$get(`https://api.finage.co.uk/news/cryptocurrency/${symbol}?apikey=${finageApiKey}&limit=1`)
         .then(response => {
           if(typeof response.news[0] !== 'undefined'){
             let index = this.newsData.findIndex(x => x.title === response.news[0].title);
@@ -162,6 +172,19 @@ export default {
           console.log(error);
         })
       },
+      fetchDefi(symbol) {
+        this.$axios.$get(`https://api.finage.co.uk/last/crypto/${symbol}?apikey=${finageApiKey}`)
+        .then(response => {
+          let indexFound = this.defi.findIndex(d => d.symbol === response.symbol );
+          let i = this.defi[indexFound];
+          i.indexFound = indexFound;
+          i.price = Number(response.price).toFixed(2);
+          this.$root.$emit('updateDefi', i);
+        })
+        .catch(error => {
+          console.log(error);
+        })
+      },
       showGrid() {
         this.view = 'grid';
       },
@@ -172,33 +195,27 @@ export default {
     },
     created() {
       let topCoins = localStorage.getItem('crypto');
-      this.coins = JSON.parse(topCoins)
-      this.coins.forEach((item) => {
-        let indexFound = item.cmc_rank - 1;
-        let i = this.coins[indexFound];
-        i.indexFound = indexFound;
-        i.price = Number(item.quote["USD"].price).toFixed(2);
-        i.change = Number(item.quote["USD"].percent_change_24h).toFixed(2);
-        i.marketcap = Number(item.quote["USD"].market_cap).toFixed(2);
-        this.$root.$emit('updateCoins', i);
-      });
-      // this.checkMarketStatus();
-      this.$root.$on('updateCoins', (item) => {
-        let itemIndex = item.indexFound ;
-        this.$set(this.coins[itemIndex], 'price', item.price);
-        this.$set(this.coins[itemIndex], 'difference', item.difference);
-        this.$set(this.coins[itemIndex], 'change', item.change);
-        this.$set(this.coins[itemIndex], 'marketcap', item.marketcap);
-      });
+      this.cryptocurrency = JSON.parse(topCoins)
       this.loading = false; // fix news api bug
       this.$root.$on('updateCrypto', (item) => {
         this.$set(this.cryptocurrency[item.indexFound], 'price', item.price);
         this.$set(this.cryptocurrency[item.indexFound], 'difference', item.difference);
         this.$set(this.cryptocurrency[item.indexFound], 'change', item.change);
       });
+      this.$root.$on('updateDefi', (item) => {
+        this.$set(this.defi[item.indexFound], 'price', item.price);
+        this.$set(this.defi[item.indexFound], 'difference', item.difference);
+        this.$set(this.defi[item.indexFound], 'change', item.change);
+      });
       this.cryptocurrency.forEach(item => {
         this.fetchNews(item.icon);
       });
+      this.defi.forEach(item => {
+        this.fetchDefi(item.symbol);
+      });
+      window.onresize = () => {
+        this.windowWidth = window.innerWidth
+      }
     },
   }
 </script>

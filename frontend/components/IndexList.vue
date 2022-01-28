@@ -5,8 +5,7 @@
       <div class="pb-2"><strong>Name</strong></div>
       <div class="pb-2"><strong>Price</strong></div>
       <div class="pb-2 justify-content-center"><strong>% Change</strong></div>
-      <div v-if="type === 'cryptocurrency'" class="pb-2 justify-content-center"><strong>Marketcap</strong></div>
-      <div v-else class="pb-2 justify-content-center"><strong>$ Change</strong></div>
+      <div class="pb-2 justify-content-center"><strong>$ Change</strong></div>
     </div>
     <div
       v-for="index in data"
@@ -21,7 +20,8 @@
         <span class="justify-content-center">{{ index.change }}</span>
       </div>
       <div v-else class="grid" :class="priceStatus(index.change)">
-        <div>{{ index.symbol }}</div>
+        <div v-if="type === 'cryptocurrency'">{{ index.symbol.toUpperCase() }}</div>
+        <div v-else>{{ index.symbol }}</div>
         <div>
           <NuxtLink
             class="instrument index d-flex"
@@ -29,6 +29,7 @@
           >
             <div class="icon-wrapper" :class="index.change > 3 && type === 'cryptocurrency' ? 'fire' : ''">
               <i class="icon" :class="index.icon ? index.icon : index.symbol.toLowerCase()" />
+              <!-- <i v-else class="icon" :style="{backgroundImage:`url(${index.thumbnail})`}" /> -->
               <!-- :style="{backgroundImage:`url(./_nuxt/assets/${index.icon}.png)`}" would be nice if all imgs were same type png/svg-->
             </div>
             {{ index.name }}
@@ -41,7 +42,7 @@
         </div>
         <div class="justify-content-center number-font">
           <Price v-if="index.difference" :index="index" :difference="index.difference" />
-          <Price v-if="index.marketcap" :index="index" :difference="index.marketcap" />
+          <!-- <Price v-if="index.marketcap" :index="index" :difference="index.marketcap" /> -->
         </div>
       </div>
     </div>
@@ -328,7 +329,7 @@ export default {
     background: none;
   }
   50%, 70% {
-    background: #e7e7fc;
+    background: #b6fae4;
     color: $green;
   }
 }
@@ -338,7 +339,7 @@ export default {
     background: none;
   }
   50%, 70% {
-    background: #fff3ef;
+    background: #f4c0c9;
     color: $red;
   }
 }
