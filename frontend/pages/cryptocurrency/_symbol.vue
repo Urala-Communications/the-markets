@@ -137,10 +137,7 @@ export default {
         (item) => item.name.toLowerCase() === this.symbol.replace("-", " ")
       );
       // this.$axios.$get(`https://api.finage.co.uk/agg/crypto/${i.symbol}/1/day/${fiveYearsAgo}/${this.today}?limit=5000&apikey=${this.finageApiKey}`)
-      this.$axios
-        .$get(
-          `https://api.binance.com/api/v3/klines?limit=1000&symbol=${i.live}&interval=1d`
-        )
+      this.$axios.$get(`https://api.binance.com/api/v3/klines?limit=1000&symbol=${i.live}&interval=1d`)
         .then((response) => {
           this.chartData = response.map(o => {
             const [timestamp, openPrice, high, low, close, volume] = [...o];
@@ -239,13 +236,20 @@ export default {
     },
   },
   created() {
+    // let topCoins = localStorage.getItem('crypto');
+    // this.coins = JSON.parse(topCoins)
+    // this.coins.forEach((item) => {
+    //   let indexFound = item.cmc_rank - 1;
+    //   let i = this.coins[indexFound];
+    // });
+    // console.log(item)
+    // this.$set(this.item, "name", this.cryptocurrency[item.indexFound].name);
+    // this.$set(this.item, "icon", this.cryptocurrency[item.indexFound].icon);
     this.$root.$on("updateCrypto", (item) => {
       if (item.symbol === this.symbol.replace("-", " ")) {
-        this.$set(this.item, "name", this.cryptocurrency[item.indexFound].name);
         //this.$set(this.item, "price", item.price);
         this.$set(this.item, "difference", item.difference);
         this.$set(this.item, "change", item.change);
-        this.$set(this.item, "icon", item.icon);
         this.$set(this.item, "time", item.time);
       }
     });

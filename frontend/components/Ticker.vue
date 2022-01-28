@@ -248,6 +248,15 @@ export default {
   &.ust  {background-image: url('./../assets/ust.png')}
   &.usdc  {background-image: url('./../assets/usdc.png')}
   &.wbtc  {background-image: url('./../assets/wbtc.png')}
+  &.ceth {background-image: url('./../assets/ceth.png');}
+  &.lido, &.steth {background-image: url('./../assets/lido.png');}
+  &.cdai {background-image: url('./../assets/cdai.png');}
+  &.frax {background-image: url('./../assets/frax.png');}
+  &.klay {background-image: url('./../assets/klay.png');}
+  &.leo {background-image: url('./../assets/leo.png');}
+  &.omi {background-image: url('./../assets/ecomi.png');}
+  &.mim {background-image: url('./../assets/mim.png');}
+  &.okb {background-image: url('./../assets/okb.png');}
   // commodities
   &.gold {
     background-image: url('./../assets/gold.svg');

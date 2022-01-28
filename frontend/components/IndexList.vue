@@ -20,7 +20,8 @@
         <span class="justify-content-center">{{ index.change }}</span>
       </div>
       <div v-else class="grid" :class="priceStatus(index.change)">
-        <div>{{ index.symbol }}</div>
+        <div v-if="type === 'cryptocurrency'">{{ index.symbol.toUpperCase() }}</div>
+        <div v-else>{{ index.symbol }}</div>
         <div>
           <NuxtLink
             class="instrument index d-flex"
@@ -28,6 +29,7 @@
           >
             <div class="icon-wrapper" :class="index.change > 3 && type === 'cryptocurrency' ? 'fire' : ''">
               <i class="icon" :class="index.icon ? index.icon : index.symbol.toLowerCase()" />
+              <!-- <i v-else class="icon" :style="{backgroundImage:`url(${index.thumbnail})`}" /> -->
               <!-- :style="{backgroundImage:`url(./_nuxt/assets/${index.icon}.png)`}" would be nice if all imgs were same type png/svg-->
             </div>
             {{ index.name }}
@@ -40,6 +42,7 @@
         </div>
         <div class="justify-content-center number-font">
           <Price v-if="index.difference" :index="index" :difference="index.difference" />
+          <!-- <Price v-if="index.marketcap" :index="index" :difference="index.marketcap" /> -->
         </div>
       </div>
     </div>

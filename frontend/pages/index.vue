@@ -197,15 +197,23 @@ export default {
     },
     // async mounted () {
     created() {
-      // let topCoins = localStorage.getItem('crypto');
-      // this.coins = JSON.parse(topCoins)
-      // this.checkMarketStatus();
-      this.$root.$on('updateCoins', (item) => {
-        let itemIndex = item.indexFound ;
-        this.$set(this.coins[itemIndex], 'price', item.price);
-        this.$set(this.coins[itemIndex], 'difference', item.difference);
-        this.$set(this.coins[itemIndex], 'change', item.change);
-      });
+      let topCoins = localStorage.getItem('crypto');
+      this.cryptocurrency = JSON.parse(topCoins)
+      // this.cryptocurrency.forEach((item) => {
+      //   let indexFound = item.order - 1;
+      //   let i = this.cryptocurrency[indexFound];
+      //   i.indexFound = indexFound;
+      //   i.symbol = i.symbol.toUpperCase()
+      //   // i.marketcap = Number(item.market_cap).toFixed(2);
+      //   this.$root.$emit('updateCoins', i);
+      // });
+
+      // this.$root.$on('updateCoins', (item) => {
+      //   let itemIndex = item.indexFound ;
+      //   this.$set(this.coins[itemIndex], 'price', item.price);
+      //   this.$set(this.coins[itemIndex], 'difference', item.difference);
+      //   this.$set(this.coins[itemIndex], 'change', item.change);
+      // });
       this.$root.$on('updateCrypto', (item) => {
         // console.log(item)
         //let itemIndex = item.indexFound ;//this.cryptocurrency.findIndex(index => index.name === item.name);

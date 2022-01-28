@@ -51,6 +51,30 @@ export let cryptocurrency = [
   {name: 'yearn.finance', symbol: 'YFIUSD', live: 'YFIUSDT', icon: 'yfi', thumb: 'yfi.png'},
   {name: '1inch', symbol: '1INCHUSD', live: '1INCHUSDT', icon: 'oneinch', thumb: 'oneinch.png'},
 ];
+export let defi = [
+  {name: 'Curve', symbol: 'CRV'},
+  {name: 'Terra', symbol: 'LUNA'},
+  {name: 'Chainlink', symbol: 'LINK'},
+  {name: 'Uniswap', symbol: 'UNI'},
+  {name: 'Dai', symbol: 'DAI'},
+  {name: 'cETH', symbol: 'CETH', icon: 'ceth'},
+  {name: 'Lido Staked Ether', symbol: 'STETH', icon: 'lido'},
+  {name: 'The Graph', symbol: 'GRT'},
+  {name: 'cDAI', symbol: 'CDAI', icon: 'cdai'},
+  {name: 'PancakeSwap', symbol: 'CAKE'},
+  {name: 'Aave', symbol: 'AAVE'},
+];
+// NFTs
+// Axie Infinity AXS
+// Theta Network THETA
+// Decentraland MANA
+// Flow FLOW
+// Chiliz CHZ
+// Enjin Coin ENJ
+// The Sandbox SAND
+// ECOMI OMI
+// WAX WAXP
+// Audius AUDIO
 export let currencies = [
   {name: 'EUR/USD', symbol: 'EURUSD', icon: 'eurusd', type: 'currency'},
   {name: 'USD/JPY', symbol: 'USDJPY', icon: 'usdjpy', type: 'currency'},

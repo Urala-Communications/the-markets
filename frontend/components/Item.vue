@@ -56,7 +56,6 @@
               :options="chartOptions"
               :chartColour="item.change > 0 ? 'up' : 'down'"
               :symbol="live"
-              
               :new="item"
               ref="TradingChart"
             />
@@ -195,9 +194,11 @@ export default {
   },
   methods: {
     getchart() {
-      console.log(this.item)
       return this.$refs.Chart
     }
+  },
+  created(){
+    console.log(this.item)
   }
 }
 </script>
