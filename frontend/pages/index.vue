@@ -199,14 +199,14 @@ export default {
     created() {
       let topCoins = localStorage.getItem('crypto');
       this.cryptocurrency = JSON.parse(topCoins)
-      this.cryptocurrency.forEach((item) => {
-        let indexFound = item.order - 1;
-        let i = this.cryptocurrency[indexFound];
-        i.indexFound = indexFound;
-        i.symbol = i.symbol.toUpperCase()
-        // i.marketcap = Number(item.market_cap).toFixed(2);
-        this.$root.$emit('updateCoins', i);
-      });
+      // this.cryptocurrency.forEach((item) => {
+      //   let indexFound = item.order - 1;
+      //   let i = this.cryptocurrency[indexFound];
+      //   i.indexFound = indexFound;
+      //   i.symbol = i.symbol.toUpperCase()
+      //   // i.marketcap = Number(item.market_cap).toFixed(2);
+      //   this.$root.$emit('updateCoins', i);
+      // });
 
       // this.$root.$on('updateCoins', (item) => {
       //   let itemIndex = item.indexFound ;
