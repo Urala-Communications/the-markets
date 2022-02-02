@@ -175,7 +175,7 @@ export default {
       fetchDefi(symbol) {
         this.$axios.$get(`https://api.finage.co.uk/last/crypto/${symbol}?apikey=${finageApiKey}`)
         .then(response => {
-          let indexFound = this.defi.findIndex(d => d.symbol === response.symbol );
+          let indexFound = this.defi.findIndex(d => d.symbol === response.s );
           let i = this.defi[indexFound];
           i.indexFound = indexFound;
           i.price = Number(response.price).toFixed(2);
