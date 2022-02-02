@@ -17,9 +17,9 @@
     <b-sidebar id="sidebar" backdrop shadow>
       <div class="sidebar-inner">
         <b-navbar-nav>
-          <NuxtLink class="nav-link" to="/movers">Movers</NuxtLink>
+          <!-- <NuxtLink class="nav-link" to="/movers">Movers</NuxtLink> -->
+          <NuxtLink class="nav-link" to="/indices">Indices</NuxtLink>
           <NuxtLink class="nav-link" to="/cryptocurrency">Crypto</NuxtLink>
-          <!-- <NuxtLink class="nav-link" to="/indices">Indices</NuxtLink> -->
           <NuxtLink class="nav-link" to="/commodities">Commodities</NuxtLink>
           <NuxtLink class="nav-link" to="/currencies">Currencies</NuxtLink>
           <NuxtLink class="nav-link" to="/stocks">Stocks</NuxtLink>
@@ -60,9 +60,9 @@
     <b-collapse id="nav-text-collapse" is-nav class="justify-content-end align-items-center collapse">
       <b-navbar-nav class="align-items-center">
         <b-navbar-toggle target="nav-text-collapse mobile" ></b-navbar-toggle>
-        <NuxtLink class="nav-link" to="/movers">Movers</NuxtLink>
+        <!-- <NuxtLink class="nav-link" to="/movers">Movers</NuxtLink> -->
+        <NuxtLink class="nav-link" to="/indices">Indices</NuxtLink>
         <NuxtLink class="nav-link" to="/cryptocurrency">Crypto</NuxtLink>
-        <!-- <NuxtLink class="nav-link" to="/indices">Indices</NuxtLink> -->
         <NuxtLink class="nav-link" to="/commodities">Commodities</NuxtLink>
         <NuxtLink class="nav-link" to="/currencies">Currencies</NuxtLink>
         <NuxtLink class="nav-link" to="/stocks">Stocks</NuxtLink>

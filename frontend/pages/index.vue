@@ -56,6 +56,7 @@
                   <NuxtLink class="index-link" to="/indices">View all</NuxtLink>
                 </h2>
                 <IndexList :data="indices" type="indices" />
+                <span class="smaller pl-2">*real-time derived</span>
               </div>
               <!-- <div class="col-12 white-well">
                 <h2>Movers
@@ -296,6 +297,10 @@ export default {
 
 .pl-half{
   padding-left: 5px;
+}
+
+.smaller {
+  font-size: 12px;
 }
 
 .content.container {

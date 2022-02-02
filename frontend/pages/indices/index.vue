@@ -26,6 +26,7 @@
         <div class="col-lg-8 offset-lg-4">
           <div class="col-12 white-well pt-2">
             <IndexList :data="filteredIndices" indexPage type="indices" />
+            <span class="smaller pl-2">*real-time derived</span>
           </div>
         </div>
       </div>
