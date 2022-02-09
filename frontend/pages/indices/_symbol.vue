@@ -120,25 +120,43 @@ export default {
       },
       updateInterval(symbol, interval, text){        
         if (symbol === this.live) {
+          let range = interval;
           let last = this.yesterday;
           switch (interval) {
             case '1m':
+              range = '1min';
+              last = this.yesterday;
+              break;
             case '5m':
+              range = '5min';
+              last = this.yesterday;
+              break;
             case '15m':
+              range = '15min';
               last = this.yesterday;
               break;
             case '30m':
+              range = '30min';
               last = new Date(Date.now() - 864e5 * 7).toLocaleDateString("fr-CA");
               break;
             case '1h':
+              range = '1h';
+              last = new Date(Date.now() - 864e5 * 30).toLocaleDateString("fr-CA");
+              break;
             case '4h':
+              range = '4h';
               last = new Date(Date.now() - 864e5 * 30).toLocaleDateString("fr-CA");
               break;
             case '1d':
+              range = '1day';
+              last = new Date(Date.now() - 864e5 * 365).toLocaleDateString("fr-CA");
+              break;
             case '1w':
+              range = '1week';
               last = new Date(Date.now() - 864e5 * 365).toLocaleDateString("fr-CA");
               break;
             case '1M':
+              range = '1month'
               last = new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString("fr-CA");
               break;
             default:
@@ -146,7 +164,7 @@ export default {
           }          
           this.$axios
           .$get(
-            `https://api.finage.co.uk/agg/index/${symbol}/${interval}/${last}/${this.today}?limit=3000&apikey=${this.finageApiKey}&sort=desc`
+            `https://api.finage.co.uk/agg/index/${symbol}/${range}/${last}/${this.today}?limit=3000&apikey=${this.finageApiKey}&sort=desc`
           )
           .then((response) => {            
             this.chartData = response.results.map(o => {
