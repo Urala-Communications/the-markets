@@ -2,8 +2,8 @@
   <div v-if="newsData.length > 0" class="news justify-content-between">
     <div v-if="newsData.video">
       <b-card
-        v-for="item in newsData"
-        :key="item.title"
+        v-for="(item, index) in newsData"
+        :key="index"
         no-body
       >
         <b-row>
@@ -29,8 +29,8 @@
     </div>
     <a
       v-else
-      v-for="item in newsData"
-      :key="item.title"
+      v-for="(item, index) in newsData"
+      :key="index"
       :href="item.url"
       target="_blank"
     >

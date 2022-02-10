@@ -61,18 +61,34 @@ export default {
       fetchNews(symbol){
         this.$axios.$get(`https://api.finage.co.uk/news/forex/${symbol}?apikey=${this.finageApiKey}`)
         .then(response => {          
-          // console.log(response.news)
-          if(typeof response.news[0] !== 'undefined'){
-            let index = this.newsData.findIndex(x => x.title === response.news[0].title);
-            let newsItem = response.news[0]
-            this.loading = false;
-            if(index === -1){
-              this.newsData.push(newsItem)
-            }
-            if(this.newsData.length > 10){
-              this.newsData.pop()
+          if (response.news.length) {
+            if(typeof response.news[0] !== 'undefined'){
+              let index = this.newsData.findIndex(x => x.title === response.news[0].title);
+              let newsItem = response.news[0]
+              this.loading = false;
+              if(index === -1){
+                this.newsData.push(newsItem)
+              }
+              if(this.newsData.length > 10){
+                this.newsData.pop()
+              }
             }
           }
+        })
+        .catch(error => {
+          console.log(error);
+        })
+      },
+      fetchBonds(index,symbol) {
+        this.$axios.$get(`https://api.finage.co.uk/bonds/us/rate/${symbol}?apikey=${this.finageApiKey}`)
+        .then(response => {
+          // console.log(response)
+          let i = this.bonds.find( bond => bond.symbol === response.symbol );
+          i.price = Number(response.value).toFixed(4);
+          this.$root.$emit('updateBond', i);
+          this.$set(this.bonds[index], 'price', Number(response.value).toFixed(4));
+          this.$set(this.bonds[index], 'difference', response.difference);
+          this.$set(this.bonds[index], 'change', response.change);
         })
         .catch(error => {
           console.log(error);
@@ -95,9 +111,11 @@ export default {
           this.loading = false;
         });
       });
-      this.bonds.forEach(item => {
+      this.bonds.forEach((item, index) => {
+        this.fetchBonds(index, item.symbol);
         this.fetchNews(item.symbol);
       });
+      this.loading = false;
       setInterval(() => {
         this.bonds.forEach(item => {
           this.fetchNews(item.symbol);

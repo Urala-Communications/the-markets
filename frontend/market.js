@@ -179,8 +179,8 @@ export let commodities = [
   {name: 'Coffee', symbol: 'KC1:COM', icon: 'coffee'},
   {name: 'Platinum', symbol: 'XPTUSD:CUR', icon: 'platinum'},
   {name: 'Cobalt', symbol: 'LCO1:COM', icon: 'cobalt'},
-  {name: 'Solar Energy Index ', symbol: 'SOLARNTR:IND', icon: 'solar'},
-  {name: 'Wind Energy Index ', symbol: 'GWETR:IND', icon: 'wind'},
+  {name: 'Solar Energy Index', symbol: 'SOLARNTR:IND', icon: 'solar'},
+  {name: 'Wind Energy Index', symbol: 'GWETR:IND', icon: 'wind'},
   {name: 'CRB Index', symbol: 'CRYTR:IND', icon: 'crb'},
   {name: 'LME Index', symbol: 'LME:IND', icon: 'lme'},
 ];

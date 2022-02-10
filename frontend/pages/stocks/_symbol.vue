@@ -34,6 +34,7 @@ export default {
         finageApiKey: process.env.finageApiKey,
         liveApiUrl: process.env.liveApiUrl,
         item: {
+          name: '',
           price: 0,
           icon: ''
         },
@@ -68,6 +69,7 @@ export default {
     methods: {
       fetchDetails() {
         let i = this.stocks.find(item => item.name.toLowerCase() === this.symbol);
+        this.$set(this.item, 'name', i.name);
         this.$axios.$get(`https://api.finage.co.uk/detail/stock/${i.symbol}?apikey=${this.finageApiKey}`)
           .then(response => {
             this.profile = response;
@@ -131,7 +133,7 @@ export default {
         let i = this.stocks.find( item => item.name.toLowerCase() === this.symbol);
         this.$axios.$get(`https://api.finage.co.uk/news/market/${i.symbol}?apikey=${this.finageApiKey}`)
         .then(response => {
-          this.news = response.news;
+          this.news = response.news;          
           if(this.news.length > 16){
             this.news.pop()
           }

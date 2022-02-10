@@ -34,6 +34,7 @@ export default {
         finageApiKey: process.env.finageApiKey,
         liveApiUrl: process.env.liveApiUrl,
         item: {
+          name: '',
           price: 0,
           icon: ''
         },
@@ -67,11 +68,13 @@ export default {
     methods: {      
       fetchPrice() {
         let i = this.indices.find( item => item.name.replace(/ /g, '-').toLowerCase() === this.symbol);
+        this.$set(this.item, 'name', i.name);
         this.$axios.$get(`https://api.finage.co.uk/last/index/${i.symbol}?apikey=${this.finageApiKey}`)
         .then(response => {
           this.item.price = response.price.toFixed(2);
           this.item.priceNumber = response.price;
           this.$set(this.item, 'icon', i.icon);
+          this.$set(this.item, 'price', i.price);
           this.loading = false;
         })
         .then(() => {

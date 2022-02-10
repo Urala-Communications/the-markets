@@ -146,6 +146,15 @@ export default {
     },
     connectSockets() {
       // FOREX
+      function checkCryptoList() {
+        if (localStorage.getItem('crypto')) {
+            this.coins = JSON.parse(localStorage.getItem("crypto"))
+          } else {
+              setTimeout(checkCryptoList, 250);
+          }
+      }
+
+      setTimeout(checkCryptoList, 250);
       this.forexWS.onopen = () => {
         // console.log("FOREX Socket connection established");
         this.forexWS.send(JSON.stringify({"action": "subscribe", "symbols": "EUR/USD,USD/JPY,USD/KRW,USD/TRY,GBP/USD,USD/BRL,USD/ILS,USD/RUB,XAU/USD,XAG/USD,WTI/USD,XBR/USD"}));
@@ -193,33 +202,45 @@ export default {
       // CRYPTO
       this.cryptoWS.onopen = () => {
         // console.log("CRYPTO Socket connection established");
-        let coinList = localStorage.getItem('coinList');
-        this.cryptoWS.send(JSON.stringify({"action": "subscribe", "symbols": coinList + 'CRVUSD,CETHUSD,STETHUSD,CDAIUSD'}))
+        const self = this;
+        function checkCoinList() {
+          if (localStorage.getItem('coinList')) {
+            
+            let coinList = localStorage.getItem('coinList');
+            self.cryptoWS.send(JSON.stringify({"action": "subscribe", "symbols": coinList + 'CRVUSD,CETHUSD,STETHUSD,CDAIUSD'}))
+            
+          } else {
+              setTimeout(checkCoinList, 250);
+          }
+      }
+      setTimeout(checkCoinList, 250);
         // this.cryptoWS.send(`{"method":"SUBSCRIBE","params":["${this.cryptocurrency.map(o => o.live.toLowerCase()).join('@ticker","')}@ticker"],"id":1}`)
         // this.cryptoWS.send(`{"method":"SUBSCRIBE","params":["${coinList}"],"id":1}`)
       }
       this.cryptoWS.onmessage = (msg) => {
         let data = JSON.parse(msg.data);
-        let indexFound = this.coins.findIndex(index => index.symbol.toUpperCase() + "USD" === data.s);
-        if (indexFound !== -1) {
-          const item = this.coins[indexFound];
-          item.indexFound = indexFound;
-          if(item.symbol === 'SHIBUSD'){
-            item.price = Number(data.p);
-          } else {
-            item.price = Number(data.p).toFixed(2);
-          }
-          item.difference = Number(data.dd).toFixed(2);
-          item.change = Number(data.dc).toFixed(2);
-          item.time = data.t;
-          item.marketOpen = true;
-          this.$root.$emit('updateCrypto', item);
-          if(item.symbol === 'crv' || item.symbol === 'luna' || item.symbol === 'link' || item.symbol === 'uni'){
-            indexFound = this.defi.findIndex(index => index.symbol.toUpperCase() + "USD" === data.s);
+        if (this.coins.length) {
+          let indexFound = this.coins.findIndex(index => index.symbol.toUpperCase() + "USD" === data.s);
+          if (indexFound !== -1) {
+            const item = this.coins[indexFound];
             item.indexFound = indexFound;
-            this.$root.$emit('updateDefi', item);
+            if(item.symbol === 'SHIBUSD'){
+              item.price = Number(data.p);
+            } else {
+              item.price = Number(data.p).toFixed(2);
+            }
+            item.difference = Number(data.dd).toFixed(2);
+            item.change = Number(data.dc).toFixed(2);
+            item.time = data.t;
+            item.marketOpen = true;
+            this.$root.$emit('updateCrypto', item);
+            if(item.symbol === 'crv' || item.symbol === 'luna' || item.symbol === 'link' || item.symbol === 'uni'){
+              indexFound = this.defi.findIndex(index => index.symbol.toUpperCase() + "USD" === data.s);
+              item.indexFound = indexFound;
+              this.$root.$emit('updateDefi', item);
+            }
+            // this.$root.$emit('updateCoins', item);
           }
-          // this.$root.$emit('updateCoins', item);
         }
         // only LINK, LUNA, UNI data coming from websockets...
         // if(data.s === 'LUNAUSD' || data.s === 'LINKUSD' || data.s === 'UNIUSD' || data.s === 'DAIUSD' || data.s === 'CETHUSD'
@@ -551,28 +572,29 @@ export default {
     },
     connect(){
       this.connectSockets();
-      this.fetchStocks();
-      this.currencies.forEach(item => {
-        this.fetchCurrency(item.symbol);
-      });
+      /* this.fetchStocks();
       this.indices.forEach(item => {
         if (item.type !== 'currency'){
           if (item.type !== 'indice'){
-            this.fetchBonds(item.symbol);
+            //this.fetchBonds(item.symbol);
           } else {
             this.fetchIndice(item.symbol);
           }
         }
-      });
+      }); */
+      // this.currencies.forEach(item => {
+      //   this.fetchCurrency(item.symbol);
+      // });
+      
       // this.cryptocurrency.forEach(item => {
       //   this.fetchCrypto(item.symbol);
       // });
-      this.fetchCommodities();
+      /* this.fetchCommodities(); */
       // setInterval(() => {
       //   this.fetchCoinsByMarketCap()
       // }, 1000);
-      this.fetchMovers();
-      this.checkMarketStatus();
+      /* this.fetchMovers(); */
+      //this.checkMarketStatus();
     },
     showGrid() {
       this.view = 'grid';
@@ -582,6 +604,7 @@ export default {
     },
   },
   created() {
+    
     this.connect();
     this.fetchCoinsByMarketCap()
     // this.readFromFirestore()

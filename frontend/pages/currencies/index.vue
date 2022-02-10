@@ -63,23 +63,36 @@ export default {
       fetchNews(symbol){
         this.$axios.$get(`https://api.finage.co.uk/news/forex/${symbol}?apikey=${this.finageApiKey}`)
         .then(response => {
-          // console.log('News')
-          console.log(response.news)
-          if(typeof response.news[0] !== 'undefined'){
-            let index = this.newsData.findIndex(x => x.title === response.news[0].title);
-            let newsItem = response.news[0]
-            let newsItem2 = response.news[1]
-            this.loading = false;
-            if(index === -1){
-              // newsItem.symbol = symbol
-              // newsItem.type = 'currencies'
-              this.newsData.push(newsItem)
-              this.newsData.push(newsItem2)
-            }
-            if(this.newsData.length > 17){
-              this.newsData.pop()
+          if (response.news.length) {
+            if(typeof response.news[0] !== 'undefined'&& this.newsData.length > 0){
+              let index = this.newsData.findIndex(x => x.title === response.news[0].title);
+              let newsItem = response.news[0]
+              let newsItem2 = response.news[1]
+              this.loading = false;
+              if(index === -1){              
+                this.newsData.push(newsItem)
+                this.newsData.push(newsItem2)
+              }
+              if(this.newsData.length > 17){
+                this.newsData.pop()
+              }
             }
           }
+        })
+        .catch(error => {
+          console.log(error);
+        })
+      },
+      fetchCurrency(index, symbol) {
+        this.$axios.$get(`https://api.finage.co.uk/last/trade/forex/${symbol}?apikey=${this.finageApiKey}`)
+        .then(response => {
+          /* let indexFound = this.currencies.findIndex(currency => currency.symbol === response.symbol );
+          let i = this.currencies[indexFound];
+          i.indexFound = indexFound;          
+          i.price = Number(response.price).toFixed(4); */
+          this.$set(this.currencies[index], 'price', Number(response.price).toFixed(4));
+          this.$set(this.currencies[index], 'difference', response.difference);
+          this.$set(this.currencies[index], 'change', response.change);           
         })
         .catch(error => {
           console.log(error);
@@ -109,9 +122,11 @@ export default {
         }
       });
       this.filteredCurrencies = this.currencies.filter(item => item.type === 'currency');
-      this.currencies.forEach(item => {
+      this.currencies.forEach((item, index) => {
+        this.fetchCurrency(index, item.symbol);
         this.fetchNews(item.symbol);
       });
+      this.loading = false;
       setInterval(() => {
         this.currencies.forEach(item => {
           this.fetchNews(item.symbol);

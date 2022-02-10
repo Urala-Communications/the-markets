@@ -55,6 +55,9 @@ export default {
     },
     data() {
       return {
+        finageApiKey: process.env.finageApiKey,
+        yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
+        today: new Date(Date.now()).toLocaleDateString("fr-CA"),
         loading: true,
         indices,
         filteredIndices: [],
@@ -87,6 +90,43 @@ export default {
       }
     },
     methods: {
+      fetchIndice(symbol) {
+        this.$axios.$get(`https://api.finage.co.uk/last/index/${symbol}?apikey=${this.finageApiKey}`)
+        .then(response => {
+          let indexFound = this.indices.findIndex( indice => indice.symbol === response.symbol );
+          let i = this.indices[indexFound];
+          i.indexFound = indexFound;
+          i.price = response.price.toFixed(2);
+          i.priceNumber = response.price;
+          this.$root.$emit('updateIndice', i);
+        })
+        .then(() => {
+          this.$axios.$get(`https://api.finage.co.uk/agg/index/${symbol}/1day/2021-01-01/${this.today}?limit=1825&apikey=${this.finageApiKey}`)
+          .then(response => {
+            // if(typeof response.p !== 'undefined'){
+            //   let i = this.indices.find( indice => indice.symbol === response.symbol );
+            // } else {
+            //   let i = this.indices.find( indice => indice.symbol === response.symbol && indice.cfd );
+            // }
+            let indexFound = this.indices.findIndex( indice => indice.symbol === response.symbol );
+            let i = this.indices[indexFound];
+            i.indexFound = indexFound;
+            let last = response.results.pop();
+            i.difference = i.priceNumber - last.c
+            i.difference = i.difference.toFixed(2)
+            i.change = (i.priceNumber - last.c) / last.c * 100
+            i.change = i.change.toFixed(2)
+            i.price = parseFloat(last.c);
+            this.$root.$emit('updateIndice', i);
+          })
+          .catch(error => {
+            console.log(error);
+          })
+        })
+        .catch(error => {
+          console.log(error);
+        })
+      },
       showGrid() {
         this.view = 'grid';
       },
@@ -96,6 +136,15 @@ export default {
 
     },
     created() {
+      this.indices.forEach(item => {
+        if (item.type !== 'currency'){
+          if (item.type !== 'indice'){
+            //this.fetchBonds(item.symbol);
+          } else {
+            this.fetchIndice(item.symbol);
+          }
+        }
+      });
       this.$root.$on('updateIndice', (item) => {
         let i = this.indices.findIndex(index => index.name === item.name);
         // console.log(this.indices[i])

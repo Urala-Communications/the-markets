@@ -34,6 +34,7 @@ export default {
         finageApiKey: process.env.finageApiKey,
         liveApiUrl: process.env.liveApiUrl,
         item: {
+          name: '',
           price: 0,
           icon: ''
         },
@@ -67,7 +68,12 @@ export default {
     methods: {
       fetchDetails() {
         let i = this.commodities.find(item => item.name.replace(/ /g, '-').toLowerCase() === this.symbol);
-        this.$axios.$get(`https://api.finage.co.uk/agg/forex/prev-close/${i.symbol}?apikey=${this.finageApiKey}`)
+        if (i) {
+          this.$set(this.item, 'icon', i.icon);
+          this.$set(this.item, 'name', i.name);
+        }
+        let symbol = i.symbol.split(":")[0];
+        this.$axios.$get(`https://api.finage.co.uk/agg/forex/prev-close/${symbol}?apikey=${this.finageApiKey}`)
           .then(response => {
             this.open = response.results[0].o;
             this.high = response.results[0].h;
@@ -81,10 +87,11 @@ export default {
       },
       fetchPrice() {
         let i = this.commodities.find( item => item.name.replace(/ /g, '-').toLowerCase() === this.symbol);
-        this.$axios.$get(`https://api.finage.co.uk/last/trade/forex/${i.symbol}?apikey=${this.finageApiKey}`)
-        .then(response => {
-          this.item.price = response.price.toFixed(2);
+        let symbol = i.symbol.split(":")[0];
+        this.$axios.$get(`https://api.finage.co.uk/last/trade/forex/${symbol}?apikey=${this.finageApiKey}`)
+        .then(response => {          
           this.$set(this.item, 'icon', i.icon);
+          this.$set(this.item, 'price', response.price.toFixed(2));
           this.loading = false;
         })
         .catch(error => {
@@ -117,7 +124,8 @@ export default {
       fetchAggregates(){
         let i = this.commodities.find( item => item.name.replace(/ /g, '-').toLowerCase() === this.symbol);
         let last = new Date(Date.now() - 864e5 * 30).toLocaleDateString("fr-CA");
-        this.$axios.$get(`https://api.finage.co.uk/agg/forex/${i.symbol}/1/hour/${last}/${this.today}?limit=1825&apikey=${this.finageApiKey}&sort=desc`)
+        let symbol = i.symbol.split(":")[0];
+        this.$axios.$get(`https://api.finage.co.uk/agg/forex/${symbol}/1/hour/${last}/${this.today}?limit=1825&apikey=${this.finageApiKey}&sort=desc`)
         .then(response => {
           this.chartData = response.results.map(o => {
             const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
@@ -144,6 +152,7 @@ export default {
       updateInterval(symbol, interval, text){
         if (symbol === this.live) {
           let last = this.yesterday;
+          symbol = symbol.split(":")[0];
           switch (interval) {
             case '1m':
             case '5m':
