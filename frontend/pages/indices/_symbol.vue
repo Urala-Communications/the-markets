@@ -64,22 +64,7 @@ export default {
       const symbol = params.symbol;
       return { symbol }
     },
-    methods: {
-      // fetchDetails() {
-      //   let itemSymbol = this.symbol.replace('-', '').toUpperCase();
-      //   this.$axios.$get(` https://api.finage.co.uk/agg/index/${itemSymbol}/1day/2021-02-05/2021-03-02?apikey=${this.finageApiKey}`)
-      //   .then(response => {
-      //     this.open = response.results[0].o;
-      //     this.high = response.results[0].h;
-      //     this.low = response.results[0].l;
-      //     this.close = response.results[0].c;
-      //     this.volume = response.results[0].v;
-      //     console.log("Details")
-      //   })
-      //   .catch(error => {
-      //     console.log(error);
-      //   })
-      // },
+    methods: {      
       fetchPrice() {
         let i = this.indices.find( item => item.name.replace(/ /g, '-').toLowerCase() === this.symbol);
         this.$axios.$get(`https://api.finage.co.uk/last/index/${i.symbol}?apikey=${this.finageApiKey}`)
@@ -107,11 +92,12 @@ export default {
       },
       fetchAggregates(){
         let i = this.indices.find( item => item.name.replace(/ /g, '-').toLowerCase() === this.symbol);
-        last = new Date(Date.now() - 864e5 * 30).toLocaleDateString("fr-CA");
+        let last = new Date(Date.now() - 864e5 * 30).toLocaleDateString("fr-CA");
         this.$axios.$get(`https://api.finage.co.uk/agg/index/${i.symbol}/1day/${last}/${this.today}?limit=1825&apikey=${this.finageApiKey}&sort=desc`)
         .then(response => {
+          
           this.chartData = response.results.map(o => {
-            const [ timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
+            const [ timestamp, openPrice, high, low, close, volume] = [(new Date(o.t)).getTime(), o.o, o.h, o.l, o.c, o.v];
             return [ timestamp, openPrice, high, low, close, volume].map(n =>
               Number(n)
             );
@@ -132,39 +118,57 @@ export default {
           console.log(error);
         })
       },
-      updateInterval(symbol, interval, text){
+      updateInterval(symbol, interval, text){        
         if (symbol === this.live) {
+          let range = interval;
           let last = this.yesterday;
           switch (interval) {
             case '1m':
+              range = '1min';
+              last = this.yesterday;
+              break;
             case '5m':
+              range = '5min';
+              last = this.yesterday;
+              break;
             case '15m':
+              range = '15min';
               last = this.yesterday;
               break;
             case '30m':
+              range = '30min';
               last = new Date(Date.now() - 864e5 * 7).toLocaleDateString("fr-CA");
               break;
             case '1h':
+              range = '1h';
+              last = new Date(Date.now() - 864e5 * 30).toLocaleDateString("fr-CA");
+              break;
             case '4h':
+              range = '4h';
               last = new Date(Date.now() - 864e5 * 30).toLocaleDateString("fr-CA");
               break;
             case '1d':
+              range = '1day';
+              last = new Date(Date.now() - 864e5 * 365).toLocaleDateString("fr-CA");
+              break;
             case '1w':
+              range = '1week';
               last = new Date(Date.now() - 864e5 * 365).toLocaleDateString("fr-CA");
               break;
             case '1M':
+              range = '1month'
               last = new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString("fr-CA");
               break;
             default:
               break;
-          }
+          }          
           this.$axios
           .$get(
-            `https://api.finage.co.uk/agg/index/${symbol}/${text}/${last}/${this.today}?limit=3000&apikey=${this.finageApiKey}&sort=desc`
+            `https://api.finage.co.uk/agg/index/${symbol}/${range}/${last}/${this.today}?limit=3000&apikey=${this.finageApiKey}&sort=desc`
           )
-          .then((response) => {
+          .then((response) => {            
             this.chartData = response.results.map(o => {
-              const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
+              const [timestamp, openPrice, high, low, close, volume] = [(new Date(o.t)).getTime(), o.o, o.h, o.l, o.c, o.v];
               return [timestamp, openPrice, high, low, close, volume].map(n =>
                 Number(n)
               );
