@@ -68,6 +68,7 @@ export default {
       marketStatus: {},
       yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
       today: new Date(Date.now()).toLocaleDateString("fr-CA"),
+      lastweek: new Date(Date.now() - 7*864e5).toLocaleDateString("fr-CA"),
       showCookieNotice: false
     }
   },
@@ -427,7 +428,7 @@ export default {
         });
       })
       .then(() => {
-        this.stocks.forEach(item => {
+        /* this.stocks.forEach(item => {
           this.$axios.$get(`https://api.finage.co.uk/agg/stock/${item.symbol}/1/day/2021-01-01/${this.today}?limit=1825&apikey=${finageApiKey}`)
           .then(response => {
             const indexFound = this.stocks.findIndex( stock => stock.symbol === response.symbol );
@@ -443,10 +444,40 @@ export default {
           .catch(error => {
             console.log(error);
           })
-        })
+        }) */
       })
       .catch(error => {
         console.log(error);
+      })
+    },
+    fetchSingleStock(symbol){
+      this.$axios.$get(`https://api.finage.co.uk/last/stock/TSLA?apikey=${finageApiKey}`)
+      .then(response => {        
+        const indexFound = this.stocks.findIndex( stock => stock.symbol === symbol );
+        let i = this.stocks[indexFound];
+        i.indexFound = indexFound;
+        i.price = Number(response.ask).toFixed(2);
+        i.priceNumber = response.ask
+        i.difference = 0;
+        i.change = 0;
+        this.$root.$emit('updateStock', i);        
+      })
+      .then(() => {
+        this.$axios.$get(`https://api.finage.co.uk/agg/stock/${symbol}/1/day/${this.lastweek}/${this.today}?limit=1825&apikey=${finageApiKey}`)
+        .then(response => {
+          const indexFound = this.stocks.findIndex( stock => stock.symbol === response.symbol );
+          let i = this.stocks[indexFound];
+          i.indexFound = indexFound;
+          let last = response.results.pop();
+          i.difference = i.priceNumber - last.c
+          i.difference = i.difference.toFixed(2)
+          i.change = (i.priceNumber - last.c) / last.c * 100
+          i.change = i.change.toFixed(2);
+          this.$root.$emit('updateStock', i);
+        })
+        .catch(error => {
+          console.log(error);
+        })
       })
     },
     fetchCurrency(symbol) {
@@ -478,7 +509,7 @@ export default {
         this.$root.$emit('updateIndice', i);
       })
       .then(() => {
-        this.$axios.$get(`https://api.finage.co.uk/agg/index/${symbol}/1day/2021-01-01/${this.today}?limit=1825&apikey=${finageApiKey}`)
+        /* this.$axios.$get(`https://api.finage.co.uk/agg/index/${symbol}/1day/2021-01-01/${this.today}?limit=1825&apikey=${finageApiKey}`)
         .then(response => {
           // if(typeof response.p !== 'undefined'){
           //   let i = this.indices.find( indice => indice.symbol === response.symbol );
@@ -498,7 +529,7 @@ export default {
         })
         .catch(error => {
           console.log(error);
-        })
+        }) */
       })
       .catch(error => {
         console.log(error);
@@ -524,7 +555,6 @@ export default {
     fetchBonds(symbol) {
       this.$axios.$get(`https://api.finage.co.uk/bonds/us/rate/${symbol}?apikey=${finageApiKey}`)
       .then(response => {
-        // console.log(response)
         let i = this.indices.find( indice => indice.symbol === response.symbol );
         i.price = Number(response.value).toFixed(4);
         this.$root.$emit('updateBond', i);
@@ -547,6 +577,29 @@ export default {
             this.$root.$emit('updateCommodity', item);
           }
         });
+      })
+      .catch(error => {
+        console.log(error);
+      })
+    },
+    fetchCommoditySymbol(symbol) {
+      // Trading Economics
+      this.$axios.$get(`https://api.tradingeconomics.com/markets/symbol/${symbol}?c=${tradingEconKey}&f=json`)
+      .then(response => {
+        
+        let indexFound = commodities.findIndex(element => element.symbol === response[0].Symbol);
+        if (indexFound !== -1) {
+          
+          let i = this.commodities[indexFound];
+          i.indexFound = indexFound;          
+          i.price = response[0]['Last'];
+          i.change = response[0]['DailyChange'];
+          i.difference = response[0]['DailyPercentualChange'];
+          i.ticker = response[0]['Ticker'];
+          console.log(i)
+          this.$root.$emit('updateCommodity', i);          
+        }
+        
       })
       .catch(error => {
         console.log(error);
@@ -606,7 +659,11 @@ export default {
   created() {
     
     this.connect();
-    this.fetchCoinsByMarketCap()
+    this.fetchCoinsByMarketCap();
+    this.fetchSingleStock("TSLA");
+    this.fetchBonds("DGS10");
+    this.fetchCommoditySymbol("XAUUSD:CUR");
+    this.fetchCommoditySymbol("CL1:COM")
     // this.readFromFirestore()
     this.$root.$on('bv::collapse::state', (id, collapsed) => {
       if (id === "sidebar") {
