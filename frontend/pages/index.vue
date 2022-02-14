@@ -358,9 +358,20 @@ export default {
       this.fetchMovers();
       this.checkMarketStatus();
 
+      function checkCryptoList() {
+        if (localStorage.getItem('crypto')) {
+          
+            let topCoins = localStorage.getItem('crypto');
+            this.cryptocurrency = JSON.parse(topCoins)
+          } else {
+              setTimeout(checkCryptoList, 250);
+          }
+      }
 
-      let topCoins = localStorage.getItem('crypto');
-      this.cryptocurrency = JSON.parse(topCoins)
+      setTimeout(checkCryptoList, 250);
+
+      // let topCoins = localStorage.getItem('crypto');
+      // this.cryptocurrency = JSON.parse(topCoins)
       // this.cryptocurrency.forEach((item) => {
       //   let indexFound = item.order - 1;
       //   let i = this.cryptocurrency[indexFound];
@@ -379,9 +390,11 @@ export default {
       this.$root.$on('updateCrypto', (item) => {
         // console.log(item)
         //let itemIndex = item.indexFound ;//this.cryptocurrency.findIndex(index => index.name === item.name);
-        this.$set(this.cryptocurrency[item.indexFound], 'price', item.price);
-        this.$set(this.cryptocurrency[item.indexFound], 'difference', item.difference);
-        this.$set(this.cryptocurrency[item.indexFound], 'change', item.change);
+        if (this.cryptocurrency) {
+          this.$set(this.cryptocurrency[item.indexFound], 'price', item.price);
+          this.$set(this.cryptocurrency[item.indexFound], 'difference', item.difference);
+          this.$set(this.cryptocurrency[item.indexFound], 'change', item.change);
+        }
       });
       this.$root.$on('updateCurrency', (item) => {
         // console.log(item)
