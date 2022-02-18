@@ -113,23 +113,52 @@ export default {
         let i = this.bonds.find(item => item.name.toLowerCase() === this.symbol.replace(/-/g, ' '));
         this.$axios.$get(`https://api.finage.co.uk/agg/index/${i.symbol}/1day/2021-01-01/${this.yesterday}?limit=1825&apikey=${this.finageApiKey}`)
           .then(response => {
-            this.chartData = response.results.map(o => {
-              const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
-              return [timestamp, openPrice, high, low, close, volume].map(n =>
-                Number(n)
-              );
-            }).sort((a, b) => {
-              return a[0] - b[0];
-            });           
-            this.symbol = itemSymbol;
-            this.live = itemSymbol;
-            let last = this.chartData.pop();
-            this.open = last[0];
-            this.high = last[1]
-            this.low = last[2];
-            this.close = last[3];
-            this.volume = last[4];
-            this.loading = false;
+            if (response.totalResults) {
+              this.chartData = response.results.map(o => {
+                const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
+                return [timestamp, openPrice, high, low, close, volume].map(n =>
+                  Number(n)
+                );
+              }).sort((a, b) => {
+                return a[0] - b[0];
+              });
+              this.symbol = itemSymbol;
+              this.live = itemSymbol;
+              let last = this.chartData[this.chartData.length - 1];
+              this.open = last[0];
+              this.high = last[1]
+              this.low = last[2];
+              this.close = last[3];
+              this.volume = last[4];
+              this.loading = false;
+            } else {
+              this.$axios.$get(`https://api.tradingeconomics.com/markets/historical/${i.symbol}?c=${this.tradingEconKey}&f=json`)
+            .then(response => {
+              if (response.length) {
+
+                this.chartData = response.map(o => {
+                  const [timestamp, openPrice, high, low, close, volume] = [moment(o.Date, 'DD-MM-YYYY'), o.Open, o.High, o.Low, o.Close, 0];
+                  return [timestamp, openPrice, high, low, close, volume].map(n =>
+                    Number(n)
+                  );
+                }).sort((a, b) => {
+                  return a[0] - b[0];
+                });                
+                this.symbol = i.symbol;   
+                this.live = i.symbol;           
+                let last = this.chartData[this.chartData.length - 1];
+                this.open = last[1];
+                this.high = last[2]
+                this.low = last[3];
+                this.close = last[4];
+                this.volume = last[5];
+                this.loading = false;
+                this.$set(this.item, 'price', last[4].toFixed(2));
+              }
+            }).catch(err => {
+              console.log("tradingeconomic err: ",err)
+            })
+            }
           })
           .catch(error => {
             console.log(error);

@@ -132,7 +132,7 @@ export default {
             });           
             this.symbol = itemSymbol;
             this.live = itemSymbol;
-            let last = this.chartData.pop();
+            let last = this.chartData[this.chartData.length - 1];
             this.open = last[0];
             this.high = last[1]
             this.low = last[2];

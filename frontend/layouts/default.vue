@@ -416,7 +416,7 @@ export default {
       // }
     },
     fetchStocks() {
-      this.$axios.$get(`https://api.finage.co.uk/last/stocks/?symbols=AAPL,AMZN,BA,BABA,FB,MSFT,MRNA,NIO,NVDA,PFE,PLTR,SAN,TSLA,XPEV,GME,AMC,BB&apikey=${finageApiKey}`)
+      this.$axios.$get(`https://api.finage.co.uk/last/stocks/?symbols=${stocks.map(s => s.symbol).join(",")}&apikey=${finageApiKey}`)
       .then(response => {
         response.forEach(item => {
           const indexFound = this.stocks.findIndex( stock => stock.symbol === item.symbol );
@@ -451,7 +451,7 @@ export default {
       })
     },
     fetchSingleStock(symbol){
-      this.$axios.$get(`https://api.finage.co.uk/last/stock/TSLA?apikey=${finageApiKey}`)
+      this.$axios.$get(`https://api.finage.co.uk/last/stock/${symbol}?apikey=${finageApiKey}`)
       .then(response => {        
         const indexFound = this.stocks.findIndex( stock => stock.symbol === symbol );
         let i = this.stocks[indexFound];
@@ -596,7 +596,7 @@ export default {
           i.change = response[0]['DailyChange'];
           i.difference = response[0]['DailyPercentualChange'];
           i.ticker = response[0]['Ticker'];
-          console.log(i)
+          //console.log(i)
           this.$root.$emit('updateCommodity', i);          
         }
         
@@ -663,7 +663,7 @@ export default {
     this.fetchSingleStock("TSLA");
     this.fetchBonds("DGS10");
     this.fetchCommoditySymbol("XAUUSD:CUR");
-    this.fetchCommoditySymbol("CL1:COM")
+    this.fetchCommoditySymbol("CL1:COM");
     // this.readFromFirestore()
     this.$root.$on('bv::collapse::state', (id, collapsed) => {
       if (id === "sidebar") {

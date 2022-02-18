@@ -85,7 +85,7 @@ export default {
         })
       },
       fetchStocks() {
-        this.$axios.$get(`https://api.finage.co.uk/last/stocks/?symbols=AAPL,AMZN,BA,BABA,FB,MSFT,MRNA,NIO,NVDA,PFE,PLTR,SAN,TSLA,XPEV,GME,AMC,BB&apikey=${this.finageApiKey}`)
+        this.$axios.$get(`https://api.finage.co.uk/last/stocks/?symbols=${stocks.map(s => s.symbol).join(",")}&apikey=${this.finageApiKey}`)
         .then(response => {
           response.forEach(item => {
             const indexFound = this.stocks.findIndex( stock => stock.symbol === item.symbol );
