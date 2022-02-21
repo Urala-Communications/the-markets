@@ -102,7 +102,7 @@
 </template>
 
 <script>
-import {cryptocurrency, currencies, stocks, indices, bonds, rising, commodities} from "./../market.js";
+import { currencies, stocks, indices, bonds, rising, commodities} from "./../market.js";
 import Ad from "./../components/Ad.vue";
 import Articles from "./../components/Articles";
 export default {
@@ -122,8 +122,8 @@ export default {
         tradingEconKey: process.env.tradingEconKey,
         loading: true,
         view: 'list',
-        coins: [],
-        cryptocurrency,
+        coins: [],   
+        cryptocurrency: [],     
         currencies,
         stocks,
         indices,
@@ -340,7 +340,7 @@ export default {
     },
     // async mounted () {
     created() {
-
+      const self = this;
       this.fetchStocks();
       this.indices.forEach(item => {
         if (item.type !== 'currency'){
@@ -362,7 +362,10 @@ export default {
         if (localStorage.getItem('crypto')) {
           
             let topCoins = localStorage.getItem('crypto');
-            this.cryptocurrency = JSON.parse(topCoins)
+            self.cryptocurrency = JSON.parse(topCoins);
+            self.cryptocurrency.forEach(item => {
+              self.fetchCryptoNews(item.icon);
+            });
           } else {
               setTimeout(checkCryptoList, 250);
           }
@@ -390,7 +393,7 @@ export default {
       this.$root.$on('updateCrypto', (item) => {
         // console.log(item)
         //let itemIndex = item.indexFound ;//this.cryptocurrency.findIndex(index => index.name === item.name);
-        if (this.cryptocurrency) {
+        if (this.cryptocurrency.length) {
           this.$set(this.cryptocurrency[item.indexFound], 'price', item.price);
           this.$set(this.cryptocurrency[item.indexFound], 'difference', item.difference);
           this.$set(this.cryptocurrency[item.indexFound], 'change', item.change);
@@ -448,9 +451,6 @@ export default {
         if(item.symbol !== 'AMC' || item.symbol !== 'GME' || item.symbol !== 'BB' || item.symbol !== 'TSLA'){
           this.fetchNews(item.symbol);
         }
-      });
-      this.cryptocurrency.forEach(item => {
-        this.fetchCryptoNews(item.icon);
       });
     }
   }

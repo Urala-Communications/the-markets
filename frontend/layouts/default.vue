@@ -15,7 +15,7 @@
 
 <script>
 import Ad from "./../components/Ad.vue";
-import {cryptocurrency, defi, currencies, stocks, indices, bonds, rising, commodities} from "./../market.js";
+import { defi, currencies, stocks, indices, bonds, rising, commodities} from "./../market.js";
 const finageApiKey = process.env.finageApiKey,
       finageSocketKey = process.env.finageSocketKey,
       tradingEconKey = process.env.tradingEconKey;
@@ -53,7 +53,6 @@ export default {
       loading: false,
       view: 'list',
       coins: [],
-      cryptocurrency,
       defi,
       currencies,
       stocks,

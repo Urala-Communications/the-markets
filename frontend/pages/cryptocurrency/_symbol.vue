@@ -31,7 +31,7 @@
 let date = new Date();
 date.setDate(date.getDate() - 1826);
 let fiveYearsAgo = date.toLocaleDateString("fr-CA");
-import { cryptocurrency } from "../../market.js";
+//import { cryptocurrency } from "../../market.js";
 import Item from "~/components/Item.vue";
 export default {
   components: {
@@ -59,7 +59,7 @@ export default {
       loading: true,
       symbol: "",
       marketStatus: "",
-      cryptocurrency,
+      cryptocurrency: [],
       chartData: [],
       chartOptions: null,
       live: "",
@@ -89,12 +89,12 @@ export default {
         (item) => item.name.toLowerCase() === this.symbol.replace("-", " ")
       );
       if (i) {
-        this.$set(this.item, 'icon', i.icon);
+        this.$set(this.item, 'icon', i.symbol);
         this.$set(this.item, 'name', i.name);
       }
       this.$axios
         .$get(
-          `https://api.finage.co.uk/detail/cryptocurrency/${i.icon}?apikey=${this.finageApiKey}`
+          `https://api.finage.co.uk/detail/cryptocurrency/${i.symbol}?apikey=${this.finageApiKey}`
         )
         .then((response) => {
           this.profile = response;
@@ -109,7 +109,7 @@ export default {
       );
       this.$axios
         .$get(
-          `https://api.finage.co.uk/last/crypto/detailed/${i.symbol}?apikey=${this.finageApiKey}`
+          `https://api.finage.co.uk/last/crypto/detailed/${i.symbol.toUpperCase()+"USD"}?apikey=${this.finageApiKey}`
         )
         .then((response) => {
           this.open = response.open.toFixed(2);
@@ -142,7 +142,7 @@ export default {
         (item) => item.name.toLowerCase() === this.symbol.replace("-", " ")
       );
       // this.$axios.$get(`https://api.finage.co.uk/agg/crypto/${i.symbol}/1/day/${fiveYearsAgo}/${this.today}?limit=5000&apikey=${this.finageApiKey}`)
-      this.$axios.$get(`https://api.binance.com/api/v3/klines?limit=1000&symbol=${i.live}&interval=1d`)
+      this.$axios.$get(`https://api.binance.com/api/v3/klines?limit=1000&symbol=${i.symbol.toUpperCase()+"USDT"}&interval=1d`)
         .then((response) => {
           this.chartData = response.map(o => {
             const [timestamp, openPrice, high, low, close, volume] = [...o];
@@ -151,7 +151,7 @@ export default {
             );
           })
           this.symbol = i.symbol;
-          this.live = i.live;
+          this.live = i.symbol.toUpperCase()+"USDT";
           let last = this.chartData[this.chartData.length - 1];
           this.open = last[1];
           this.high = last[2]
@@ -218,7 +218,7 @@ export default {
       );
       this.$axios
         .$get(
-          `https://api.finage.co.uk/news/cryptocurrency/${i.icon}?apikey=${this.finageApiKey}`
+          `https://api.finage.co.uk/news/cryptocurrency/${i.symbol}?apikey=${this.finageApiKey}`
         )
         .then((response) => {
           // filter matching articles
@@ -263,16 +263,29 @@ export default {
         this.$set(this.item, "price", price);
       }
     })
-    this.fetchDetails();
-    this.checkMarketStatus();
-    this.fetchAggregates();
-    //this.fetchPrice();
+    const self = this;
+    function checkCryptoList() {
+      if (localStorage.getItem('crypto')) {        
+          let topCoins = localStorage.getItem('crypto');
+          self.cryptocurrency = JSON.parse(topCoins);
+
+          self.fetchDetails();
+          self.checkMarketStatus();
+          self.fetchPrice();
+          self.fetchAggregates();
+          self.fetchNews();
+        } else {
+            setTimeout(checkCryptoList, 250);
+        }
+    }
+    setTimeout(checkCryptoList, 250);   
+    
     this.$root.$on("changeInterval", ({symbol, interval, text}) => {
       this.updateInterval(symbol, interval, text);
     })
     this.subscribeTrade();
     this.listenTrade();
-    // this.fetchNews();
+    // 
     // setInterval(() => {
     //     this.fetchNews();
     // }, 300000);
