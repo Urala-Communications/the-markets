@@ -17,6 +17,8 @@
     :chartData="chartData"
     :chartOptions="chartOptions"
     :marketStatus="marketStatus"
+    :symbol="symbol"
+    :live="live"
   />
 </template>
 
@@ -31,6 +33,7 @@ export default {
       return {
         finageApiKey: process.env.finageApiKey,
         item: {
+          name: '',
           price: 0,
           icon: ''
         },
@@ -43,6 +46,7 @@ export default {
         news: [],
         loading: true,
         symbol: '',
+        live: '',
         marketStatus: '',
         bonds,
         chartData: [],
@@ -83,11 +87,12 @@ export default {
         //   });
         // };
         let i = this.bonds.find(item => item.name.toLowerCase() === this.symbol.replace(/-/g, ' '));
+        this.$set(this.item, 'name', i.name);
         this.$axios.$get(`https://api.finage.co.uk/bonds/us/rate/${i.symbol}?apikey=${this.finageApiKey}`)
         .then(response => {
           console.log("Price")
           console.log(response)
-          this.item.price = response.price.toFixed(2);
+          this.item.price = response.value.toFixed(2);
           this.$set(this.item, 'icon', i.icon);
           this.loading = false;
         })
@@ -106,15 +111,109 @@ export default {
       },
       fetchAggregates(){
         let i = this.bonds.find(item => item.name.toLowerCase() === this.symbol.replace(/-/g, ' '));
-        this.$axios.$get(`https://api.finage.co.uk/agg/index/${i.symbol}/1/day/2021-01-01/${this.yesterday}?limit=1825&apikey=${this.finageApiKey}`)
+        this.$axios.$get(`https://api.finage.co.uk/agg/index/${i.symbol}/1day/2021-01-01/${this.yesterday}?limit=1825&apikey=${this.finageApiKey}`)
           .then(response => {
-            console.log("Aggregates")
-            console.log(response.results)
-            this.chartData = response.results.map(i => i.c);
+            if (response.totalResults) {
+              this.chartData = response.results.map(o => {
+                const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
+                return [timestamp, openPrice, high, low, close, volume].map(n =>
+                  Number(n)
+                );
+              }).sort((a, b) => {
+                return a[0] - b[0];
+              });
+              this.symbol = itemSymbol;
+              this.live = itemSymbol;
+              let last = this.chartData[this.chartData.length - 1];
+              this.open = last[0];
+              this.high = last[1]
+              this.low = last[2];
+              this.close = last[3];
+              this.volume = last[4];
+              this.loading = false;
+            } else {
+              this.$axios.$get(`https://api.tradingeconomics.com/markets/historical/${i.symbol}?c=${this.tradingEconKey}&f=json`)
+            .then(response => {
+              if (response.length) {
+
+                this.chartData = response.map(o => {
+                  const [timestamp, openPrice, high, low, close, volume] = [moment(o.Date, 'DD-MM-YYYY'), o.Open, o.High, o.Low, o.Close, 0];
+                  return [timestamp, openPrice, high, low, close, volume].map(n =>
+                    Number(n)
+                  );
+                }).sort((a, b) => {
+                  return a[0] - b[0];
+                });                
+                this.symbol = i.symbol;   
+                this.live = i.symbol;           
+                let last = this.chartData[this.chartData.length - 1];
+                this.open = last[1];
+                this.high = last[2]
+                this.low = last[3];
+                this.close = last[4];
+                this.volume = last[5];
+                this.loading = false;
+                this.$set(this.item, 'price', last[4].toFixed(2));
+              }
+            }).catch(err => {
+              console.log("tradingeconomic err: ",err)
+            })
+            }
           })
           .catch(error => {
             console.log(error);
+            this.chartData = [];
+            this.loading = false;
           })
+      },
+      updateInterval(symbol, interval, text){
+        
+        if (symbol === this.live) {
+          let last = this.yesterday;
+          switch (interval) {
+            case '1m':
+            case '5m':
+            case '15m':
+              last = this.yesterday;
+              break;
+            case '30m':
+              last = new Date(Date.now() - 864e5 * 7).toLocaleDateString("fr-CA");
+              break;
+            case '1h':
+            case '4h':
+              last = new Date(Date.now() - 864e5 * 30).toLocaleDateString("fr-CA");
+              break;
+            case '1d':
+            case '1w':
+              last = new Date(Date.now() - 864e5 * 365).toLocaleDateString("fr-CA");
+              break;
+            case '1M':
+              last = new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString("fr-CA");
+              break;
+            default:
+              break;
+          }
+          
+          this.$axios
+          .$get(
+            `https://api.finage.co.uk/agg/index/${i.symbol}/${text}/${last}/${this.yesterday}?limit=3000&apikey=${this.finageApiKey}&sort=desc`
+          )
+          .then((response) => {
+            
+            this.chartData = response.results.map(o => {
+              const [timestamp, openPrice, high, low, close, volume] = [(new Date(o.t)).getTime(), o.o, o.h, o.l, o.c, o.v];
+              return [timestamp, openPrice, high, low, close, volume].map(n =>
+                Number(n)
+              );
+            }).sort((a, b) => {
+              return a[0] - b[0];
+            });
+            this.$root.$emit("updatedInterval", {symbol, interval});
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+        }
       },
       fetchNews(){
         let i = this.bonds.find(item => item.name.toLowerCase() === this.symbol.replace(/-/g, ' '));
@@ -145,10 +244,18 @@ export default {
           this.loading = false;
         }
       });
+      this.$root.$on("updateTrade", ({symbol, time, price, volumn}) => {
+        if (symbol === this.live) {
+          this.$set(this.item, "price", price);
+        }
+      })
+      this.$root.$on("changeInterval", ({symbol, interval, text}) => {
+        this.updateInterval(symbol, interval, text);
+      })
       // this.fetchDetails();
-      // this.fetchPrice();
+      this.fetchPrice();
       // this.checkMarketStatus();
-      // this.fetchAggregates();
+      this.fetchAggregates();
       setInterval(() => {
         this.checkMarketStatus()
       }, 300000);

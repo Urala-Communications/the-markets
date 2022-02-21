@@ -42,6 +42,7 @@ export default {
       finageApiKey: process.env.finageApiKey,
       liveApiUrl: process.env.liveApiUrl,
       item: {
+        name: '',
         price: 0,
         icon: "",
       },
@@ -87,6 +88,10 @@ export default {
       let i = this.cryptocurrency.find(
         (item) => item.name.toLowerCase() === this.symbol.replace("-", " ")
       );
+      if (i) {
+        this.$set(this.item, 'icon', i.icon);
+        this.$set(this.item, 'name', i.name);
+      }
       this.$axios
         .$get(
           `https://api.finage.co.uk/detail/cryptocurrency/${i.icon}?apikey=${this.finageApiKey}`
@@ -147,7 +152,7 @@ export default {
           })
           this.symbol = i.symbol;
           this.live = i.live;
-          let last = this.chartData.pop();
+          let last = this.chartData[this.chartData.length - 1];
           this.open = last[1];
           this.high = last[2]
           this.low = last[3];

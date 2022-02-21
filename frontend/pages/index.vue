@@ -119,6 +119,7 @@ export default {
     data() {
       return {
         finageApiKey: process.env.finageApiKey,
+        tradingEconKey: process.env.tradingEconKey,
         loading: true,
         view: 'list',
         coins: [],
@@ -133,7 +134,9 @@ export default {
         chartOptions: null,
         stockNews: [],
         cryptoNews: [],
-        risingNews: []
+        risingNews: [],
+        yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
+        today: new Date(Date.now()).toLocaleDateString("fr-CA"),
       }
     },
     methods: {
@@ -189,6 +192,145 @@ export default {
       //     console.log(error);
       //   })
       // },
+      fetchStocks() {
+        this.$axios.$get(`https://api.finage.co.uk/last/stocks/?symbols=${this.stocks.map(s => s.symbol).join(",")}&apikey=${this.finageApiKey}`)
+        .then(response => {
+          response.forEach(item => {
+            const indexFound = this.stocks.findIndex( stock => stock.symbol === item.symbol );
+            let i = this.stocks[indexFound];
+            i.indexFound = indexFound;
+            i.price = Number(item.ask).toFixed(2);
+            i.priceNumber = item.ask
+            this.$root.$emit('updateStock', i);
+          });
+        })
+        .then(() => {
+          this.stocks.forEach(item => {
+            this.$axios.$get(`https://api.finage.co.uk/agg/stock/${item.symbol}/1/day/2021-01-01/${this.today}?limit=1825&apikey=${this.finageApiKey}`)
+            .then(response => {
+              const indexFound = this.stocks.findIndex( stock => stock.symbol === response.symbol );
+              let i = this.stocks[indexFound];
+              i.indexFound = indexFound;
+              let last = response.results.pop();
+              i.difference = i.priceNumber - last.c
+              i.difference = i.difference.toFixed(2)
+              i.change = (i.priceNumber - last.c) / last.c * 100
+              i.change = i.change.toFixed(2)
+              this.$root.$emit('updateStock', i);
+            })
+            .catch(error => {
+              console.log(error);
+            })
+          })
+        })
+        .catch(error => {
+          console.log(error);
+        })
+      },
+      fetchCurrency(symbol) {
+        this.$axios.$get(`https://api.finage.co.uk/last/trade/forex/${symbol}?apikey=${this.finageApiKey}`)
+        .then(response => {
+          let indexFound = this.currencies.findIndex(currency => currency.symbol === response.symbol );
+          let i = this.currencies[indexFound];
+          i.indexFound = indexFound;
+          // if(i.type === 'commodity'){
+          //   i.price = Number(response.price).toFixed(2);
+          //   this.$root.$emit('updateCommodity', i);
+          // } else {
+            i.price = Number(response.price).toFixed(4);
+            this.$root.$emit('updateCurrency', i);
+          // }
+        })
+        .catch(error => {
+          console.log(error);
+        })
+      },
+      fetchIndice(symbol) {
+        this.$axios.$get(`https://api.finage.co.uk/last/index/${symbol}?apikey=${this.finageApiKey}`)
+        .then(response => {
+          let indexFound = this.indices.findIndex( indice => indice.symbol === response.symbol );
+          let i = this.indices[indexFound];
+          i.indexFound = indexFound;
+          i.price = response.price.toFixed(2);
+          i.priceNumber = response.price;
+          this.$root.$emit('updateIndice', i);
+        })
+        .then(() => {
+          this.$axios.$get(`https://api.finage.co.uk/agg/index/${symbol}/1day/2021-01-01/${this.today}?limit=1825&apikey=${this.finageApiKey}`)
+          .then(response => {
+            // if(typeof response.p !== 'undefined'){
+            //   let i = this.indices.find( indice => indice.symbol === response.symbol );
+            // } else {
+            //   let i = this.indices.find( indice => indice.symbol === response.symbol && indice.cfd );
+            // }
+            let indexFound = this.indices.findIndex( indice => indice.symbol === response.symbol );
+            let i = this.indices[indexFound];
+            i.indexFound = indexFound;
+            let last = response.results.pop();
+            i.difference = i.priceNumber - last.c
+            i.difference = i.difference.toFixed(2)
+            i.change = (i.priceNumber - last.c) / last.c * 100
+            i.change = i.change.toFixed(2)
+            i.price = parseFloat(last.c);
+            this.$root.$emit('updateIndice', i);
+          })
+          .catch(error => {
+            console.log(error);
+          })
+        })
+        .catch(error => {
+          console.log(error);
+        })
+      },
+      fetchBonds(symbol) {
+        this.$axios.$get(`https://api.finage.co.uk/bonds/us/rate/${symbol}?apikey=${this.finageApiKey}`)
+        .then(response => {
+          // console.log(response)
+          let i = this.indices.find( indice => indice.symbol === response.symbol );
+          i.price = Number(response.value).toFixed(4);
+          this.$root.$emit('updateBond', i);
+        })
+        .catch(error => {
+          console.log(error);
+        })
+      },
+      fetchCommodities() {
+        // Trading Economics
+        this.$axios.$get(`https://api.tradingeconomics.com/markets/commodities?c=${this.tradingEconKey}&f=json`)
+        .then(response => {
+          this.commodities.forEach(item => {
+            let match = response.filter(element => element["Symbol"] === item.symbol);
+            if(match.length > 0){
+              item.price = match[0]['Last'];
+              item.change = match[0]['DailyChange'];
+              item.difference = match[0]['DailyPercentualChange'];
+              item.ticker = match[0]['Ticker'];
+              this.$root.$emit('updateCommodity', item);
+            }
+          });
+        })
+        .catch(error => {
+          console.log(error);
+        })
+      },
+      fetchMovers() {
+        this.$axios.$get(`https://api.finage.co.uk/market-information/us/most-gainers?apikey=${this.finageApiKey}`)
+        .then(response => {
+          this.$root.$emit('updateRising', response);
+        })
+        .catch(error => {
+          console.log(error);
+        })
+      },
+      checkMarketStatus(){
+        this.$axios.$get(`https://api.finage.co.uk/marketstatus?apikey=${this.finageApiKey}`)
+        .then(response => {
+          this.marketStatus = response;
+        })
+        .catch(error => {
+          console.log(error);
+        })
+      },
       showGrid() {
         this.view = 'grid';
       },
@@ -198,8 +340,38 @@ export default {
     },
     // async mounted () {
     created() {
-      let topCoins = localStorage.getItem('crypto');
-      this.cryptocurrency = JSON.parse(topCoins)
+
+      this.fetchStocks();
+      this.indices.forEach(item => {
+        if (item.type !== 'currency'){
+          if (item.type !== 'indice'){
+            this.fetchBonds(item.symbol);
+          } else {
+            this.fetchIndice(item.symbol);
+          }
+        }
+      }); 
+      this.currencies.forEach(item => {
+        this.fetchCurrency(item.symbol);
+      });
+      this.fetchCommodities();
+      this.fetchMovers();
+      this.checkMarketStatus();
+
+      function checkCryptoList() {
+        if (localStorage.getItem('crypto')) {
+          
+            let topCoins = localStorage.getItem('crypto');
+            this.cryptocurrency = JSON.parse(topCoins)
+          } else {
+              setTimeout(checkCryptoList, 250);
+          }
+      }
+
+      setTimeout(checkCryptoList, 250);
+
+      // let topCoins = localStorage.getItem('crypto');
+      // this.cryptocurrency = JSON.parse(topCoins)
       // this.cryptocurrency.forEach((item) => {
       //   let indexFound = item.order - 1;
       //   let i = this.cryptocurrency[indexFound];
@@ -218,9 +390,11 @@ export default {
       this.$root.$on('updateCrypto', (item) => {
         // console.log(item)
         //let itemIndex = item.indexFound ;//this.cryptocurrency.findIndex(index => index.name === item.name);
-        this.$set(this.cryptocurrency[item.indexFound], 'price', item.price);
-        this.$set(this.cryptocurrency[item.indexFound], 'difference', item.difference);
-        this.$set(this.cryptocurrency[item.indexFound], 'change', item.change);
+        if (this.cryptocurrency) {
+          this.$set(this.cryptocurrency[item.indexFound], 'price', item.price);
+          this.$set(this.cryptocurrency[item.indexFound], 'difference', item.difference);
+          this.$set(this.cryptocurrency[item.indexFound], 'change', item.change);
+        }
       });
       this.$root.$on('updateCurrency', (item) => {
         // console.log(item)

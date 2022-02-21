@@ -68,6 +68,7 @@ export default {
       marketStatus: {},
       yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
       today: new Date(Date.now()).toLocaleDateString("fr-CA"),
+      lastweek: new Date(Date.now() - 7*864e5).toLocaleDateString("fr-CA"),
       showCookieNotice: false
     }
   },
@@ -146,6 +147,15 @@ export default {
     },
     connectSockets() {
       // FOREX
+      function checkCryptoList() {
+        if (localStorage.getItem('crypto')) {
+            this.coins = JSON.parse(localStorage.getItem("crypto"))
+          } else {
+              setTimeout(checkCryptoList, 250);
+          }
+      }
+
+      setTimeout(checkCryptoList, 250);
       this.forexWS.onopen = () => {
         // console.log("FOREX Socket connection established");
         this.forexWS.send(JSON.stringify({"action": "subscribe", "symbols": "EUR/USD,USD/JPY,USD/KRW,USD/TRY,GBP/USD,USD/BRL,USD/ILS,USD/RUB,XAU/USD,XAG/USD,WTI/USD,XBR/USD"}));
@@ -193,33 +203,45 @@ export default {
       // CRYPTO
       this.cryptoWS.onopen = () => {
         // console.log("CRYPTO Socket connection established");
-        let coinList = localStorage.getItem('coinList');
-        this.cryptoWS.send(JSON.stringify({"action": "subscribe", "symbols": coinList + 'CRVUSD,CETHUSD,STETHUSD,CDAIUSD'}))
+        const self = this;
+        function checkCoinList() {
+          if (localStorage.getItem('coinList')) {
+            
+            let coinList = localStorage.getItem('coinList');
+            self.cryptoWS.send(JSON.stringify({"action": "subscribe", "symbols": coinList + 'CRVUSD,CETHUSD,STETHUSD,CDAIUSD'}))
+            
+          } else {
+              setTimeout(checkCoinList, 250);
+          }
+      }
+      setTimeout(checkCoinList, 250);
         // this.cryptoWS.send(`{"method":"SUBSCRIBE","params":["${this.cryptocurrency.map(o => o.live.toLowerCase()).join('@ticker","')}@ticker"],"id":1}`)
         // this.cryptoWS.send(`{"method":"SUBSCRIBE","params":["${coinList}"],"id":1}`)
       }
       this.cryptoWS.onmessage = (msg) => {
         let data = JSON.parse(msg.data);
-        let indexFound = this.coins.findIndex(index => index.symbol.toUpperCase() + "USD" === data.s);
-        if (indexFound !== -1) {
-          const item = this.coins[indexFound];
-          item.indexFound = indexFound;
-          if(item.symbol === 'SHIBUSD'){
-            item.price = Number(data.p);
-          } else {
-            item.price = Number(data.p).toFixed(2);
-          }
-          item.difference = Number(data.dd).toFixed(2);
-          item.change = Number(data.dc).toFixed(2);
-          item.time = data.t;
-          item.marketOpen = true;
-          this.$root.$emit('updateCrypto', item);
-          if(item.symbol === 'crv' || item.symbol === 'luna' || item.symbol === 'link' || item.symbol === 'uni'){
-            indexFound = this.defi.findIndex(index => index.symbol.toUpperCase() + "USD" === data.s);
+        if (this.coins.length) {
+          let indexFound = this.coins.findIndex(index => index.symbol.toUpperCase() + "USD" === data.s);
+          if (indexFound !== -1) {
+            const item = this.coins[indexFound];
             item.indexFound = indexFound;
-            this.$root.$emit('updateDefi', item);
+            if(item.symbol === 'SHIBUSD'){
+              item.price = Number(data.p);
+            } else {
+              item.price = Number(data.p).toFixed(2);
+            }
+            item.difference = Number(data.dd).toFixed(2);
+            item.change = Number(data.dc).toFixed(2);
+            item.time = data.t;
+            item.marketOpen = true;
+            this.$root.$emit('updateCrypto', item);
+            if(item.symbol === 'crv' || item.symbol === 'luna' || item.symbol === 'link' || item.symbol === 'uni'){
+              indexFound = this.defi.findIndex(index => index.symbol.toUpperCase() + "USD" === data.s);
+              item.indexFound = indexFound;
+              this.$root.$emit('updateDefi', item);
+            }
+            // this.$root.$emit('updateCoins', item);
           }
-          // this.$root.$emit('updateCoins', item);
         }
         // only LINK, LUNA, UNI data coming from websockets...
         // if(data.s === 'LUNAUSD' || data.s === 'LINKUSD' || data.s === 'UNIUSD' || data.s === 'DAIUSD' || data.s === 'CETHUSD'
@@ -394,7 +416,7 @@ export default {
       // }
     },
     fetchStocks() {
-      this.$axios.$get(`https://api.finage.co.uk/last/stocks/?symbols=AAPL,AMZN,BA,BABA,FB,MSFT,MRNA,NIO,NVDA,PFE,PLTR,SAN,TSLA,XPEV,GME,AMC,BB&apikey=${finageApiKey}`)
+      this.$axios.$get(`https://api.finage.co.uk/last/stocks/?symbols=${stocks.map(s => s.symbol).join(",")}&apikey=${finageApiKey}`)
       .then(response => {
         response.forEach(item => {
           const indexFound = this.stocks.findIndex( stock => stock.symbol === item.symbol );
@@ -406,7 +428,7 @@ export default {
         });
       })
       .then(() => {
-        this.stocks.forEach(item => {
+        /* this.stocks.forEach(item => {
           this.$axios.$get(`https://api.finage.co.uk/agg/stock/${item.symbol}/1/day/2021-01-01/${this.today}?limit=1825&apikey=${finageApiKey}`)
           .then(response => {
             const indexFound = this.stocks.findIndex( stock => stock.symbol === response.symbol );
@@ -422,10 +444,40 @@ export default {
           .catch(error => {
             console.log(error);
           })
-        })
+        }) */
       })
       .catch(error => {
         console.log(error);
+      })
+    },
+    fetchSingleStock(symbol){
+      this.$axios.$get(`https://api.finage.co.uk/last/stock/${symbol}?apikey=${finageApiKey}`)
+      .then(response => {        
+        const indexFound = this.stocks.findIndex( stock => stock.symbol === symbol );
+        let i = this.stocks[indexFound];
+        i.indexFound = indexFound;
+        i.price = Number(response.ask).toFixed(2);
+        i.priceNumber = response.ask
+        i.difference = 0;
+        i.change = 0;
+        this.$root.$emit('updateStock', i);        
+      })
+      .then(() => {
+        this.$axios.$get(`https://api.finage.co.uk/agg/stock/${symbol}/1/day/${this.lastweek}/${this.today}?limit=1825&apikey=${finageApiKey}`)
+        .then(response => {
+          const indexFound = this.stocks.findIndex( stock => stock.symbol === response.symbol );
+          let i = this.stocks[indexFound];
+          i.indexFound = indexFound;
+          let last = response.results.pop();
+          i.difference = i.priceNumber - last.c
+          i.difference = i.difference.toFixed(2)
+          i.change = (i.priceNumber - last.c) / last.c * 100
+          i.change = i.change.toFixed(2);
+          this.$root.$emit('updateStock', i);
+        })
+        .catch(error => {
+          console.log(error);
+        })
       })
     },
     fetchCurrency(symbol) {
@@ -457,7 +509,7 @@ export default {
         this.$root.$emit('updateIndice', i);
       })
       .then(() => {
-        this.$axios.$get(`https://api.finage.co.uk/agg/index/${symbol}/1day/2021-01-01/${this.today}?limit=1825&apikey=${finageApiKey}`)
+        /* this.$axios.$get(`https://api.finage.co.uk/agg/index/${symbol}/1day/2021-01-01/${this.today}?limit=1825&apikey=${finageApiKey}`)
         .then(response => {
           // if(typeof response.p !== 'undefined'){
           //   let i = this.indices.find( indice => indice.symbol === response.symbol );
@@ -477,7 +529,7 @@ export default {
         })
         .catch(error => {
           console.log(error);
-        })
+        }) */
       })
       .catch(error => {
         console.log(error);
@@ -503,7 +555,6 @@ export default {
     fetchBonds(symbol) {
       this.$axios.$get(`https://api.finage.co.uk/bonds/us/rate/${symbol}?apikey=${finageApiKey}`)
       .then(response => {
-        // console.log(response)
         let i = this.indices.find( indice => indice.symbol === response.symbol );
         i.price = Number(response.value).toFixed(4);
         this.$root.$emit('updateBond', i);
@@ -531,6 +582,29 @@ export default {
         console.log(error);
       })
     },
+    fetchCommoditySymbol(symbol) {
+      // Trading Economics
+      this.$axios.$get(`https://api.tradingeconomics.com/markets/symbol/${symbol}?c=${tradingEconKey}&f=json`)
+      .then(response => {
+        
+        let indexFound = commodities.findIndex(element => element.symbol === response[0].Symbol);
+        if (indexFound !== -1) {
+          
+          let i = this.commodities[indexFound];
+          i.indexFound = indexFound;          
+          i.price = response[0]['Last'];
+          i.change = response[0]['DailyChange'];
+          i.difference = response[0]['DailyPercentualChange'];
+          i.ticker = response[0]['Ticker'];
+          //console.log(i)
+          this.$root.$emit('updateCommodity', i);          
+        }
+        
+      })
+      .catch(error => {
+        console.log(error);
+      })
+    },
     fetchMovers() {
       this.$axios.$get(`https://api.finage.co.uk/market-information/us/most-gainers?apikey=${finageApiKey}`)
       .then(response => {
@@ -551,28 +625,29 @@ export default {
     },
     connect(){
       this.connectSockets();
-      this.fetchStocks();
-      this.currencies.forEach(item => {
-        this.fetchCurrency(item.symbol);
-      });
+      /* this.fetchStocks();
       this.indices.forEach(item => {
         if (item.type !== 'currency'){
           if (item.type !== 'indice'){
-            this.fetchBonds(item.symbol);
+            //this.fetchBonds(item.symbol);
           } else {
             this.fetchIndice(item.symbol);
           }
         }
-      });
+      }); */
+      // this.currencies.forEach(item => {
+      //   this.fetchCurrency(item.symbol);
+      // });
+      
       // this.cryptocurrency.forEach(item => {
       //   this.fetchCrypto(item.symbol);
       // });
-      this.fetchCommodities();
+      /* this.fetchCommodities(); */
       // setInterval(() => {
       //   this.fetchCoinsByMarketCap()
       // }, 1000);
-      this.fetchMovers();
-      this.checkMarketStatus();
+      /* this.fetchMovers(); */
+      //this.checkMarketStatus();
     },
     showGrid() {
       this.view = 'grid';
@@ -582,8 +657,13 @@ export default {
     },
   },
   created() {
+    
     this.connect();
-    this.fetchCoinsByMarketCap()
+    this.fetchCoinsByMarketCap();
+    this.fetchSingleStock("TSLA");
+    this.fetchBonds("DGS10");
+    this.fetchCommoditySymbol("XAUUSD:CUR");
+    this.fetchCommoditySymbol("CL1:COM");
     // this.readFromFirestore()
     this.$root.$on('bv::collapse::state', (id, collapsed) => {
       if (id === "sidebar") {

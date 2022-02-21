@@ -33,6 +33,7 @@ export default {
         finageApiKey: process.env.finageApiKey,
         liveApiUrl: process.env.liveApiUrl,
         item: {
+          name: '',
           price: 0,
           icon: ''
         },
@@ -66,7 +67,15 @@ export default {
     },
     methods: {
       fetchDetails() {
-        let itemSymbol = this.symbol.replace('-', '').toUpperCase();        
+        let itemSymbol = this.symbol.replace('-', '').toUpperCase();  
+        let i = this.currencies.find(x => x.symbol === itemSymbol);  
+        if(itemSymbol === 'DOLLARINDEX'){
+          i = this.currencies.find(x => x.symbol === "DXY");  
+        }      
+        if (i) {
+          this.$set(this.item, 'icon', i.icon);
+          this.$set(this.item, 'name', i.name);
+        }
         if(itemSymbol !== 'DOLLARINDEX'){
           this.$axios.$get(`https://api.finage.co.uk/agg/forex/prev-close/${itemSymbol}?apikey=${this.finageApiKey}`)
           .then(response => {
@@ -123,7 +132,7 @@ export default {
             });           
             this.symbol = itemSymbol;
             this.live = itemSymbol;
-            let last = this.chartData.pop();
+            let last = this.chartData[this.chartData.length - 1];
             this.open = last[0];
             this.high = last[1]
             this.low = last[2];

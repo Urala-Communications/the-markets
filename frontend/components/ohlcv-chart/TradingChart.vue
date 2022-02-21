@@ -40,7 +40,6 @@ export default {
             this.width = document.querySelector('.graph').offsetWidth - 20          
         },
         on_selected(tf) {
-            
             this.$root.$emit("changeInterval", {symbol: this.symbol, interval: tf.name, text: tf.text})            
         }
     },
@@ -67,11 +66,19 @@ export default {
             }
 
         });
+
         this.$root.$on("updatedInterval", ({symbol, interval}) => {
             if (this.data.length > 0 && this.$refs.tradingChart && symbol == this.symbol) {
                 this.$refs.tradingChart.resetChart();
             }
-        })
+        });
+
+        this.$root.$on("limitRange", (symbol) => {            
+            if (this.data.length > 0 && this.$refs.tradingChart && symbol == this.symbol) {                
+                this.charts = [{label: "1d", value:"1d", text: "1/day"}];
+            }
+        });
+
     },
     beforeDestroy() {
         window.removeEventListener('resize', this.onResize)
@@ -108,7 +115,7 @@ export default {
             timezone: (new Date()).getTimezoneOffset() / -60,
             overlays: []
         }
-    }
+    },
 }
 
 

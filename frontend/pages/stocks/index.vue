@@ -54,30 +54,69 @@ export default {
         view: 'list',
         chartData: null,
         chartOptions: null,
-        newsData: []
+        newsData: [],
+        yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
+        today: new Date(Date.now()).toLocaleDateString("fr-CA"),
       }
     },
     methods: {
       fetchNews(symbol){
         this.$axios.$get(`https://api.finage.co.uk/news/market/${symbol}?apikey=${this.finageApiKey}`)
         .then(response => {
-          if(typeof response.news[0] !== 'undefined'){
-            let index = this.newsData.findIndex(x => x.title === response.news[0].title);
-            let newsItem = response.news[0]
-            if(index === -1){
-              newsItem.symbol = symbol
-              newsItem.type = 'stocks'
-              this.newsData.push(newsItem)
-            }
-            this.loading = false;
-            if(this.newsData.length > 17){
-              this.newsData.pop()
+          if (response.news.length) {
+            if(typeof response.news[0] !== 'undefined'){
+              let index = this.newsData.findIndex(x => x.title === response.news[0].title);
+              let newsItem = response.news[0]
+              if(index === -1){
+                newsItem.symbol = symbol
+                newsItem.type = 'stocks'
+                this.newsData.push(newsItem)
+              }
+              this.loading = false;
+              if(this.newsData.length > 17){
+                this.newsData.pop()
+              }
             }
           }
         })
         .catch(error => {
           console.log(error);
           // this.loading = false;
+        })
+      },
+      fetchStocks() {
+        this.$axios.$get(`https://api.finage.co.uk/last/stocks/?symbols=${stocks.map(s => s.symbol).join(",")}&apikey=${this.finageApiKey}`)
+        .then(response => {
+          response.forEach(item => {
+            const indexFound = this.stocks.findIndex( stock => stock.symbol === item.symbol );
+            let i = this.stocks[indexFound];
+            i.indexFound = indexFound;
+            i.price = Number(item.ask).toFixed(2);
+            i.priceNumber = item.ask
+            this.$root.$emit('updateStock', i);
+          });
+        })
+        .then(() => {
+          this.stocks.forEach(item => {
+            this.$axios.$get(`https://api.finage.co.uk/agg/stock/${item.symbol}/1/day/2021-01-01/${this.today}?limit=1825&apikey=${this.finageApiKey}`)
+            .then(response => {
+              const indexFound = this.stocks.findIndex( stock => stock.symbol === response.symbol );
+              let i = this.stocks[indexFound];
+              i.indexFound = indexFound;
+              let last = response.results.pop();
+              i.difference = i.priceNumber - last.c
+              i.difference = i.difference.toFixed(2)
+              i.change = (i.priceNumber - last.c) / last.c * 100
+              i.change = i.change.toFixed(2)
+              this.$root.$emit('updateStock', i);
+            })
+            .catch(error => {
+              console.log(error);
+            })
+          })
+        })
+        .catch(error => {
+          console.log(error);
         })
       },
       showGrid() {
@@ -88,6 +127,8 @@ export default {
       },
     },
     created() {
+      this.fetchStocks();
+      this.loading = false;
       this.$root.$on('updateStock', (item) => {
         let i = item.indexFound;//this.stocks.findIndex(index => index.name === item.name);
         this.$set(this.stocks[i], 'price', item.price);

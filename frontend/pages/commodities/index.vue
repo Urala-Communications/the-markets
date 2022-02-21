@@ -48,6 +48,7 @@ export default {
     data() {
       return {
         finageApiKey: process.env.finageApiKey,
+        tradingEconKey: process.env.tradingEconKey,
         loading: true,
         commodities,
         view: 'list',
@@ -60,21 +61,40 @@ export default {
       fetchNews(symbol){
         this.$axios.$get(`https://api.finage.co.uk/news/forex/${symbol}?apikey=${this.finageApiKey}`)
         .then(response => {
-          // console.log('News')
-          // console.log(response.news)
-          if(typeof response.news[0] !== 'undefined'){
-            let index = this.newsData.findIndex(x => x.title === response.news[0].title);
-            let newsItem = response.news[0]
-            let newsItem2 = response.news[1]
-            this.loading = false;
-            if(index === -1){
-              this.newsData.push(newsItem)
-              this.newsData.push(newsItem2)
-            }
-            if(this.newsData.length > 10){
-              this.newsData.pop()
+          if (response.news.length) {
+            if(typeof response.news[0] !== 'undefined'){
+              let index = this.newsData.findIndex(x => x.title === response.news[0].title);
+              let newsItem = response.news[0]
+              let newsItem2 = response.news[1]
+              this.loading = false;
+              if(index === -1){
+                this.newsData.push(newsItem)
+                this.newsData.push(newsItem2)
+              }
+              if(this.newsData.length > 10){
+                this.newsData.pop()
+              }
             }
           }
+        })
+        .catch(error => {
+          console.log(error);
+        })
+      },
+      fetchCommodities() {
+        // Trading Economics
+        this.$axios.$get(`https://api.tradingeconomics.com/markets/commodities?c=${this.tradingEconKey}&f=json`)
+        .then(response => {
+          this.commodities.forEach(item => {
+            let match = response.filter(element => element["Symbol"] === item.symbol);
+            if(match.length > 0){
+              item.price = match[0]['Last'];
+              item.change = match[0]['DailyChange'];
+              item.difference = match[0]['DailyPercentualChange'];
+              item.ticker = match[0]['Ticker'];
+              this.$root.$emit('updateCommodity', item);
+            }
+          });
         })
         .catch(error => {
           console.log(error);
@@ -88,6 +108,7 @@ export default {
       },
     },
     created() {
+      this.fetchCommodities();
       this.$root.$on('updateCommodity', (item) => {
         this.loading = false; // ONLY ONCE ALL FETCHED
         let itemIndex = this.commodities.findIndex(index => index["Symbol"] === item["Symbol"]);
