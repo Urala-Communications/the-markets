@@ -121,7 +121,7 @@
 </template>
 
 <script>
-import {cryptocurrency, defi} from "./../../market.js";
+import { defi} from "./../../market.js";
 import IndexList from './../../components/IndexList.vue'
 const finageApiKey = process.env.finageApiKey;
 export default {
@@ -141,7 +141,7 @@ export default {
         cmcApiKey: process.env.cmcApiKey,
         loading: true,
         coins: [],
-        cryptocurrency,
+        cryptocurrency: [],
         defi,
         view: 'list',
         chartData: null,
@@ -166,6 +166,18 @@ export default {
             if(this.newsData.length > 30){
               this.newsData.pop()
             }
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        })
+      },
+      fetchCrypto(symbol) {        
+        this.$axios.$get(`https://api.finage.co.uk/last/crypto/${symbol.toUpperCase()}USD?apikey=${finageApiKey}`)
+        .then(response => {
+          let indexFound = this.cryptocurrency.findIndex(crypto => crypto.symbol.toUpperCase() === response.symbol.slice(0,-3));
+          if (indexFound !== -1) {
+            this.$set(this.cryptocurrency[indexFound], 'price', response.price);
           }
         })
         .catch(error => {
@@ -198,22 +210,23 @@ export default {
 
     },
     created() {
-      
+      const self = this;
       function checkCryptoList() {
-        if (localStorage.getItem('crypto')) {
-          
+        if (localStorage.getItem('crypto')) {          
             let topCoins = localStorage.getItem('crypto');
-            this.cryptocurrency = JSON.parse(topCoins)
+            self.cryptocurrency = JSON.parse(topCoins);
+            self.cryptocurrency.forEach(item => {
+              self.fetchCrypto(item.symbol);
+              self.fetchNews(item.symbol);
+            });          
           } else {
               setTimeout(checkCryptoList, 250);
           }
       }
-
       setTimeout(checkCryptoList, 250);
       this.loading = false; // fix news api bug
-      this.$root.$on('updateCrypto', (item) => {
-        if (this.cryptocurrency) {
-
+      this.$root.$on('updateCrypto', (item) => {       
+        if (this.cryptocurrency.length) {
           this.$set(this.cryptocurrency[item.indexFound], 'price', item.price);
           this.$set(this.cryptocurrency[item.indexFound], 'difference', item.difference);
           this.$set(this.cryptocurrency[item.indexFound], 'change', item.change);
@@ -225,11 +238,7 @@ export default {
         this.$set(this.defi[item.indexFound], 'difference', item.difference);
         this.$set(this.defi[item.indexFound], 'change', item.change);
       });
-      
-      this.cryptocurrency.forEach(item => {
-        
-        this.fetchNews(item.icon);
-      });
+            
       this.defi.forEach(item => {
         this.fetchDefi(item.symbol);
       });

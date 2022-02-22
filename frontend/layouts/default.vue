@@ -15,7 +15,7 @@
 
 <script>
 import Ad from "./../components/Ad.vue";
-import {cryptocurrency, defi, currencies, stocks, indices, bonds, rising, commodities} from "./../market.js";
+import { defi, currencies, stocks, indices, bonds, rising, commodities} from "./../market.js";
 const finageApiKey = process.env.finageApiKey,
       finageSocketKey = process.env.finageSocketKey,
       tradingEconKey = process.env.tradingEconKey;
@@ -53,7 +53,6 @@ export default {
       loading: false,
       view: 'list',
       coins: [],
-      cryptocurrency,
       defi,
       currencies,
       stocks,
@@ -225,7 +224,7 @@ export default {
           if (indexFound !== -1) {
             const item = this.coins[indexFound];
             item.indexFound = indexFound;
-            if(item.symbol === 'SHIBUSD'){
+            if(item.symbol === 'shib'){
               item.price = Number(data.p);
             } else {
               item.price = Number(data.p).toFixed(2);
