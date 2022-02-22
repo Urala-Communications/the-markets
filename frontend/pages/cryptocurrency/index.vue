@@ -124,11 +124,11 @@
 import { defi} from "./../../market.js";
 import IndexList from './../../components/IndexList.vue'
 const finageApiKey = process.env.finageApiKey;
-export default {   
+export default {
     components: {
       IndexList
     },
-    computed: {     
+    computed: {
       vertical() {
         if (this.windowWidth > 992){
           return true

@@ -224,7 +224,7 @@ export default {
           if (indexFound !== -1) {
             const item = this.coins[indexFound];
             item.indexFound = indexFound;
-            if(item.symbol === 'SHIBUSD'){
+            if(item.symbol === 'shib'){
               item.price = Number(data.p);
             } else {
               item.price = Number(data.p).toFixed(2);
