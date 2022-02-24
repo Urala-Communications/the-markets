@@ -181,7 +181,11 @@ export default {
               break;
             case '1M':
               last = new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString("fr-CA");
-              break;          
+              break;
+            case 'MAX':
+              text = '1/week';
+              last = new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString("fr-CA");
+              break;
             default:
               break;
           }

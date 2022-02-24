@@ -162,6 +162,9 @@ export default {
               range = '1month'
               last = new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString("fr-CA");
               break;
+            case 'MAX':
+              range = '1week'
+              last = new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString("fr-CA");
             default:
               break;
           }          

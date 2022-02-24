@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import { now } from 'moment';
 let date = new Date();
 date.setDate(date.getDate() - 1826);
 let fiveYearsAgo = date.toLocaleDateString("fr-CA");
@@ -192,24 +193,46 @@ export default {
     },
     updateInterval(symbol, interval){
       if (symbol === this.live) {
-        this.$axios
-        .$get(
-          `https://api.binance.com/api/v3/klines?limit=1000&symbol=${symbol}&interval=${interval}`
-        )
-        .then((response) => {
-
-          this.chartData = response.map(o => {
-            const [timestamp, openPrice, high, low, close, volume] = [...o];
-            return [timestamp, openPrice, high, low, close, volume].map(n =>
-              Number(n)
-            );
+        if (interval !== "MAX") {
+          this.$axios
+          .$get(
+            `https://api.binance.com/api/v3/klines?limit=1000&symbol=${symbol}&interval=${interval}`
+          )
+          .then((response) => {
+  
+            this.chartData = response.map(o => {
+              const [timestamp, openPrice, high, low, close, volume] = [...o];
+              return [timestamp, openPrice, high, low, close, volume].map(n =>
+                Number(n)
+              );
+            });
+  
+            this.$root.$emit("updatedInterval", {symbol, interval});
+          })
+          .catch((error) => {
+            console.log(error);
           });
-
-          this.$root.$emit("updatedInterval", {symbol, interval});
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+        } else {
+          this.$axios
+          .$get(
+            `https://api.finage.co.uk/agg/crypto/${symbol}/1/week/${fiveYearsAgo}/${today}?apikey=${this.finageApiKey}`
+          )
+          .then((response) => {
+            if (response.results.length) {
+              this.chartData = response.results.map(o => {
+                const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
+                return [timestamp, openPrice, high, low, close, volume].map(n =>
+                  Number(n)
+                );
+              });
+    
+              this.$root.$emit("updatedInterval", {symbol, interval});
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+        }
       }
     },
     fetchNews() {

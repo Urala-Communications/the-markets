@@ -210,6 +210,10 @@ export default {
             case '1M':
               last = new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString("fr-CA");
               break;
+            case 'MAX':
+              last = new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString("fr-CA");
+              text = '1/week';
+              break;
             default:
               break;
           }

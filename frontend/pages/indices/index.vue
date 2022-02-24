@@ -136,6 +136,7 @@ export default {
 
     },
     created() {
+      this.filteredIndices = this.indices.filter(item => item.type === 'indice');
       this.indices.forEach(item => {
         if (item.type !== 'currency'){
           if (item.type !== 'indice'){
@@ -146,16 +147,17 @@ export default {
         }
       });
       this.$root.$on('updateIndice', (item) => {
-        let i = this.indices.findIndex(index => index.name === item.name);
-        // console.log(this.indices[i])
-        this.$set(this.indices[i], 'price', item.price);
-        this.$set(this.indices[i], 'difference', item.difference);
-        this.$set(this.indices[i], 'change', item.change);
-        this.$nextTick(() => {
-          this.loading = false;
-        });
+        let i = this.indices.findIndex(index => index.name === item.name && item.type=="indice");   
+        if (i !== -1) {
+          // console.log(i)
+          this.$set(this.filteredIndices[i], 'price', item.price);
+          this.$set(this.filteredIndices[i], 'difference', item.difference);
+          this.$set(this.filteredIndices[i], 'change', item.change);
+          this.$nextTick(() => {
+            this.loading = false;
+          });
+        }
       });
-      this.filteredIndices = this.indices.filter(item => item.type === 'indice');
     },
   }
 </script>

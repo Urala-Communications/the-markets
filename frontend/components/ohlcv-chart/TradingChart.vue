@@ -96,6 +96,7 @@ export default {
                 {label: "1d", value:"1d", text: "1/day"},
                 {label: "1W", value:"1w", text: "1/week"},
                 {label: "1M", value:"1M", text: "1/month"},
+                {label: "MAX", value:"MAX", text: "MAX"}
             ],
             chart: new DataCube({ 
                 chart: {

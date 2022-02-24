@@ -334,7 +334,7 @@ export default {
             // console.log('non-CFD')
             // console.log(data.p)
             // console.log(data)
-          let indexFound = this.indices.findIndex(index => index.symbol === data.s);
+          let indexFound = this.indices.findIndex(index => index.symbol === data.s && !index.cfd);
           if (indexFound !== -1) {
             const item = this.indices[indexFound];
             item.indexFound = indexFound;
@@ -551,6 +551,35 @@ export default {
     //     console.log(error);
     //   })
     // },
+    fetchIndiceCFD(item){
+      this.$axios.$get(`https://api.finage.co.uk/marketstatus?apikey=${finageApiKey}&currencies=true&country=${item.country}`)
+      .then(response => {
+        if(response.market=="open") {
+          this.$axios.$get(`https://api.finage.co.uk/last/cfd/${item.symbol}?apikey=${finageApiKey}`)
+          .then(res => {
+            if (!res.error) {
+              let indexFound = this.indices.findIndex( indice => indice.symbol === res.symbol && indice.cfd );
+              let i = this.indices[indexFound];
+              i.indexFound = indexFound;
+              i.price = res.ask.toFixed(2);
+  
+              if (this.indices[indexFound].idOldPrice != i.price ) {
+                this.$root.$emit('updateIndice', i);              
+                this.$root.$emit("updateTrade",  {
+                  symbol: i.symbol,
+                  time: Number(res.timestamp),
+                  price: Number(i.price),
+                  volumn: 0,
+                });
+                this.indices[indexFound].idOldPrice = i.price;
+              }
+            }
+          })
+        }
+      }).catch(err => {
+
+      })
+    },
     fetchBonds(symbol) {
       this.$axios.$get(`https://api.finage.co.uk/bonds/us/rate/${symbol}?apikey=${finageApiKey}`)
       .then(response => {
@@ -647,6 +676,13 @@ export default {
       // }, 1000);
       /* this.fetchMovers(); */
       //this.checkMarketStatus();
+
+      // fetch cfd      
+      setInterval(() => {
+        this.indices.filter(i => i.cfd).forEach(item => {
+          this.fetchIndiceCFD(item);
+        })
+      }, 10000);
     },
     showGrid() {
       this.view = 'grid';
