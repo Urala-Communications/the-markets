@@ -162,33 +162,35 @@ export default {
       this.forexWS.onmessage = (msg) => {
         let data = JSON.parse(msg.data);
         if(typeof data.s !== 'undefined'){
-          let indexFound = this.currencies.findIndex(index => index.name === data.s);
-          let item = this.currencies[indexFound];
-          item.indexFound = indexFound;
-          item.difference = Number(data.dd).toFixed(2);
-          item.change = Number(data.dc).toFixed(2);
-          item.time = data['t'];
-          // if(item.type === 'commodity'){
-          //   item.price = Number(data.a).toFixed(2);
-          //   item.marketOpen = true;
-          //   if (this.currencies[indexFound].mdOldPrice != item.price ) {
-          //     this.$root.$emit('updateCommodity', item);
-          //     this.currencies[indexFound].mdOldPrice = item.price;
-          //   }
-          // } else {
-            item.price = Number(data.a).toFixed(4);
-            item.marketOpen = true;
-            if (this.currencies[indexFound].rcOldPrice != item.price ) {
-              this.$root.$emit('updateCurrency', item);
-              this.$root.$emit("updateTrade",  {
-                symbol: item.symbol,
-                time: Number(item.time),
-                price: Number(item.price),
-                volumn: 0,
-              });
-              this.currencies[indexFound].rcOldPrice = item.price;
-            }
-          // }
+          let indexFound = this.currencies.findIndex(index => index.name === data.s && index.type === 'currency');
+          if (indexFound !== -1) {
+            let item = this.currencies[indexFound];
+            item.indexFound = indexFound;
+            item.difference = Number(data.dd).toFixed(2);
+            item.change = Number(data.dc).toFixed(2);
+            item.time = data['t'];
+            // if(item.type === 'commodity'){
+            //   item.price = Number(data.a).toFixed(2);
+            //   item.marketOpen = true;
+            //   if (this.currencies[indexFound].mdOldPrice != item.price ) {
+            //     this.$root.$emit('updateCommodity', item);
+            //     this.currencies[indexFound].mdOldPrice = item.price;
+            //   }
+            // } else {
+              item.price = Number(data.a).toFixed(4);
+              item.marketOpen = true;
+              if (this.currencies[indexFound].rcOldPrice != item.price ) {
+                this.$root.$emit('updateCurrency', item);
+                this.$root.$emit("updateTrade",  {
+                  symbol: item.symbol,
+                  time: Number(item.time),
+                  price: Number(item.price),
+                  volumn: 0,
+                });
+                this.currencies[indexFound].rcOldPrice = item.price;
+              }
+            // }
+          }
         }
         this.loading = false;
       }
@@ -482,7 +484,7 @@ export default {
     fetchCurrency(symbol) {
       this.$axios.$get(`https://api.finage.co.uk/last/trade/forex/${symbol}?apikey=${finageApiKey}`)
       .then(response => {
-        let indexFound = this.currencies.findIndex(currency => currency.symbol === response.symbol );
+        let indexFound = this.currencies.findIndex(currency => currency.symbol === response.symbol && currency.type === 'currency' );
         let i = this.currencies[indexFound];
         i.indexFound = indexFound;
         // if(i.type === 'commodity'){
@@ -562,9 +564,9 @@ export default {
               let i = this.indices[indexFound];
               i.indexFound = indexFound;
               i.price = res.ask.toFixed(2);
-  
+
               if (this.indices[indexFound].idOldPrice != i.price ) {
-                this.$root.$emit('updateIndice', i);              
+                this.$root.$emit('updateIndice', i);
                 this.$root.$emit("updateTrade",  {
                   symbol: i.symbol,
                   time: Number(res.timestamp),
@@ -679,7 +681,7 @@ export default {
 
       // fetch cfd      
       setInterval(() => {
-        this.indices.filter(i => i.cfd).forEach(item => {
+        this.indices.filter(i => i.cfd && (i.country !== "KO" && i.country !== "HK" && i.country !== "ES" ) ).forEach(item => {
           this.fetchIndiceCFD(item);
         })
       }, 10000);

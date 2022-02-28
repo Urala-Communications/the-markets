@@ -230,7 +230,7 @@ export default {
       fetchCurrency(symbol) {
         this.$axios.$get(`https://api.finage.co.uk/last/trade/forex/${symbol}?apikey=${this.finageApiKey}`)
         .then(response => {
-          let indexFound = this.currencies.findIndex(currency => currency.symbol === response.symbol );
+          let indexFound = this.currencies.findIndex(currency => currency.symbol === response.symbol && currency.type === 'currency' );
           let i = this.currencies[indexFound];
           i.indexFound = indexFound;
           // if(i.type === 'commodity'){
