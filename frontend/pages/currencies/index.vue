@@ -25,7 +25,7 @@
         </div> -->
         <div class="col-12 col-lg-7 offset-lg-5">
           <div class="col-12 white-well pt-2">
-            <IndexList :data="filteredCurrencies" indexPage type="currencies" />
+            <IndexList :data="currencies.filter(item => item.type === 'currency')" indexPage type="currencies" />
           </div>
         </div>
         <div class="col-12 col-lg-7 offset-lg-5">
@@ -109,16 +109,16 @@ export default {
       this.filteredCurrencies = this.currencies.filter(item => item.type === 'currency');
       this.$root.$on('updateCurrency', (item) => {
         let i = item.indexFound;//this.currencies.findIndex(index => index.name === item.name);
-        this.$set(this.filteredCurrencies[i], 'price', item.price);
-        this.$set(this.filteredCurrencies[i], 'difference', item.difference);
-        this.$set(this.filteredCurrencies[i], 'change', item.change);
+        this.$set(this.currencies[i], 'price', item.price);
+        this.$set(this.currencies[i], 'difference', item.difference);
+        this.$set(this.currencies[i], 'change', item.change);
       });
       this.$root.$on('updateIndice', (item) => {
         if(item.symbol === 'DXY'){
-          let i =  this.filteredCurrencies.findIndex(index => index.name === item.name);
-          this.$set(this.filteredCurrencies[i], 'price', item.price);
-          this.$set(this.filteredCurrencies[i], 'difference', item.difference);
-          this.$set(this.filteredCurrencies[i], 'change', item.change);
+          let i =  this.currencies.findIndex(index => index.name === item.name);
+          this.$set(this.currencies[i], 'price', item.price);
+          this.$set(this.currencies[i], 'difference', item.difference);
+          this.$set(this.currencies[i], 'change', item.change);
         }
       });
       
