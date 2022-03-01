@@ -364,7 +364,7 @@ export default {
             let topCoins = localStorage.getItem('crypto');
             self.cryptocurrency = JSON.parse(topCoins);
             self.cryptocurrency.forEach(item => {
-              self.fetchCryptoNews(item.icon);
+              self.fetchCryptoNews(item.symbol);
             });
           } else {
               setTimeout(checkCryptoList, 250);
