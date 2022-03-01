@@ -68,7 +68,8 @@ export default {
       yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
       today: new Date(Date.now()).toLocaleDateString("fr-CA"),
       lastweek: new Date(Date.now() - 7*864e5).toLocaleDateString("fr-CA"),
-      showCookieNotice: false
+      showCookieNotice: false,
+      cfdInterval: null,
     }
   },
   head() {
@@ -564,7 +565,6 @@ export default {
               let i = this.indices[indexFound];
               i.indexFound = indexFound;
               i.price = res.ask.toFixed(2);
-
               if (this.indices[indexFound].idOldPrice != i.price ) {
                 this.$root.$emit('updateIndice', i);
                 this.$root.$emit("updateTrade",  {
@@ -679,8 +679,9 @@ export default {
       /* this.fetchMovers(); */
       //this.checkMarketStatus();
 
-      // fetch cfd      
-      setInterval(() => {
+      // fetch cfd 
+      clearInterval(this.cfdInterval);
+      this.cfdInterval = setInterval(() => {
         this.indices.filter(i => i.cfd && (i.country !== "KO" && i.country !== "HK"  && i.country !== "CN" && i.country !== "ES" ) ).forEach(item => {
           this.fetchIndiceCFD(item);
         })
