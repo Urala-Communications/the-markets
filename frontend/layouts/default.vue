@@ -681,7 +681,7 @@ export default {
 
       // fetch cfd      
       setInterval(() => {
-        this.indices.filter(i => i.cfd && (i.country !== "KO" && i.country !== "HK" && i.country !== "ES" ) ).forEach(item => {
+        this.indices.filter(i => i.cfd && (i.country !== "KO" && i.country !== "HK"  && i.country !== "CN" && i.country !== "ES" ) ).forEach(item => {
           this.fetchIndiceCFD(item);
         })
       }, 10000);
