@@ -208,10 +208,10 @@ export default {
         const self = this;
         function checkCoinList() {
           if (localStorage.getItem('coinList')) {
-            
+
             let coinList = localStorage.getItem('coinList');
             self.cryptoWS.send(JSON.stringify({"action": "subscribe", "symbols": coinList + 'CRVUSD,CETHUSD,STETHUSD,CDAIUSD'}))
-            
+
           } else {
               setTimeout(checkCoinList, 250);
           }
@@ -454,7 +454,7 @@ export default {
     },
     fetchSingleStock(symbol){
       this.$axios.$get(`https://api.finage.co.uk/last/stock/${symbol}?apikey=${finageApiKey}`)
-      .then(response => {        
+      .then(response => {
         const indexFound = this.stocks.findIndex( stock => stock.symbol === symbol );
         let i = this.stocks[indexFound];
         i.indexFound = indexFound;
@@ -462,7 +462,7 @@ export default {
         i.priceNumber = response.ask
         i.difference = 0;
         i.change = 0;
-        this.$root.$emit('updateStock', i);        
+        this.$root.$emit('updateStock', i);
       })
       .then(() => {
         this.$axios.$get(`https://api.finage.co.uk/agg/stock/${symbol}/1/day/${this.lastweek}/${this.today}?limit=1825&apikey=${finageApiKey}`)
@@ -567,6 +567,7 @@ export default {
               i.price = res.ask.toFixed(2);
               if (this.indices[indexFound].idOldPrice != i.price ) {
                 this.$root.$emit('updateIndice', i);
+                // console.log('CFD update', i.name, i.price)
                 this.$root.$emit("updateTrade",  {
                   symbol: i.symbol,
                   time: Number(res.timestamp),
@@ -616,20 +617,20 @@ export default {
       // Trading Economics
       this.$axios.$get(`https://api.tradingeconomics.com/markets/symbol/${symbol}?c=${tradingEconKey}&f=json`)
       .then(response => {
-        
+
         let indexFound = commodities.findIndex(element => element.symbol === response[0].Symbol);
         if (indexFound !== -1) {
-          
+
           let i = this.commodities[indexFound];
-          i.indexFound = indexFound;          
+          i.indexFound = indexFound;
           i.price = response[0]['Last'];
           i.change = response[0]['DailyChange'];
           i.difference = response[0]['DailyPercentualChange'];
           i.ticker = response[0]['Ticker'];
           //console.log(i)
-          this.$root.$emit('updateCommodity', i);          
+          this.$root.$emit('updateCommodity', i);
         }
-        
+
       })
       .catch(error => {
         console.log(error);
@@ -668,7 +669,7 @@ export default {
       // this.currencies.forEach(item => {
       //   this.fetchCurrency(item.symbol);
       // });
-      
+
       // this.cryptocurrency.forEach(item => {
       //   this.fetchCrypto(item.symbol);
       // });
@@ -679,13 +680,13 @@ export default {
       /* this.fetchMovers(); */
       //this.checkMarketStatus();
 
-      // fetch cfd 
+      // fetch cfd
       clearInterval(this.cfdInterval);
       this.cfdInterval = setInterval(() => {
-        this.indices.filter(i => i.cfd && (i.country !== "KO" && i.country !== "HK"  && i.country !== "CN" && i.country !== "ES" ) ).forEach(item => {
+        this.indices.filter(i => i.cfd && (i.country !== "KO" && i.country !== "ES" ) ).forEach(item => {
           this.fetchIndiceCFD(item);
         })
-      }, 10000);
+      }, 4000);
     },
     showGrid() {
       this.view = 'grid';
@@ -695,7 +696,7 @@ export default {
     },
   },
   created() {
-    
+
     this.connect();
     this.fetchCoinsByMarketCap();
     this.fetchSingleStock("TSLA");
