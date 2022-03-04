@@ -230,7 +230,7 @@ export default {
       fetchCurrency(symbol) {
         this.$axios.$get(`https://api.finage.co.uk/last/trade/forex/${symbol}?apikey=${this.finageApiKey}`)
         .then(response => {
-          let indexFound = this.currencies.findIndex(currency => currency.symbol === response.symbol );
+          let indexFound = this.currencies.findIndex(currency => currency.symbol === response.symbol  );
           let i = this.currencies[indexFound];
           i.indexFound = indexFound;
           // if(i.type === 'commodity'){
@@ -364,7 +364,7 @@ export default {
             let topCoins = localStorage.getItem('crypto');
             self.cryptocurrency = JSON.parse(topCoins);
             self.cryptocurrency.forEach(item => {
-              self.fetchCryptoNews(item.icon);
+              self.fetchCryptoNews(item.symbol);
             });
           } else {
               setTimeout(checkCryptoList, 250);
@@ -373,26 +373,7 @@ export default {
 
       setTimeout(checkCryptoList, 250);
 
-      // let topCoins = localStorage.getItem('crypto');
-      // this.cryptocurrency = JSON.parse(topCoins)
-      // this.cryptocurrency.forEach((item) => {
-      //   let indexFound = item.order - 1;
-      //   let i = this.cryptocurrency[indexFound];
-      //   i.indexFound = indexFound;
-      //   i.symbol = i.symbol.toUpperCase()
-      //   // i.marketcap = Number(item.market_cap).toFixed(2);
-      //   this.$root.$emit('updateCoins', i);
-      // });
-
-      // this.$root.$on('updateCoins', (item) => {
-      //   let itemIndex = item.indexFound ;
-      //   this.$set(this.coins[itemIndex], 'price', item.price);
-      //   this.$set(this.coins[itemIndex], 'difference', item.difference);
-      //   this.$set(this.coins[itemIndex], 'change', item.change);
-      // });
       this.$root.$on('updateCrypto', (item) => {
-        // console.log(item)
-        //let itemIndex = item.indexFound ;//this.cryptocurrency.findIndex(index => index.name === item.name);
         if (this.cryptocurrency.length) {
           this.$set(this.cryptocurrency[item.indexFound], 'price', item.price);
           this.$set(this.cryptocurrency[item.indexFound], 'difference', item.difference);
@@ -413,13 +394,6 @@ export default {
         this.$set(this.commodities[itemIndex], 'change', item.change);
         this.loading = false;
       });
-      // this.$root.$on('updateEconCommodities', (item) => {
-      //   console.log(item)
-      //   // let itemIndex = this.commodities.findIndex(index => index.symbol === item.symbol);
-      //   // this.$set(this.commodities[itemIndex], 'price', item.price);
-      //   // this.$set(this.commodities[itemIndex], 'difference', item.difference);
-      //   // this.$set(this.commodities[itemIndex], 'change', item.change);
-      // });
       this.$root.$on('updateStock', (item) => {
         const itemIndex = item.indexFound ;//this.stocks.findIndex(index => index.name === item.name);
         this.$set(this.stocks[itemIndex], 'price', item.price);

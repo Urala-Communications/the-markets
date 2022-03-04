@@ -138,8 +138,8 @@ export default {
             }).sort((a, b) => {
               return a[0] - b[0];
             });
-            this.symbol = i.symbol;
-            this.live = i.symbol;
+            this.symbol = i.symbol.split(":")[0];
+            this.live = i.symbol.split(":")[0];
             let last = this.chartData[this.chartData.length - 1];
             this.open = last[0];
             this.high = last[1]
@@ -160,8 +160,8 @@ export default {
                 }).sort((a, b) => {
                   return a[0] - b[0];
                 });                
-                this.symbol = i.symbol;   
-                this.live = i.symbol;           
+                this.symbol = i.symbol.split(":")[0];   
+                this.live = i.symbol.split(":")[0];           
                 let last = this.chartData[this.chartData.length - 1];
                 this.open = last[1];
                 this.high = last[2]
@@ -209,6 +209,10 @@ export default {
               break;
             case '1M':
               last = new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString("fr-CA");
+              break;
+            case 'MAX':
+              last = new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString("fr-CA");
+              text = '1/week';
               break;
             default:
               break;

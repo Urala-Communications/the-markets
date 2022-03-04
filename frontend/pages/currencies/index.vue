@@ -25,7 +25,7 @@
         </div> -->
         <div class="col-12 col-lg-7 offset-lg-5">
           <div class="col-12 white-well pt-2">
-            <IndexList :data="filteredCurrencies" indexPage type="currencies" />
+            <IndexList :data="currencies.filter(item => item.type === 'currency')" indexPage type="currencies" />
           </div>
         </div>
         <div class="col-12 col-lg-7 offset-lg-5">
@@ -106,6 +106,7 @@ export default {
       },
     },
     created() {
+      this.filteredCurrencies = this.currencies.filter(item => item.type === 'currency');
       this.$root.$on('updateCurrency', (item) => {
         let i = item.indexFound;//this.currencies.findIndex(index => index.name === item.name);
         this.$set(this.currencies[i], 'price', item.price);
@@ -113,7 +114,6 @@ export default {
         this.$set(this.currencies[i], 'change', item.change);
       });
       this.$root.$on('updateIndice', (item) => {
-        // console.log(item)
         if(item.symbol === 'DXY'){
           let i =  this.currencies.findIndex(index => index.name === item.name);
           this.$set(this.currencies[i], 'price', item.price);
@@ -121,14 +121,14 @@ export default {
           this.$set(this.currencies[i], 'change', item.change);
         }
       });
-      this.filteredCurrencies = this.currencies.filter(item => item.type === 'currency');
-      this.currencies.forEach((item, index) => {
+      
+      this.filteredCurrencies.forEach((item, index) => {
         this.fetchCurrency(index, item.symbol);
         this.fetchNews(item.symbol);
       });
       this.loading = false;
       setInterval(() => {
-        this.currencies.forEach(item => {
+        this.filteredCurrencies.forEach(item => {
           this.fetchNews(item.symbol);
         });
         // every 5 minutes

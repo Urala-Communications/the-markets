@@ -25,7 +25,7 @@
         <h2 class="col-12">Indices</h2>
         <div class="col-lg-8 offset-lg-4">
           <div class="col-12 white-well pt-2">
-            <IndexList :data="filteredIndices" indexPage type="indices" />
+            <IndexList :data="indices.filter(item => item.type === 'indice')" indexPage type="indices" />
             <span class="smaller pl-2">*real-time derived</span>
           </div>
         </div>
@@ -136,6 +136,7 @@ export default {
 
     },
     created() {
+      this.filteredIndices = this.indices.filter(item => item.type === 'indice');
       this.indices.forEach(item => {
         if (item.type !== 'currency'){
           if (item.type !== 'indice'){
@@ -146,16 +147,17 @@ export default {
         }
       });
       this.$root.$on('updateIndice', (item) => {
-        let i = this.indices.findIndex(index => index.name === item.name);
-        // console.log(this.indices[i])
-        this.$set(this.indices[i], 'price', item.price);
-        this.$set(this.indices[i], 'difference', item.difference);
-        this.$set(this.indices[i], 'change', item.change);
+        //let i = this.indices.findIndex(index => index.name === item.name && item.type=="indice");   
+        //console.log(item)
+        if (item.indexFound !== -1) {
+          this.$set(this.indices[item.indexFound], 'price', item.price);
+          this.$set(this.indices[item.indexFound], 'difference', item.difference);
+          this.$set(this.indices[item.indexFound], 'change', item.change);
+        }
         this.$nextTick(() => {
           this.loading = false;
         });
       });
-      this.filteredIndices = this.indices.filter(item => item.type === 'indice');
     },
   }
 </script>

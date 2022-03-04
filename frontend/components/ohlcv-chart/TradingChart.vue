@@ -11,6 +11,7 @@
         :color-text="colors.colorText"
         :overlays="overlays"
         :timezone="this.timezone"
+        :chart-config="this.defaultConfig"
         ref="tradingChart">
         </trading-vue>
         
@@ -70,6 +71,12 @@ export default {
         this.$root.$on("updatedInterval", ({symbol, interval}) => {
             if (this.data.length > 0 && this.$refs.tradingChart && symbol == this.symbol) {
                 this.$refs.tradingChart.resetChart();
+
+                if (interval === "MAX") {
+                    this.defaultConfig = { DEFAULT_LEN: 250 }
+                } else {
+                    this.defaultConfig = { DEFAULT_LEN: 40 }
+                }
             }
         });
 
@@ -96,6 +103,7 @@ export default {
                 {label: "1d", value:"1d", text: "1/day"},
                 {label: "1W", value:"1w", text: "1/week"},
                 {label: "1M", value:"1M", text: "1/month"},
+                {label: "MAX", value:"MAX", text: "MAX"}
             ],
             chart: new DataCube({ 
                 chart: {
@@ -113,6 +121,7 @@ export default {
                 colorText: '#333',
             },
             timezone: (new Date()).getTimezoneOffset() / -60,
+            defaultConfig:  { DEFAULT_LEN: 40 },
             overlays: []
         }
     },
