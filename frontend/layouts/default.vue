@@ -324,9 +324,10 @@ export default {
       // INDICES
       this.indicesWS.onopen = () => {
         // console.log("INDICES Socket connection established");
-        //this.indicesWS.send(JSON.stringify({"action": "subscribe", "symbols": "DJI,GSPC,IXIC,GDAXI,N225,HSI,000001,KS11,IBEX,FTSE,XU100"}));
-        this.indicesWS.send(JSON.stringify({"action": "subscribe", "symbols": "DJI,GSPC,IXIC,GDAXI,N225,HSI,000001,KS11,IBEX,FTSE,XU100,DGS2,DGS5,DGS10,DGS20,DGS30,DXY", "isCFD": false}));
-
+        this.indicesWS.send(JSON.stringify({"action": "subscribe", "symbols": "DJI,GSPC,IXIC,GDAXI,N225,HSI,000001,KS11,IBEX,FTSE,XU100"}));
+        setTimeout(() => {
+          this.indicesWS.send(JSON.stringify({"action": "subscribe", "symbols": "DJI,GSPC,IXIC,GDAXI,N225,HSI,000001,KS11,IBEX,FTSE,XU100,DGS2,DGS5,DGS10,DGS20,DGS30,DXY", "isCFD": false}));
+        }, 2000)
       }
       this.indicesWS.onmessage = (msg) => {
         let data = JSON.parse(msg.data);
@@ -681,12 +682,12 @@ export default {
       //this.checkMarketStatus();
 
       // fetch cfd
-      clearInterval(this.cfdInterval);
-      this.cfdInterval = setInterval(() => {
-        this.indices.filter(i => i.cfd && (i.country !== "KO" && i.country !== "ES" ) ).forEach(item => {
-          this.fetchIndiceCFD(item);
-        })
-      }, 4000);
+      // clearInterval(this.cfdInterval);
+      // this.cfdInterval = setInterval(() => {
+      //   this.indices.filter(i => i.cfd && (i.country !== "KO" && i.country !== "ES" ) ).forEach(item => {
+      //     this.fetchIndiceCFD(item);
+      //   })
+      // }, 10000);
     },
     showGrid() {
       this.view = 'grid';
