@@ -686,7 +686,7 @@ export default {
         this.indices.filter(i => i.cfd && (i.country !== "KO" && i.country !== "ES" ) ).forEach(item => {
           this.fetchIndiceCFD(item);
         })
-      }, 4000);
+      }, 10000);
     },
     showGrid() {
       this.view = 'grid';
@@ -732,7 +732,7 @@ export default {
 <style lang="scss">
 /* @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Serif+Display&display=swap'); */
 @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=Nunito:wght@400;800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap'); */
 html, body {
   font-family: 'Archivo', sans-serif;
   font-size: 16px;

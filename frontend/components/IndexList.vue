@@ -239,12 +239,13 @@ export default {
   /* border-bottom: 1px solid #e3e3e3; */
   transition: 0.2s ease-in-out;
   h4 {
-    font-family: 'Press Start 2P', sans-serif;
-    letter-spacing: -1px;
-    word-spacing: -4px;
+    /* font-family: 'Press Start 2P', sans-serif; */
+    font-family: 'Nunito', serif;
+    /* letter-spacing: -1px; */
+    /* word-spacing: -4px; */
     display: inline-flex;
-    /* font-size: 14px; */
-    font-size: 10px;
+    font-size: 14px;
+    /* font-size: 10px; */
     margin-top: 0;
     align-items: center;
     margin-bottom: 0;
