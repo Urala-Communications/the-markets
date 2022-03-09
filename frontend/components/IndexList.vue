@@ -27,7 +27,7 @@
             class="instrument index d-flex"
             :to="`/${type}/${index.name.replace(/\s+|[' '\/]/g, '-').toLowerCase()}`"
           >
-            <div class="icon-wrapper" :class="index.change > 3 && type === 'cryptocurrency' ? 'fire' : ''">
+            <div class="icon-wrapper" :class="index.change > 8 && type === 'cryptocurrency' ? 'fire' : ''">
               <i class="icon" :class="index.icon ? index.icon : index.symbol.toLowerCase()" />
               <!-- <i v-else class="icon" :style="{backgroundImage:`url(${index.thumbnail})`}" /> -->
               <!-- :style="{backgroundImage:`url(./_nuxt/assets/${index.icon}.png)`}" would be nice if all imgs were same type png/svg-->
@@ -65,7 +65,7 @@
       :class="index.change > 0 ? 'up' : 'down'"
       :to="`/${type}/${index.name.replace(/\s+|[' '\/]/g, '-').toLowerCase()}`"
     >
-      <div class="d-flex icon-wrapper" :class="index.change > 3 && type === 'cryptocurrency' ? 'fire' : ''">
+      <div class="d-flex icon-wrapper" :class="index.change > 8 && type === 'cryptocurrency' ? 'fire' : ''">
         <div class="icon" :class="index.icon ? index.icon : index.symbol.toLowerCase()"/>
         <h4>{{ index.name }}<span v-if="index.marketOpen" class="indicator"/></h4>
       </div>
