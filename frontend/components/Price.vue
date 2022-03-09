@@ -23,7 +23,7 @@
       <strong v-if="price">{{ price }}</strong>
       <p v-if="index.change"><span>{{ index.difference }}</span> {{ index.change }}%</p>
     </div>
-    <strong v-else class="loading"/>
+    <!-- <strong v-else class="loading"/> -->
   </div>
 </template>
 
