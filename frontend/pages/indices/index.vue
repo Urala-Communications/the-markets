@@ -136,7 +136,7 @@ export default {
 
     },
     created() {
-      this.filteredIndices = this.indices.filter(item => item.type === 'indice');
+      //this.filteredIndices = this.indices.filter(item => item.type === 'indice');
       this.indices.forEach(item => {
         if (item.type !== 'currency'){
           if (item.type !== 'indice'){
