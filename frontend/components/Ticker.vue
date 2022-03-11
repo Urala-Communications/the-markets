@@ -186,6 +186,7 @@ export default {
   &.gbp {
     background-image: url('./../assets/uk.svg');
   }
+
   &.btc, &.btcb {background-image: url('./../assets/btc.svg');}
   &.eth {background-image: url('./../assets/eth.svg');}
   &.doge {background-image: url('./../assets/dogecoin.svg');}
