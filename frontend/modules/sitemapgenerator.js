@@ -1,6 +1,7 @@
 //import { Module } from '@nuxt/types'
 
 import { cryptocurrency, stocks, currencies, indices, bonds, commodities} from "../market";
+import axios from 'axios';
 
 module.exports = function() {
   this.nuxt.hook('generate:done', async (context) => {
@@ -8,9 +9,15 @@ module.exports = function() {
     const allRoutes = await Array.from(context.generatedRoutes)
     let routes = await allRoutes.filter((route) => !routesToExclude.includes(route))
 
-    cryptocurrency.forEach(function(e){
-        routes.push(`/cryptocurrency/${e.name.toLowerCase()}`)
-    })
+   
+    let coins = await axios.get(`https://api.finage.co.uk/list/cryptocurrency?apikey=${process.env.FINAGE_API_KEY}&limit=200`);
+    
+    if (coins.data.results.length) {
+        coins.data.results.forEach(function(e){
+            routes.push(`/cryptocurrency/${e.name.toLowerCase().replace(/\W+(?!$)/g,"-")}`)
+        })
+    } 
+
     stocks.forEach(function(e){
         routes.push(`/stocks/${e.name.toLowerCase().replace(/\W+(?!$)/g,"-")}`)
     })
