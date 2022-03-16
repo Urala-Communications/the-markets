@@ -103,11 +103,6 @@ export default {
         .then(() => {
           this.$axios.$get(`https://api.finage.co.uk/agg/index/${symbol}/1day/2021-01-01/${this.today}?limit=1825&apikey=${this.finageApiKey}`)
           .then(response => {
-            // if(typeof response.p !== 'undefined'){
-            //   let i = this.indices.find( indice => indice.symbol === response.symbol );
-            // } else {
-            //   let i = this.indices.find( indice => indice.symbol === response.symbol && indice.cfd );
-            // }
             let indexFound = this.indices.findIndex( indice => indice.symbol === response.symbol );
             let i = this.indices[indexFound];
             i.indexFound = indexFound;
@@ -116,7 +111,7 @@ export default {
             i.difference = i.difference.toFixed(2)
             i.change = (i.priceNumber - last.c) / last.c * 100
             i.change = i.change.toFixed(2)
-            i.price = parseFloat(last.c);
+            i.price = parseFloat(last.c).toFixed(2);
             this.$root.$emit('updateIndice', i);
           })
           .catch(error => {
@@ -147,7 +142,7 @@ export default {
         }
       });
       this.$root.$on('updateIndice', (item) => {
-        //let i = this.indices.findIndex(index => index.name === item.name && item.type=="indice");   
+        //let i = this.indices.findIndex(index => index.name === item.name && item.type=="indice");
         //console.log(item)
         if (item.indexFound !== -1) {
           this.$set(this.indices[item.indexFound], 'price', item.price);

@@ -40,6 +40,7 @@
             <b-card-body class="pr-0 pb-0 pt-0">
               <b-card-text>
                 <!-- <p v-if="item.source" class="category">{{ item.source }}</p> -->
+                <p class="card-text source">{{ item.source }} | {{ formatDate(item.date) }}</p>
                 <h5 class="card-title" v-snip="2">{{ item.title }}</h5>
                 <p class="card-text" v-snip="2">{{ item.description }}</p>
                 <span>{{ item.time }}</span>
@@ -128,6 +129,14 @@ export default {
         symbol = this[newsItem.type].find(item => item.symbol === newsItem.symbol)
       }
       return require(`~/assets/news/${symbol.thumb}`)
+    },
+    formatDate(date){
+      if(date.includes('ago')){
+        return date
+      } else {
+        let d = new Date(date)
+        return d.toLocaleString('en-GB',{month:'long', year:'numeric', day:'numeric'});
+      }
     }
   }
   // mounted(){}
@@ -162,6 +171,7 @@ export default {
       margin-bottom: 0.25rem;
     }
     p.category{color: #CD34AD; font-size: 12px; margin-bottom: 8px;}
+    p.source{color: rgba(31,34,99,0.61); font-size: 12px; margin-bottom: 2px; font-weight: 600;}
     p{font-size: 12px; margin-bottom: 0;}
   }
 }
