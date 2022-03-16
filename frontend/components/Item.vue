@@ -27,12 +27,12 @@
               <div class="d-inline-flex flex-column">
                 <h2 class="price">${{ item.price }}</h2>
                 <p v-if="item.difference" class="diff d-flex flex-column" :class="item.change > 0 ? 'up' : 'down'">
-                  <span class="pr-3"><strong class="main-font pr-2">Difference:</strong>{{ item.difference > 0 ? '+' : '' }}{{ item.difference }}</span>
-                  <span><strong class="main-font pr-2">Change:</strong>{{ item.change > 0 ? '+' : '' }}{{ item.change }}%</span>
+                  <span class="pr-3"><strong class="main-font pr-2">24h Difference:</strong>{{ item.difference > 0 ? '+' : '' }}{{ item.difference }}</span>
+                  <span><strong class="main-font pr-2">24h Change:</strong>{{ item.change > 0 ? '+' : '' }}{{ item.change }}%</span>
                 </p>
               </div>
-              <div v-if="open" class="detail col-12 d-inline-flex flex-column text-right">
-                <span><strong>Open:</strong>${{ open }}</span>
+              <div class="detail col-12 d-inline-flex flex-column text-right">
+                <span v-if="open > 0"><strong>Open:</strong>${{ open }}</span>
                 <span><strong>High:</strong>${{ high }}</span>
                 <span><strong>Low:</strong>${{ low }}</span>
                 <span><strong>Close:</strong>${{ close }}</span>
