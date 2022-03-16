@@ -1,7 +1,17 @@
 <template>
   <div v-if="loading">
-    <div class="container d-flex justify-content-around w-50 pt-5 vh-100 text-center">
-      <div class="loading-logo mt-5" role="status"/>
+    <div
+      class="
+        container
+        d-flex
+        justify-content-around
+        w-50
+        pt-5
+        vh-100
+        text-center
+      "
+    >
+      <div class="loading-logo mt-5" role="status" />
     </div>
   </div>
   <div v-else>
@@ -33,7 +43,11 @@
             <b-tabs pills card lazy :vertical="vertical">
               <b-tab title="All" active>
                 <b-card-text>
-                  <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
+                  <IndexList
+                    :data="cryptocurrency"
+                    type="cryptocurrency"
+                    indexPage
+                  />
                 </b-card-text>
               </b-tab>
               <b-tab title="DeFi">
@@ -111,8 +125,8 @@
         </div>
         <div class="col-12">
           <div class="col-lg-12 mt-4 white-well">
-            <News :newsData="newsData"/>
-            <Ad feedAd/>
+            <News :newsData="newsData" />
+            <Ad feedAd />
           </div>
         </div>
       </div>
@@ -121,139 +135,158 @@
 </template>
 
 <script>
-import { defi} from "./../../market.js";
-import IndexList from './../../components/IndexList.vue'
+import { defi } from "./../../market.js";
+import IndexList from "./../../components/IndexList.vue";
 const finageApiKey = process.env.finageApiKey;
 export default {
-    components: {
-      IndexList
-    },
-    computed: {
-      vertical() {
-        if (this.windowWidth > 992){
-          return true
-        }
-        return false
+  components: {
+    IndexList,
+  },
+  computed: {
+    vertical() {
+      if (this.windowWidth > 992) {
+        return true;
       }
+      return false;
     },
-    data() {
-      return {
-        cmcApiKey: process.env.cmcApiKey,
-        loading: true,
-        coins: [],
-        cryptocurrency: [],
-        defi,
-        view: 'list',
-        chartData: null,
-        chartOptions: null,
-        newsData: [],
-        windowWidth: 0
-      }
-    },
-    methods: {
-      fetchNews(symbol){
-        this.$axios.$get(`https://api.finage.co.uk/news/cryptocurrency/${symbol}?apikey=${finageApiKey}&limit=1`)
-        .then(response => {
-          if(typeof response.news[0] !== 'undefined'){
-            let index = this.newsData.findIndex(x => x.title === response.news[0].title);
+  },
+  data() {
+    return {
+      cmcApiKey: process.env.cmcApiKey,
+      loading: true,
+      coins: [],
+      cryptocurrency: [],
+      defi,
+      view: "list",
+      chartData: null,
+      chartOptions: null,
+      newsData: [],
+      windowWidth: 0,
+    };
+  },
+  methods: {
+    fetchNews(symbol) {
+      this.$axios
+        .$get(
+          `https://api.finage.co.uk/news/cryptocurrency/${symbol}?apikey=${finageApiKey}&limit=1`
+        )
+        .then((response) => {
+          if (typeof response.news[0] !== "undefined") {
+            let index = this.newsData.findIndex(
+              (x) => x.title === response.news[0].title
+            );
             let newsItem = response.news[0];
             this.loading = false;
-            if(index === -1){
-              newsItem.symbol = symbol
-              newsItem.type = 'cryptocurrency'
-              this.newsData.push(newsItem)
+            if (index === -1) {
+              newsItem.symbol = symbol;
+              newsItem.type = "cryptocurrency";
+              this.newsData.push(newsItem);
             }
-            if(this.newsData.length > 30){
-              this.newsData.pop()
+            if (this.newsData.length > 30) {
+              this.newsData.pop();
             }
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
-        })
-      },
-      fetchCrypto(symbol) {        
-        this.$axios.$get(`https://api.finage.co.uk/last/crypto/${symbol.toUpperCase()}USD?apikey=${finageApiKey}`)
-        .then(response => {
-          let indexFound = this.cryptocurrency.findIndex(crypto => crypto.symbol.toUpperCase() === response.symbol.slice(0,-3));
+        });
+    },
+    fetchCrypto(symbol) {
+      this.$axios
+        .$get(
+          `https://api.finage.co.uk/last/crypto/${symbol.toUpperCase()}USD?apikey=${finageApiKey}`
+        )
+        .then((response) => {
+          let indexFound = this.cryptocurrency.findIndex(
+            (crypto) =>
+              crypto.symbol.toUpperCase() === response.symbol.slice(0, -3)
+          );
           if (indexFound !== -1) {
-            this.$set(this.cryptocurrency[indexFound], 'price', response.price);
+            this.$set(this.cryptocurrency[indexFound], "price", response.price);
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
-        })
-      },
-      fetchDefi(symbol) {
-        this.$axios.$get(`https://api.finage.co.uk/last/crypto/${symbol}?apikey=${finageApiKey}`)
-        .then(response => {
-          let indexFound = this.defi.findIndex(d => d.symbol == response.symbol );          
+        });
+    },
+    fetchDefi(symbol) {
+      this.$axios
+        .$get(
+          `https://api.finage.co.uk/last/crypto/${symbol}?apikey=${finageApiKey}`
+        )
+        .then((response) => {
+          let indexFound = this.defi.findIndex(
+            (d) => d.symbol == response.symbol
+          );
           if (indexFound !== -1) {
             let i = this.defi[indexFound];
             i.indexFound = indexFound;
             i.price = Number(response.price).toFixed(2);
-            
-            this.$root.$emit('updateDefi', i);
-          }
-        })
-        .catch(error => {
-          console.log(error);
-        })
-      },
-       
-      showGrid() {
-        this.view = 'grid';
-      },
-      showList() {
-        this.view = 'list';
-      },
 
-    },
-    created() {
-      const self = this;
-      function checkCryptoList() {
-        if (localStorage.getItem('crypto')) {          
-            let topCoins = localStorage.getItem('crypto');
-            self.cryptocurrency = JSON.parse(topCoins);
-            self.cryptocurrency.forEach(item => {
-              self.fetchCrypto(item.symbol);
-              self.fetchNews(item.symbol);
-            });          
-          } else {
-              setTimeout(checkCryptoList, 250);
+            this.$root.$emit("updateDefi", i);
           }
-      }
-      setTimeout(checkCryptoList, 250);
-      this.loading = false; // fix news api bug
-      this.$root.$on('updateCrypto', (item) => {       
-        if (this.cryptocurrency.length) {
-          this.$set(this.cryptocurrency[item.indexFound], 'price', item.price);
-          this.$set(this.cryptocurrency[item.indexFound], 'difference', item.difference);
-          this.$set(this.cryptocurrency[item.indexFound], 'change', item.change);
-        }
-      });
-      this.$root.$on('updateDefi', (item) => {
-        
-        this.$set(this.defi[item.indexFound], 'price', item.price);
-        this.$set(this.defi[item.indexFound], 'difference', item.difference);
-        this.$set(this.defi[item.indexFound], 'change', item.change);
-      });
-            
-      this.defi.forEach(item => {
-        this.fetchDefi(item.symbol);
-      });
-      window.onresize = () => {
-        this.windowWidth = window.innerWidth
-      }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
-  }
+
+    showGrid() {
+      this.view = "grid";
+    },
+    showList() {
+      this.view = "list";
+    },
+  },
+  created() {
+    const self = this;
+    function checkCryptoList() {
+      if (localStorage.getItem("crypto")) {
+        let topCoins = localStorage.getItem("crypto");
+        self.cryptocurrency = JSON.parse(topCoins);
+        self.cryptocurrency.forEach((item) => {
+          self.fetchCrypto(item.symbol);
+          self.fetchNews(item.symbol);
+        });
+      } else {
+        setTimeout(checkCryptoList, 250);
+      }
+    }
+    setTimeout(checkCryptoList, 250);
+    this.loading = false; // fix news api bug
+    this.$root.$on("updateCrypto", (item) => {
+      if (this.cryptocurrency.length) {
+        this.$set(this.cryptocurrency[item.indexFound], "price", item.price);
+        this.$set(
+          this.cryptocurrency[item.indexFound],
+          "difference",
+          item.difference
+        );
+        this.$set(this.cryptocurrency[item.indexFound], "change", item.change);
+      }
+    });
+    this.$root.$on("updateDefi", (item) => {
+      this.$set(this.defi[item.indexFound], "price", item.price);
+      this.$set(this.defi[item.indexFound], "difference", item.difference);
+      this.$set(this.defi[item.indexFound], "change", item.change);
+    });
+
+    this.defi.forEach((item) => {
+      this.fetchDefi(item.symbol);
+    });
+    window.onresize = () => {
+      this.windowWidth = window.innerWidth;
+    };
+  },
+};
 </script>
 
 <style lang="scss">
-  .nav-pills .nav-link{
-    padding: 0.25rem 1rem;
-  }
-  .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-    background-color: #191c5f;
-  }
+.nav-pills .nav-link {
+  padding: 0.25rem 1rem;
+}
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+  background-color: #191c5f;
+}
 </style>

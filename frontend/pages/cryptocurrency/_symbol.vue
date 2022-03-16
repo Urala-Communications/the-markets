@@ -1,6 +1,16 @@
 <template>
   <div v-if="loading">
-    <div class="container d-flex justify-content-around w-50 pt-5 vh-100 text-center">
+    <div
+      class="
+        container
+        d-flex
+        justify-content-around
+        w-50
+        pt-5
+        vh-100
+        text-center
+      "
+    >
       <div class="loading-logo mt-5" role="status" />
     </div>
   </div>
@@ -12,33 +22,38 @@
     :profile="profile"
     :open="open"
     :close="close"
+    ref="Item"
     :high="high"
     :low="low"
     :volume="volume"
-    :marketCap="marketCap"
-    :yearHigh="yearHigh"
-    :yearLow="yearLow"
-    :chartData="chartData"
-    :chartOptions="chartOptions"
-    :marketStatus="marketStatus"
+    :market-cap="marketCap"
+    :year-high="yearHigh"
+    :year-low="yearLow"
+    :chart-data="chartData"
+    :chart-options="chartOptions"
+    :market-status="marketStatus"
     :symbol="symbol"
     :live="live"
-    ref="Item"
   />
 </template>
 
 <script>
+import { gqlQuery, queries } from "@/services/graphql";
 import Item from "~/components/Item.vue";
 export default {
   components: {
     Item,
+  },
+  async asyncData({ params }) {
+    const symbol = params.symbol;
+    return { symbol };
   },
   data() {
     return {
       finageApiKey: process.env.finageApiKey,
       liveApiUrl: process.env.liveApiUrl,
       item: {
-        name: '',
+        name: "",
         price: 0,
         icon: "",
       },
@@ -63,201 +78,10 @@ export default {
       cryptoWS: new WebSocket(`wss://stream.binance.com/stream`),
       yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
       today: new Date(Date.now()).toLocaleDateString("fr-CA"),
-      fiveYearsAgo: new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString("fr-CA"),
+      fiveYearsAgo: new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString(
+        "fr-CA"
+      ),
     };
-  },
-  head() {
-    return {
-      title:
-        this.symbol.toUpperCase().replace("-", " ") +
-        " $" +
-        this.item.price +
-        " - " +
-        "The Markets - Live Charts for Financial Markets & the Global Community of Traders. Bitcoin, Ethereum, Doge, Shiba, Memes, Crypto, Indices, Stocks, Forex, Bonds, CFDs and more.",
-    };
-  },
-  async asyncData({ params }) {
-    const symbol = params.symbol;
-    return { symbol };
-  },
-  methods: {
-    fetchDetails() {
-      let i = this.cryptocurrency.find(
-        (item) => item.name.toLowerCase() === this.symbol.replace("-", " ")
-      );
-      if (i) {
-        this.$set(this.item, 'icon', i.symbol);
-        this.$set(this.item, 'name', i.name);
-      }
-      this.$axios
-        .$get(
-          `https://api.finage.co.uk/detail/cryptocurrency/${i.symbol}?apikey=${this.finageApiKey}`
-        )
-        .then((response) => {
-          this.profile = response;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    fetchPrice() {
-      let i = this.cryptocurrency.find(
-        (item) => item.name.toLowerCase() === this.symbol.replace("-", " ")
-      );
-      this.$axios
-        .$get(
-          `https://api.finage.co.uk/last/crypto/detailed/${i.symbol.toUpperCase()+"USD"}?apikey=${this.finageApiKey}`
-        )
-        .then((response) => {
-          this.open = response.open.toFixed(2);
-          this.close = response.close.toFixed(2);
-          this.high = response.high.toFixed(2);
-          this.low = response.low.toFixed(2);
-          this.volume = response.volume.toFixed(2);
-          this.marketCap = response.marketCap.toFixed(2);
-          this.yearHigh = response.yearHigh.toFixed(2);
-          this.yearLow = response.yearLow.toFixed(2);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    checkMarketStatus() {
-      this.$axios
-        .$get(
-          `https://api.finage.co.uk/marketstatus?apikey=${this.finageApiKey}`
-        )
-        .then((response) => {
-          this.marketStatus = response.currencies.crypto;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    fetchAggregates() {
-      let i = this.cryptocurrency.find(
-        (item) => item.name.toLowerCase() === this.symbol.replace("-", " ")
-      );
-      // this.$axios.$get(`https://api.finage.co.uk/agg/crypto/${i.symbol}/1/day/${fiveYearsAgo}/${this.today}?limit=5000&apikey=${this.finageApiKey}`)
-      this.$axios.$get(`https://api.binance.com/api/v3/klines?limit=1000&symbol=${i.symbol.toUpperCase()+"USDT"}&interval=1d`)
-        .then((response) => {
-          this.chartData = response.map(o => {
-            const [timestamp, openPrice, high, low, close, volume] = [...o];
-            return [timestamp, openPrice, high, low, close, volume].map(n =>
-              Number(n)
-            );
-          })
-          this.symbol = i.symbol;
-          this.live = i.symbol.toUpperCase()+"USDT";
-          let last = this.chartData[this.chartData.length - 1];
-          this.open = last[1];
-          this.high = last[2]
-          this.low = last[3];
-          this.close = last[4];
-          this.volume = last[5];
-          this.loading = false;
-          if (this.cryptoWS.readyState === 1) {
-            this.cryptoWS.send(`{"method":"SUBSCRIBE","params":["${this.live.toLowerCase()}@aggTrade"],"id":${this.subindex}}`);
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
-    subscribeTrade(){
-      this.cryptoWS.onopen = () => {
-        if (this.live)
-          this.cryptoWS.send(`{"method":"SUBSCRIBE","params":["${this.live.toLowerCase()}@aggTrade"],"id":${this.subindex}}`);
-      }
-    },
-    listenTrade(){
-      this.cryptoWS.onmessage = (msg) => {
-        let data = JSON.parse(msg.data);
-        if (data.stream == `${this.live.toLowerCase()}@aggTrade`) {
-          this.$root.$emit("updateTrade",
-          {
-            symbol: this.live,
-            time: data.data.E,
-            price: Number(data.data.p),
-            volumn: Number(data.data.q),
-          });
-        }
-      }
-    },
-    unsubscribeTrade(){
-      this.cryptoWS.send(`{"method":"UNSUBSCRIBE","params":["${this.live.toLowerCase()}@aggTrade"],"id":${this.subindex}}`);
-    },
-    updateInterval(symbol, interval){
-      if (symbol === this.live) {
-        if (interval !== "MAX") {
-          this.$axios
-          .$get(
-            `https://api.binance.com/api/v3/klines?limit=1000&symbol=${symbol}&interval=${interval}`
-          )
-          .then((response) => {
-  
-            this.chartData = response.map(o => {
-              const [timestamp, openPrice, high, low, close, volume] = [...o];
-              return [timestamp, openPrice, high, low, close, volume].map(n =>
-                Number(n)
-              );
-            });
-  
-            this.$root.$emit("updatedInterval", {symbol, interval});
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-        } else {
-          this.$axios
-          .$get(
-            `https://api.finage.co.uk/agg/crypto/${symbol.slice(0,-1)}/1/week/${this.fiveYearsAgo}/${this.today}?apikey=${this.finageApiKey}`
-          )
-          .then((response) => {
-            if (response.results.length) {
-              this.chartData = response.results.map(o => {
-                const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
-                return [timestamp, openPrice, high, low, close, volume].map(n =>
-                  Number(n)
-                );
-              });
-    
-              this.$root.$emit("updatedInterval", {symbol, interval});
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-        }
-      }
-    },
-    fetchNews() {
-      let i = this.cryptocurrency.find(
-        (item) => item.name.toLowerCase() === this.symbol.replace("-", " ")
-      );
-      this.$axios
-        .$get(
-          `https://api.finage.co.uk/news/cryptocurrency/${i.symbol}?apikey=${this.finageApiKey}`
-        )
-        .then((response) => {
-          // filter matching articles
-          // let index = newsfeed.findIndex(x => x.title === response.news[0].title);
-          // if(index === -1){
-          //   newsfeed.push(response.news[0])
-          // }
-          //console.log("NEWS");
-          // console.log(response)
-          this.news = response.news;
-          // ?type=video
-          // this.news.video = true;
-          if (this.news.length > 16) {
-            this.news.pop();
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
   },
   created() {
     // let topCoins = localStorage.getItem('crypto');
@@ -277,34 +101,34 @@ export default {
         this.$set(this.item, "time", item.time);
       }
     });
-    this.$root.$on("updateTrade", ({symbol, time, price, volumn}) => {
+    this.$root.$on("updateTrade", ({ symbol, time, price, volume }) => {
       if (symbol === this.live) {
         this.$set(this.item, "price", price);
       }
-    })
+    });
     const self = this;
     function checkCryptoList() {
-      if (localStorage.getItem('crypto')) {        
-          let topCoins = localStorage.getItem('crypto');
-          self.cryptocurrency = JSON.parse(topCoins);
+      if (localStorage.getItem("crypto")) {
+        let topCoins = localStorage.getItem("crypto");
+        self.cryptocurrency = JSON.parse(topCoins);
 
-          self.fetchDetails();
-          self.checkMarketStatus();
-          self.fetchPrice();
-          self.fetchAggregates();
-          self.fetchNews();
-        } else {
-            setTimeout(checkCryptoList, 250);
-        }
+        self.fetchDetails();
+        self.checkMarketStatus();
+        self.fetchPrice();
+        self.fetchAggregates();
+        self.fetchNews();
+      } else {
+        setTimeout(checkCryptoList, 250);
+      }
     }
-    setTimeout(checkCryptoList, 250);   
-    
-    this.$root.$on("changeInterval", ({symbol, interval, text}) => {
+    setTimeout(checkCryptoList, 250);
+
+    this.$root.$on("changeInterval", ({ symbol, interval, text }) => {
       this.updateInterval(symbol, interval, text);
-    })
+    });
     this.subscribeTrade();
     this.listenTrade();
-    // 
+    //
     // setInterval(() => {
     //     this.fetchNews();
     // }, 300000);
@@ -315,6 +139,195 @@ export default {
   beforeDestroy() {
     this.unsubscribeTrade();
     this.cryptoWS.close();
+  },
+  methods: {
+    async fetchDetails() {
+      let i = this.cryptocurrency.find(
+        (item) => item.name.toLowerCase() === this.symbol.replace("-", " ")
+      );
+      if (i) {
+        this.$set(this.item, "icon", i.symbol);
+        this.$set(this.item, "name", i.name);
+      }
+
+      const res = await gqlQuery(this.$axios)(queries.crypto.detail, {
+        symbol: i.symbol,
+      });
+
+      if (res.status !== 200) return console.log(res.data);
+      if (res?.data?.data?.finageDetailCrypto)
+        this.profile = res.data.data.finageDetailCrypto;
+    },
+    async fetchPrice() {
+      let i = this.cryptocurrency.find(
+        (item) => item.name.toLowerCase() === this.symbol.replace("-", " ")
+      );
+
+      const res = await gqlQuery(this.$axios)(
+        queries.crypto.lastPriceDetailed,
+        {
+          symbol: i.symbol.toUpperCase() + "USD",
+        }
+      );
+
+      if (res.status !== 200) return console.log(res.data);
+      if (res?.data?.data?.finageLast)
+        Object.keys(res.data.data.finageLast).forEach((key) => {
+          this[key] = res.data.data.finageLast[key];
+        });
+    },
+    async checkMarketStatus() {
+      const res = await gqlQuery(this.$axios)(
+        queries.fundamentals.marketStatus
+      );
+      if (res.status !== 200) return console.log(res.data);
+      if (res?.data?.data?.marketStatus)
+        this.marketStatus = res.data.data.marketStatus.currencies.crypto;
+    },
+    fetchAggregates() {
+      let i = this.cryptocurrency.find(
+        (item) => item.name.toLowerCase() === this.symbol.replace("-", " ")
+      );
+      // this.$axios.$get(`https://api.finage.co.uk/agg/crypto/${i.symbol}/1/day/${fiveYearsAgo}/${this.today}?limit=5000&apikey=${this.finageApiKey}`)
+      this.$axios
+        .$get(
+          `https://api.binance.com/api/v3/klines?limit=1000&symbol=${
+            i.symbol.toUpperCase() + "USDT"
+          }&interval=1d`
+        )
+        .then((response) => {
+          this.chartData = response.map((o) => {
+            const [timestamp, openPrice, high, low, close, volume] = [...o];
+            return [timestamp, openPrice, high, low, close, volume].map((n) =>
+              Number(n)
+            );
+          });
+          this.symbol = i.symbol;
+          this.live = i.symbol.toUpperCase() + "USDT";
+          let last = this.chartData[this.chartData.length - 1];
+          this.open = last[1];
+          this.high = last[2];
+          this.low = last[3];
+          this.close = last[4];
+          this.volume = last[5];
+          this.loading = false;
+          if (this.cryptoWS.readyState === 1) {
+            this.cryptoWS.send(
+              `{"method":"SUBSCRIBE","params":["${this.live.toLowerCase()}@aggTrade"],"id":${
+                this.subindex
+              }}`
+            );
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    subscribeTrade() {
+      this.cryptoWS.onopen = () => {
+        if (this.live)
+          this.cryptoWS.send(
+            `{"method":"SUBSCRIBE","params":["${this.live.toLowerCase()}@aggTrade"],"id":${
+              this.subindex
+            }}`
+          );
+      };
+    },
+    listenTrade() {
+      this.cryptoWS.onmessage = (msg) => {
+        let data = JSON.parse(msg.data);
+        if (data.stream == `${this.live.toLowerCase()}@aggTrade`) {
+          this.$root.$emit("updateTrade", {
+            symbol: this.live,
+            time: data.data.E,
+            price: Number(data.data.p),
+            volumn: Number(data.data.q),
+          });
+        }
+      };
+    },
+    unsubscribeTrade() {
+      this.cryptoWS.send(
+        `{"method":"UNSUBSCRIBE","params":["${this.live.toLowerCase()}@aggTrade"],"id":${
+          this.subindex
+        }}`
+      );
+    },
+    async updateInterval(symbol, interval) {
+      if (symbol === this.live) {
+        if (interval !== "MAX") {
+          this.$axios
+            .$get(
+              `https://api.binance.com/api/v3/klines?limit=1000&symbol=${symbol}&interval=${interval}`
+            )
+            .then((response) => {
+              this.chartData = response.map((o) => {
+                const [timestamp, openPrice, high, low, close, volume] = [...o];
+                return [timestamp, openPrice, high, low, close, volume].map(
+                  (n) => Number(n)
+                );
+              });
+
+              this.$root.$emit("updatedInterval", { symbol, interval });
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        } else {
+          const res = await gqlQuery(this.$axios)(queries.crypto.aggregate, {
+            symbol: symbol.slice(0, -1),
+            period: "1",
+            multiplier: "week",
+            from: this.fiveYearsAgo,
+            to: this.today,
+          });
+
+          if (res.status !== 200) return console.log(res.data);
+          if (res?.data?.data?.finageAgg)
+            this.chartData = res.data.data.finageAgg.map((o) => {
+              const [timestamp, openPrice, high, low, close, volume] = [
+                o.t,
+                o.o,
+                o.h,
+                o.l,
+                o.c,
+                o.v,
+              ];
+              return [timestamp, openPrice, high, low, close, volume].map((n) =>
+                Number(n)
+              );
+            });
+
+          this.$root.$emit("updatedInterval", { symbol, interval });
+        }
+      }
+    },
+    async fetchNews() {
+      let i = this.cryptocurrency.find(
+        (item) => item.name.toLowerCase() === this.symbol.replace("-", " ")
+      );
+
+      const res = await gqlQuery(this.$axios)(queries.fundamentals.news, {
+        market: "cryptocurrency",
+        symbol: i.symbol,
+      });
+
+      if (res.status !== 200) console.log(res.data);
+      if (res?.data?.data?.finageNews) {
+        this.news = res.data.data.finageNews.news;
+        if (this.news.length > 16) this.news.pop();
+      }
+    },
+  },
+  head() {
+    return {
+      title:
+        this.symbol.toUpperCase().replace("-", " ") +
+        " $" +
+        this.item.price +
+        " - " +
+        "The Markets - Live Charts for Financial Markets & the Global Community of Traders. Bitcoin, Ethereum, Doge, Shiba, Memes, Crypto, Indices, Stocks, Forex, Bonds, CFDs and more.",
+    };
   },
 };
 </script>
