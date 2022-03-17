@@ -152,7 +152,10 @@ export default {
 .card {
   border: none;
   flex-direction: row;
-  margin-bottom: 1rem;
+  padding: 0.4rem 0;
+  background: #ffffff;
+  border-bottom: 1px solid rgba(31, 34, 99, 0.15);
+  border-radius: 0;
   background: #ffffff;
   .row {overflow: hidden;}
   .card-img {

@@ -31,8 +31,8 @@
                   <span><strong class="main-font pr-2">24h Change:</strong>{{ item.change > 0 ? '+' : '' }}{{ item.change }}%</span>
                 </p>
               </div>
-              <div class="detail col-12 d-inline-flex flex-column text-right">
-                <span v-if="open > 0"><strong>Open:</strong>${{ open }}</span>
+              <div v-if="open" class="detail col-12 d-inline-flex flex-column text-right">
+                <span><strong>Open:</strong>${{ open }}</span>
                 <span><strong>High:</strong>${{ high }}</span>
                 <span><strong>Low:</strong>${{ low }}</span>
                 <span><strong>Close:</strong>${{ close }}</span>
