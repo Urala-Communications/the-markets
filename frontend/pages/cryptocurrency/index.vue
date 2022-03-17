@@ -224,6 +224,30 @@ export default {
           console.log(error);
         })
       },
+      fetCoinsData() {
+        return this.$axios
+          .$get(`/api/coins`, {
+            json: true,
+            gzip: true,
+          })
+          .then((response) => {
+            this.coins = response;
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      },
+      checkBackground(){
+        const self = this;
+        document.querySelectorAll('.icon').forEach(function(icon) {
+          if (window.getComputedStyle(icon).backgroundImage == "none") {
+            const cid = icon.getAttribute("id");
+            if (self.coins[cid]) {              
+              icon.style.backgroundImage  = ('url("'+self.coins[cid][0].logo+'")');
+            }
+          }
+        });
+      },
       showGrid() {
         this.view = 'grid';
       },
@@ -235,7 +259,7 @@ export default {
       const self = this;
       this.loading = false; // fix news api bug
       this.$root.$on('updateCrypto', (item) => {       
-        if (this.cryptocurrency.length) {
+        if (this.cryptocurrency.length && item.indexFound !== -1) {
           this.$set(this.cryptocurrency[item.indexFound], 'price', item.price);
           this.$set(this.cryptocurrency[item.indexFound], 'difference', item.difference);
           this.$set(this.cryptocurrency[item.indexFound], 'change', item.change);
@@ -254,6 +278,10 @@ export default {
       window.onresize = () => {
         this.windowWidth = window.innerWidth
       }
+    },
+    mounted() {
+      window.addEventListener("scroll", this.checkBackground);
+      this.checkBackground();
     },
   }
 </script>
