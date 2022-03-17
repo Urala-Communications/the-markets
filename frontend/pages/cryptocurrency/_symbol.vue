@@ -16,13 +16,13 @@
   </div>
   <Item
     v-else
+    ref="Item"
     :item="item"
     type="cryptocurrency"
     :news="news"
     :profile="profile"
     :open="open"
     :close="close"
-    ref="Item"
     :high="high"
     :low="low"
     :volume="volume"
@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { gqlQuery, queries } from "@/services/graphql";
+import { useQuery } from "@/services/graphql";
 import Item from "~/components/Item.vue";
 export default {
   components: {
@@ -150,39 +150,42 @@ export default {
         this.$set(this.item, "name", i.name);
       }
 
-      const res = await gqlQuery(this.$axios)(queries.crypto.detail, {
-        symbol: i.symbol,
+      const res = await useQuery({
+        query: "finage.detailCrypto",
+        variables: { symbol: i.symbol },
+        axios: this.$axios,
       });
 
-      if (res.status !== 200) return console.log(res.data);
-      if (res?.data?.data?.finageDetailCrypto)
-        this.profile = res.data.data.finageDetailCrypto;
+      if (!res) return;
+
+      this.profile = res;
     },
     async fetchPrice() {
       let i = this.cryptocurrency.find(
         (item) => item.name.toLowerCase() === this.symbol.replace("-", " ")
       );
 
-      const res = await gqlQuery(this.$axios)(
-        queries.crypto.lastPriceDetailed,
-        {
-          symbol: i.symbol.toUpperCase() + "USD",
-        }
-      );
+      const res = await useQuery({
+        query: "finage.detailCrypto",
+        variables: { suffix: "cryptocurrency", symbol: i.symbol },
+        axios: this.$axios,
+      });
 
-      if (res.status !== 200) return console.log(res.data);
-      if (res?.data?.data?.finageLast)
-        Object.keys(res.data.data.finageLast).forEach((key) => {
-          this[key] = res.data.data.finageLast[key];
-        });
+      if (!res) return;
+
+      Object.keys(res).forEach((key) => {
+        this[key] = res[key];
+      });
     },
     async checkMarketStatus() {
-      const res = await gqlQuery(this.$axios)(
-        queries.fundamentals.marketStatus
-      );
-      if (res.status !== 200) return console.log(res.data);
-      if (res?.data?.data?.marketStatus)
-        this.marketStatus = res.data.data.marketStatus.currencies.crypto;
+      const res = await useQuery({
+        query: "finage.marketStatus",
+        axios: this.$axios,
+      });
+
+      if (!this.res) return;
+
+      this.marketStatus = res.currencies.crypto;
     },
     fetchAggregates() {
       let i = this.cryptocurrency.find(
@@ -274,30 +277,34 @@ export default {
               console.log(error);
             });
         } else {
-          const res = await gqlQuery(this.$axios)(queries.crypto.aggregate, {
-            symbol: symbol.slice(0, -1),
-            period: "1",
-            multiplier: "week",
-            from: this.fiveYearsAgo,
-            to: this.today,
+          const res = await useQuery({
+            query: "finage.agg",
+            variables: {
+              suffix: "crypto",
+              symbol: symbol.slice(0, -1),
+              period: "1",
+              multiplier: "week",
+              from: this.fiveYearsAgo,
+              to: this.today,
+            },
+            axios: this.$axios,
           });
 
-          if (res.status !== 200) return console.log(res.data);
-          if (res?.data?.data?.finageAgg)
-            this.chartData = res.data.data.finageAgg.map((o) => {
-              const [timestamp, openPrice, high, low, close, volume] = [
-                o.t,
-                o.o,
-                o.h,
-                o.l,
-                o.c,
-                o.v,
-              ];
-              return [timestamp, openPrice, high, low, close, volume].map((n) =>
-                Number(n)
-              );
-            });
+          if (!res) return;
 
+          this.chartData = res.results.map((o) => {
+            const [timestamp, openPrice, high, low, close, volume] = [
+              o.t,
+              o.o,
+              o.h,
+              o.l,
+              o.c,
+              o.v,
+            ];
+            return [timestamp, openPrice, high, low, close, volume].map((n) =>
+              Number(n)
+            );
+          });
           this.$root.$emit("updatedInterval", { symbol, interval });
         }
       }
@@ -307,16 +314,16 @@ export default {
         (item) => item.name.toLowerCase() === this.symbol.replace("-", " ")
       );
 
-      const res = await gqlQuery(this.$axios)(queries.fundamentals.news, {
-        market: "cryptocurrency",
-        symbol: i.symbol,
+      const res = await useQuery({
+        query: "finage.news",
+        variables: { market: "cryptocurrency", symbol: i.symbol },
+        axios: this.$axios,
       });
 
-      if (res.status !== 200) console.log(res.data);
-      if (res?.data?.data?.finageNews) {
-        this.news = res.data.data.finageNews.news;
-        if (this.news.length > 16) this.news.pop();
-      }
+      if (!res) return;
+
+      this.news = res.news;
+      if (this.news.length > 16) this.news.pop();
     },
   },
   head() {
