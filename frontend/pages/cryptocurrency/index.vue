@@ -34,6 +34,7 @@
               <b-tab title="All" active>
                 <b-card-text>
                   <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
+                  <infinite-loading @infinite="lazyLoadCrypto"></infinite-loading>                
                 </b-card-text>
               </b-tab>
               <b-tab title="DeFi">
@@ -121,12 +122,14 @@
 </template>
 
 <script>
+import InfiniteLoading from 'vue-infinite-loading';
 import { defi} from "./../../market.js";
 import IndexList from './../../components/IndexList.vue'
 const finageApiKey = process.env.finageApiKey;
 export default {
     components: {
-      IndexList
+      IndexList,
+      InfiniteLoading,
     },
     computed: {
       vertical() {
@@ -147,7 +150,8 @@ export default {
         chartData: null,
         chartOptions: null,
         newsData: [],
-        windowWidth: 0
+        windowWidth: 0,
+        page: 1,
       }
     },
     methods: {
@@ -200,30 +204,35 @@ export default {
           console.log(error);
         })
       },
-       
+      lazyLoadCrypto($state){
+        this.$axios.$get(`https://api.finage.co.uk/list/cryptocurrency?apikey=${finageApiKey}&limit=50&page=${this.page}`)
+        .then(response => {
+          if (response.results.length) {
+            this.page++;
+            this.cryptocurrency = this.cryptocurrency.concat(response.results);
+            if (this.page > 2)
+              this.$root.$emit('addCrypto', response.results);
+            $state.loaded();
+            if (this.page > 4) {
+              $state.complete();
+            }
+          } else {
+            $state.complete();
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        })
+      },
       showGrid() {
         this.view = 'grid';
       },
       showList() {
         this.view = 'list';
       },
-
     },
     created() {
       const self = this;
-      function checkCryptoList() {
-        if (localStorage.getItem('crypto')) {          
-            let topCoins = localStorage.getItem('crypto');
-            self.cryptocurrency = JSON.parse(topCoins);
-            self.cryptocurrency.forEach(item => {
-              self.fetchCrypto(item.symbol);
-              self.fetchNews(item.symbol);
-            });          
-          } else {
-              setTimeout(checkCryptoList, 250);
-          }
-      }
-      setTimeout(checkCryptoList, 250);
       this.loading = false; // fix news api bug
       this.$root.$on('updateCrypto', (item) => {       
         if (this.cryptocurrency.length) {
