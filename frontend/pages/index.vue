@@ -88,7 +88,7 @@
         <div class="col-12 col-lg-4 mb-5 news-section">
           <div class="row m-0 justify-content-between">
             <div class="col-lg-12 white-well">
-              <h2 class="mt-0">News</h2>
+              <h2 class="mt-0 mb-1">News</h2>
               <News :newsData="cryptoNews"/>
               <News :newsData="stockNews"/>
               <!-- <Ad feedAd/> -->
@@ -258,11 +258,6 @@ export default {
         .then(() => {
           this.$axios.$get(`https://api.finage.co.uk/agg/index/${symbol}/1day/2021-01-01/${this.today}?limit=1825&apikey=${this.finageApiKey}`)
           .then(response => {
-            // if(typeof response.p !== 'undefined'){
-            //   let i = this.indices.find( indice => indice.symbol === response.symbol );
-            // } else {
-            //   let i = this.indices.find( indice => indice.symbol === response.symbol && indice.cfd );
-            // }
             let indexFound = this.indices.findIndex( indice => indice.symbol === response.symbol );
             let i = this.indices[indexFound];
             i.indexFound = indexFound;
@@ -271,7 +266,7 @@ export default {
             i.difference = i.difference.toFixed(2)
             i.change = (i.priceNumber - last.c) / last.c * 100
             i.change = i.change.toFixed(2)
-            i.price = parseFloat(last.c);
+            i.price = parseFloat(last.c).toFixed(2);
             this.$root.$emit('updateIndice', i);
           })
           .catch(error => {
@@ -287,7 +282,7 @@ export default {
         .then(response => {
           // console.log(response)
           let i = this.indices.find( indice => indice.symbol === response.symbol );
-          i.price = Number(response.value).toFixed(4);
+          i.price = Number(response.value).toFixed(2);
           this.$root.$emit('updateBond', i);
         })
         .catch(error => {
@@ -301,7 +296,7 @@ export default {
           this.commodities.forEach(item => {
             let match = response.filter(element => element["Symbol"] === item.symbol);
             if(match.length > 0){
-              item.price = match[0]['Last'];
+              item.price = match[0]['Last'].toFixed(2);
               item.change = match[0]['DailyChange'];
               item.difference = match[0]['DailyPercentualChange'];
               item.ticker = match[0]['Ticker'];

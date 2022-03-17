@@ -3,7 +3,7 @@
     <div class="grid grid-header">
       <div class="pb-2"><strong>Symbol</strong></div>
       <div class="pb-2"><strong>Name</strong></div>
-      <div class="pb-2"><strong>Price</strong></div>
+      <div class="pb-2 justify-content-end"><strong>Price</strong></div>
       <div class="pb-2 justify-content-center"><strong>% Change</strong></div>
       <div class="pb-2 justify-content-center"><strong>$ Change</strong></div>
     </div>
@@ -36,7 +36,7 @@
             <span v-if="index.marketOpen" class="indicator"/>
           </NuxtLink>
         </div>
-        <div class="price ask number-font"><span v-if="type !== 'indices'">$</span>{{ index.price }}</div>
+        <div class="justify-content-end price ask number-font"><span v-if="type !== 'indices'">$</span>{{ index.price }}</div>
         <div class="justify-content-center number-font">
           <Price v-if="index.change" :index="index" :difference="index.change" />
         </div>

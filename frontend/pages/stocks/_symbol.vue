@@ -118,11 +118,11 @@ export default {
             this.symbol = i.symbol;
             this.live = i.symbol;
             let last = this.chartData[this.chartData.length - 1];
-            this.open = last[0];
-            this.high = last[1]
-            this.low = last[2];
-            this.close = last[3];
-            this.volume = last[4];
+            this.open = last[1];
+            this.high = last[2]
+            this.low = last[3];
+            this.close = last[4];
+            this.volume = last[5];
             this.loading = false;
           })
           .catch(error => {
@@ -133,7 +133,7 @@ export default {
         let i = this.stocks.find( item => item.name.toLowerCase() === this.symbol);
         this.$axios.$get(`https://api.finage.co.uk/news/market/${i.symbol}?apikey=${this.finageApiKey}`)
         .then(response => {
-          this.news = response.news;          
+          this.news = response.news;
           if(this.news.length > 16){
             this.news.pop()
           }

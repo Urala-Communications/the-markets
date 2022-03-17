@@ -331,13 +331,8 @@ export default {
       }
       this.indicesWS.onmessage = (msg) => {
         let data = JSON.parse(msg.data);
-        // if(data.s !== 'DXY'){
-        //   console.log(data)
-        // }
         if(typeof data.p !== 'undefined'){
-            // console.log('non-CFD')
-            // console.log(data.p)
-            // console.log(data)
+          // non-CFD
           let indexFound = this.indices.findIndex(index => index.symbol === data.s && !index.cfd);
           if (indexFound !== -1) {
             const item = this.indices[indexFound];
@@ -346,12 +341,6 @@ export default {
             item.difference = Number(data.dd).toFixed(2);
             item.change = Number(data.dc).toFixed(2);
             item.time = data.t;
-            // if(this.marketStatus.exchanges.nasdaq){
-              // need asian market indicators
-              // item.marketOpen = true;
-            // }
-            // console.log(item)
-            // console.log("")
             if (this.indices[indexFound].idOldPrice != item.price ) {
               this.$root.$emit('updateIndice', item);
               this.$root.$emit("updateTrade",  {
@@ -364,25 +353,15 @@ export default {
             }
           }
         } else {
-            // console.log('CFD')
-            // console.log(data.s)
-            // console.log(data)
+          // CFD
           let indexFound = this.indices.findIndex(index => index.cfd && index.symbol === data.s);
           if (indexFound !== -1) {
             const item = this.indices[indexFound];
             item.indexFound = indexFound;
-            // console.log('CFD')
-            // console.log(item)
-            // console.log("")
-            item.price = Number(data.a).toFixed(2); // ask or bid or both?
+            item.price = Number(data.a).toFixed(2);
             item.difference = Number(data.dd).toFixed(2);
             item.change = Number(data.dc).toFixed(2);
             item.time = data.t;
-            //item.change = Number(data.dc).toFixed(2);
-            // if(this.marketStatus.exchanges.nasdaq){
-              // need asian market indicators
-              // item.marketOpen = true;
-            // }
             if (this.indices[indexFound].idOldPrice != item.price ) {
               this.$root.$emit('updateIndice', item);
               this.$root.$emit("updateTrade",  {
@@ -588,7 +567,7 @@ export default {
       this.$axios.$get(`https://api.finage.co.uk/bonds/us/rate/${symbol}?apikey=${finageApiKey}`)
       .then(response => {
         let i = this.indices.find( indice => indice.symbol === response.symbol );
-        i.price = Number(response.value).toFixed(4);
+        i.price = Number(response.value).toFixed(2);
         this.$root.$emit('updateBond', i);
       })
       .catch(error => {
