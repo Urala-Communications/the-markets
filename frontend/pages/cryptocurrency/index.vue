@@ -34,7 +34,9 @@
               <b-tab title="All" active>
                 <b-card-text>
                   <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
-                  <infinite-loading @infinite="lazyLoadCrypto"></infinite-loading>                
+                  <infinite-loading @infinite="lazyLoadCrypto">
+                    <span slot="no-more"/>
+                  </infinite-loading>
                 </b-card-text>
               </b-tab>
               <b-tab title="DeFi">
@@ -176,7 +178,7 @@ export default {
           console.log(error);
         })
       },
-      fetchCrypto(symbol) {        
+      fetchCrypto(symbol) {
         this.$axios.$get(`https://api.finage.co.uk/last/crypto/${symbol.toUpperCase()}USD?apikey=${finageApiKey}`)
         .then(response => {
           let indexFound = this.cryptocurrency.findIndex(crypto => crypto.symbol.toUpperCase() === response.symbol.slice(0,-3));
@@ -191,12 +193,12 @@ export default {
       fetchDefi(symbol) {
         this.$axios.$get(`https://api.finage.co.uk/last/crypto/${symbol}?apikey=${finageApiKey}`)
         .then(response => {
-          let indexFound = this.defi.findIndex(d => d.symbol == response.symbol );          
+          let indexFound = this.defi.findIndex(d => d.symbol == response.symbol );
           if (indexFound !== -1) {
             let i = this.defi[indexFound];
             i.indexFound = indexFound;
             i.price = Number(response.price).toFixed(2);
-            
+
             this.$root.$emit('updateDefi', i);
           }
         })
@@ -258,20 +260,20 @@ export default {
     created() {
       const self = this;
       this.loading = false; // fix news api bug
-      this.$root.$on('updateCrypto', (item) => {       
-        if (this.cryptocurrency.length && item.indexFound !== -1) {
+      this.$root.$on('updateCrypto', (item) => {
+        if (this.cryptocurrency.length) {
           this.$set(this.cryptocurrency[item.indexFound], 'price', item.price);
           this.$set(this.cryptocurrency[item.indexFound], 'difference', item.difference);
           this.$set(this.cryptocurrency[item.indexFound], 'change', item.change);
         }
       });
       this.$root.$on('updateDefi', (item) => {
-        
+
         this.$set(this.defi[item.indexFound], 'price', item.price);
         this.$set(this.defi[item.indexFound], 'difference', item.difference);
         this.$set(this.defi[item.indexFound], 'change', item.change);
       });
-            
+
       this.defi.forEach(item => {
         this.fetchDefi(item.symbol);
       });
