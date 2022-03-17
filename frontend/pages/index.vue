@@ -88,7 +88,7 @@
         <div class="col-12 col-lg-4 mb-5 news-section">
           <div class="row m-0 justify-content-between">
             <div class="col-lg-12 white-well">
-              <h2 class="mt-0">News</h2>
+              <h2 class="mt-0 mb-1">News</h2>
               <News :newsData="cryptoNews"/>
               <News :newsData="stockNews"/>
               <!-- <Ad feedAd/> -->

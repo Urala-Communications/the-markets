@@ -65,7 +65,7 @@ export default {
       const symbol = params.symbol;
       return { symbol }
     },
-    methods: {      
+    methods: {
       fetchPrice() {
         let i = this.indices.find( item => item.name.replace(/ /g, '-').toLowerCase() === this.symbol);
         this.$set(this.item, 'name', i.name);
@@ -98,7 +98,7 @@ export default {
         let last = new Date(Date.now() - 864e5 * 30).toLocaleDateString("fr-CA");
         this.$axios.$get(`https://api.finage.co.uk/agg/index/${i.symbol}/1day/${last}/${this.today}?limit=1825&apikey=${this.finageApiKey}&sort=desc`)
         .then(response => {
-          
+
           this.chartData = response.results.map(o => {
             const [ timestamp, openPrice, high, low, close, volume] = [(new Date(o.t)).getTime(), o.o, o.h, o.l, o.c, o.v];
             return [ timestamp, openPrice, high, low, close, volume].map(n =>
@@ -110,18 +110,18 @@ export default {
           this.symbol = i.symbol;
           this.live = i.symbol;
           let last = this.chartData[this.chartData.length - 1];
-          this.open = last[0];
-          this.high = last[1]
-          this.low = last[2];
-          this.close = last[3];
-          this.volume = last[4];
+          this.open = last[1];
+          this.high = last[2]
+          this.low = last[3];
+          this.close = last[4];
+          this.volume = last[5];
           this.loading = false;
         })
         .catch(error => {
           console.log(error);
         })
       },
-      updateInterval(symbol, interval, text){        
+      updateInterval(symbol, interval, text){
         if (symbol === this.live) {
           let range = interval;
           let last = this.yesterday;
@@ -167,12 +167,12 @@ export default {
               last = new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString("fr-CA");
             default:
               break;
-          }          
+          }
           this.$axios
           .$get(
             `https://api.finage.co.uk/agg/index/${symbol}/${range}/${last}/${this.today}?limit=3000&apikey=${this.finageApiKey}&sort=desc`
           )
-          .then((response) => {            
+          .then((response) => {
             this.chartData = response.results.map(o => {
               const [timestamp, openPrice, high, low, close, volume] = [(new Date(o.t)).getTime(), o.o, o.h, o.l, o.c, o.v];
               return [timestamp, openPrice, high, low, close, volume].map(n =>
