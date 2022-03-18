@@ -368,6 +368,11 @@ export default {
       }
 
       setTimeout(checkCryptoList, 250);
+      this.$root.$on("addCrypto", (cryptoLists) => {
+        if (this.cryptocurrency.length && this.cryptocurrency.length < 200) {
+          this.cryptocurrency = this.cryptocurrency.concat(cryptoLists);
+        }
+      })
 
       this.$root.$on('updateCrypto', (item) => {
         if (this.cryptocurrency.length) {

@@ -80,8 +80,8 @@ export default {
     }
   },
   methods: {
-    fetchCoinsByMarketCap() {
-      this.$axios.$get(`https://api.finage.co.uk/list/cryptocurrency?apikey=${finageApiKey}&limit=50`, {
+    async fetchCoinsByMarketCap() {
+      return this.$axios.$get(`https://api.finage.co.uk/list/cryptocurrency?apikey=${finageApiKey}&limit=50`, {
         headers: {
           'Content-Type': 'application/json',
           'Access-Control-Allow-Origin': '*'
@@ -92,8 +92,8 @@ export default {
       .then((response) => {
         // console.log(response.results)
         let topCoins = response.results
-        this.writeCryptoLists(topCoins)
         this.coins = topCoins;
+        return this.writeCryptoLists(topCoins)
         // this.writeToFirestore(response)
       })
       .catch((error) => {
@@ -676,9 +676,8 @@ export default {
     },
   },
   created() {
-
-    this.connect();
     this.fetchCoinsByMarketCap();
+    this.connect();
     this.fetchSingleStock("TSLA");
     this.fetchBonds("DGS10");
     this.fetchCommoditySymbol("XAUUSD:CUR");
@@ -692,6 +691,18 @@ export default {
     if (!this.getGDPR() === true) {
       this.showCookieNotice = true;
     }
+
+    this.$root.$on("addCrypto", (cryptoLists) => {
+      if (this.coins.length && this.coins.length < 200) {
+        this.coins = this.coins.concat(cryptoLists);
+        let coinLists = cryptoLists.map(crypto => crypto.symbol.toUpperCase()+"USD").join();
+        let coinList = localStorage.getItem('coinList');
+        localStorage.setItem('coinList', coinList+","+coinLists);
+        localStorage.setItem('crypto', JSON.stringify(this.coins));
+        this.cryptoWS.send(JSON.stringify({"action": "subscribe", "symbols": coinLists }))
+      }
+    })
+
   },
   beforeDestroy() {
     this.forexWS.close();

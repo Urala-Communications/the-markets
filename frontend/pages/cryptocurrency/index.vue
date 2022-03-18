@@ -34,6 +34,9 @@
               <b-tab title="All" active>
                 <b-card-text>
                   <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
+                  <infinite-loading @infinite="lazyLoadCrypto">
+                    <span slot="no-more"/>
+                  </infinite-loading>
                 </b-card-text>
               </b-tab>
               <b-tab title="DeFi">
@@ -121,12 +124,14 @@
 </template>
 
 <script>
+import InfiniteLoading from 'vue-infinite-loading';
 import { defi} from "./../../market.js";
 import IndexList from './../../components/IndexList.vue'
 const finageApiKey = process.env.finageApiKey;
 export default {
     components: {
-      IndexList
+      IndexList,
+      InfiniteLoading,
     },
     computed: {
       vertical() {
@@ -147,7 +152,8 @@ export default {
         chartData: null,
         chartOptions: null,
         newsData: [],
-        windowWidth: 0
+        windowWidth: 0,
+        page: 1,
       }
     },
     methods: {
@@ -172,7 +178,7 @@ export default {
           console.log(error);
         })
       },
-      fetchCrypto(symbol) {        
+      fetchCrypto(symbol) {
         this.$axios.$get(`https://api.finage.co.uk/last/crypto/${symbol.toUpperCase()}USD?apikey=${finageApiKey}`)
         .then(response => {
           let indexFound = this.cryptocurrency.findIndex(crypto => crypto.symbol.toUpperCase() === response.symbol.slice(0,-3));
@@ -187,12 +193,12 @@ export default {
       fetchDefi(symbol) {
         this.$axios.$get(`https://api.finage.co.uk/last/crypto/${symbol}?apikey=${finageApiKey}`)
         .then(response => {
-          let indexFound = this.defi.findIndex(d => d.symbol == response.symbol );          
+          let indexFound = this.defi.findIndex(d => d.symbol == response.symbol );
           if (indexFound !== -1) {
             let i = this.defi[indexFound];
             i.indexFound = indexFound;
             i.price = Number(response.price).toFixed(2);
-            
+
             this.$root.$emit('updateDefi', i);
           }
         })
@@ -200,32 +206,65 @@ export default {
           console.log(error);
         })
       },
-       
+      lazyLoadCrypto($state){
+        this.$axios.$get(`https://api.finage.co.uk/list/cryptocurrency?apikey=${finageApiKey}&limit=50&page=${this.page}`)
+        .then(response => {
+          if (response.results.length) {
+            this.page++;
+            this.cryptocurrency = this.cryptocurrency.concat(response.results);
+            // fetch crypto pricing on load
+            response.results.forEach(item => {
+              this.fetchCrypto(item.symbol);
+            });
+            if (this.page > 2)
+              this.$root.$emit('addCrypto', response.results);
+            $state.loaded();
+            if (this.page > 4) {
+              $state.complete();
+            }
+          } else {
+            $state.complete();
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        })
+      },
+      fetCoinsData() {
+        return this.$axios
+          .$get(`/api/coins`, {
+            json: true,
+            gzip: true,
+          })
+          .then((response) => {
+            this.coins = response;
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      },
+      checkBackground(){
+        const self = this;
+        document.querySelectorAll('.icon').forEach(function(icon) {
+          if (window.getComputedStyle(icon).backgroundImage == "none") {
+            const cid = icon.getAttribute("id");
+            if (self.coins[cid]) {              
+              icon.style.backgroundImage  = ('url("'+self.coins[cid][0].logo+'")');
+            }
+          }
+        });
+      },
       showGrid() {
         this.view = 'grid';
       },
       showList() {
         this.view = 'list';
       },
-
     },
     created() {
       const self = this;
-      function checkCryptoList() {
-        if (localStorage.getItem('crypto')) {          
-            let topCoins = localStorage.getItem('crypto');
-            self.cryptocurrency = JSON.parse(topCoins);
-            self.cryptocurrency.forEach(item => {
-              self.fetchCrypto(item.symbol);
-              self.fetchNews(item.symbol);
-            });          
-          } else {
-              setTimeout(checkCryptoList, 250);
-          }
-      }
-      setTimeout(checkCryptoList, 250);
       this.loading = false; // fix news api bug
-      this.$root.$on('updateCrypto', (item) => {       
+      this.$root.$on('updateCrypto', (item) => {
         if (this.cryptocurrency.length) {
           this.$set(this.cryptocurrency[item.indexFound], 'price', item.price);
           this.$set(this.cryptocurrency[item.indexFound], 'difference', item.difference);
@@ -233,18 +272,22 @@ export default {
         }
       });
       this.$root.$on('updateDefi', (item) => {
-        
+
         this.$set(this.defi[item.indexFound], 'price', item.price);
         this.$set(this.defi[item.indexFound], 'difference', item.difference);
         this.$set(this.defi[item.indexFound], 'change', item.change);
       });
-            
+
       this.defi.forEach(item => {
         this.fetchDefi(item.symbol);
       });
       window.onresize = () => {
         this.windowWidth = window.innerWidth
       }
+    },
+    mounted() {
+      window.addEventListener("scroll", this.checkBackground);
+      this.checkBackground();
     },
   }
 </script>

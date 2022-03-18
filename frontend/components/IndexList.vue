@@ -28,9 +28,7 @@
             :to="`/${type}/${index.name.replace(/\s+|[' '\/]/g, '-').toLowerCase()}`"
           >
             <div class="icon-wrapper" :class="index.change > 8 && type === 'cryptocurrency' ? 'fire' : ''">
-              <i class="icon" :class="index.icon ? index.icon : index.symbol.toLowerCase()" />
-              <!-- <i v-else class="icon" :style="{backgroundImage:`url(${index.thumbnail})`}" /> -->
-              <!-- :style="{backgroundImage:`url(./_nuxt/assets/${index.icon}.png)`}" would be nice if all imgs were same type png/svg-->
+              <i class="icon" :class="index.icon ? index.icon : 's-'+index.symbol.toLowerCase()" :id="index.symbol.toUpperCase()" />
             </div>
             {{ index.name }}
             <span v-if="index.marketOpen" class="indicator"/>
@@ -66,7 +64,7 @@
       :to="`/${type}/${index.name.replace(/\s+|[' '\/]/g, '-').toLowerCase()}`"
     >
       <div class="d-flex icon-wrapper" :class="index.change > 8 && type === 'cryptocurrency' ? 'fire' : ''">
-        <div class="icon" :class="index.icon ? index.icon : index.symbol.toLowerCase()"/>
+        <div class="icon" :class="index.icon ? index.icon : 's-' + index.symbol.toLowerCase()" :id="index.symbol.toUpperCase()"   />
         <h4>{{ index.name }}<span v-if="index.marketOpen" class="indicator"/></h4>
       </div>
       <Price :index="index" :price="index.price" />
