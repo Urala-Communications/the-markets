@@ -186,6 +186,30 @@ export default {
           console.log("finage err: ",error);
         })
       },
+      fetchAllResursive(symbol, interval, text, lastdate){
+        let last =  new Date(Date.parse(lastdate) - 864e5 * 365 * 5 ).toLocaleDateString("fr-CA");
+        this.$axios
+          .$get(
+            `https://api.finage.co.uk/agg/forex/${symbol}/${text}/${last}/${lastdate}?limit=3000&apikey=${this.finageApiKey}&sort=desc`
+          )
+          .then((response) => {
+            if (response.results || response.results.length) {
+              this.chartData = response.results.map(o => {
+                const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
+                return [timestamp, openPrice, high, low, close, volume].map(n =>
+                  Number(n)
+                );
+              }).sort((a, b) => {
+                return a[0] - b[0];
+              }).concat(this.chartData);
+              this.$root.$emit("updatedInterval", {symbol, interval});
+              this.fetchAllResursive(symbol, interval, text, last);
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      },
       updateInterval(symbol, interval, text){
         if (symbol === this.live) {
           let last = this.yesterday;
@@ -232,6 +256,9 @@ export default {
                 return a[0] - b[0];
               });
               this.$root.$emit("updatedInterval", {symbol, interval});
+              if (interval === "MAX") {
+                this.fetchAllResursive(symbol, interval, text, last);
+              }
             }
           })
           .catch((error) => {

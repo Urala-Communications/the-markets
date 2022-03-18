@@ -142,8 +142,33 @@ export default {
           console.log(error);
         })
       },
+      fetchAllResursive(symbol, interval, text, lastdate){
+        let last =  new Date(Date.parse(lastdate) - 864e5 * 365 * 5 ).toLocaleDateString("fr-CA");
+        this.$axios
+          .$get(
+            `https://api.finage.co.uk/agg/stock/${symbol}/${text}/${last}/${lastdate}?limit=3000&apikey=${this.finageApiKey}&sort=desc`
+          )
+          .then((response) => {
+            if (response.results || response.results.length) {
+              this.chartData = response.results.map(o => {
+                const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
+                return [timestamp, openPrice, high, low, close, volume].map(n =>
+                  Number(n)
+                );
+              }).sort((a, b) => {
+                return a[0] - b[0];
+              }).concat(this.chartData);
+              this.$root.$emit("updatedInterval", {symbol, interval});              
+              this.fetchAllResursive(symbol, interval, text, last);
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      },
       updateInterval(symbol, interval, text){
         if (symbol === this.live) {
+          const now = Date.now();
           let last = this.yesterday;
           switch (interval) {
             case '1m':
@@ -152,21 +177,21 @@ export default {
               last = this.yesterday;
               break;
             case '30m':
-              last = new Date(Date.now() - 864e5 * 7).toLocaleDateString("fr-CA");
+              last = new Date(now - 864e5 * 7).toLocaleDateString("fr-CA");
               break;
             case '1h':
             case '4h':
-              last = new Date(Date.now() - 864e5 * 30).toLocaleDateString("fr-CA");
+              last = new Date(now - 864e5 * 30).toLocaleDateString("fr-CA");
               break;
             case '1d':
             case '1w':
-              last = new Date(Date.now() - 864e5 * 365).toLocaleDateString("fr-CA");
+              last = new Date(now - 864e5 * 365).toLocaleDateString("fr-CA");
               break;
             case '1M':
-              last = new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString("fr-CA");
+              last = new Date(now - 864e5 * 365 * 5).toLocaleDateString("fr-CA");
               break;
             case 'MAX':
-              last = new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString("fr-CA");
+              last = new Date(now - 864e5 * 365 * 5).toLocaleDateString("fr-CA");
               text = '1/week';
               break;
             default:
@@ -186,6 +211,9 @@ export default {
               return a[0] - b[0];
             });
             this.$root.$emit("updatedInterval", {symbol, interval});
+            if (interval === "MAX") {
+              this.fetchAllResursive(symbol, interval, text, last);
+            }
           })
           .catch((error) => {
             console.log(error);

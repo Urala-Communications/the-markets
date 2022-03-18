@@ -121,6 +121,30 @@ export default {
           console.log(error);
         })
       },
+      fetchAllResursive(symbol, interval, range, lastdate){
+        let last =  new Date(Date.parse(lastdate) - 864e5 * 365 * 5 ).toLocaleDateString("fr-CA");
+        this.$axios
+          .$get(
+            `https://api.finage.co.uk/agg/index/${symbol}/${range}/${last}/${lastdate}?limit=3000&apikey=${this.finageApiKey}&sort=asc`
+          )
+          .then((response) => {
+            if (!response.results || response.results.length) {
+              this.chartData = response.results.map(o => {
+                const [timestamp, openPrice, high, low, close, volume] = [(new Date(o.t)).getTime(), o.o, o.h, o.l, o.c, o.v];
+                return [timestamp, openPrice, high, low, close, volume].map(n =>
+                  Number(n)
+                );
+              }).sort((a, b) => {
+                return a[0] - b[0];
+              }).concat(this.chartData);
+              this.$root.$emit("updatedInterval", {symbol, interval});
+              this.fetchAllResursive(symbol, interval, range, last);
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      },
       updateInterval(symbol, interval, text){
         if (symbol === this.live) {
           let range = interval;
@@ -164,13 +188,13 @@ export default {
               break;
             case 'MAX':
               range = '1week'
-              last = new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString("fr-CA");
+              last = new Date(Date.now() - 864e5 * 365 * 15).toLocaleDateString("fr-CA");
             default:
               break;
           }
           this.$axios
           .$get(
-            `https://api.finage.co.uk/agg/index/${symbol}/${range}/${last}/${this.today}?limit=3000&apikey=${this.finageApiKey}&sort=desc`
+            `https://api.finage.co.uk/agg/index/${symbol}/${range}/${last}/${this.today}?limit=3000&apikey=${this.finageApiKey}&sort=asc`
           )
           .then((response) => {
             this.chartData = response.results.map(o => {
@@ -182,6 +206,9 @@ export default {
               return a[0] - b[0];
             });
             this.$root.$emit("updatedInterval", {symbol, interval});
+            if (interval === "MAX") {
+              this.fetchAllResursive(symbol, interval, range, last);
+            }
           })
           .catch((error) => {
             console.log(error);

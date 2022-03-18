@@ -187,6 +187,30 @@ export default {
     unsubscribeTrade(){
       this.cryptoWS.send(`{"method":"UNSUBSCRIBE","params":["${this.live.toLowerCase()}@aggTrade"],"id":${this.subindex}}`);
     },
+    fetchAllResursive(symbol, interval,  lastdate){
+        let last =  new Date(Date.parse(lastdate) - 864e5 * 365 * 5 ).toLocaleDateString("fr-CA");
+        this.$axios
+          .$get(
+            `https://api.finage.co.uk/agg/crypto/${symbol.slice(0,-1)}/1/week/${last}/${lastdate}?apikey=${this.finageApiKey}`
+          )
+          .then((response) => {
+            if (response.results.length) {
+              this.chartData = response.results.map(o => {
+                const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
+                return [timestamp, openPrice, high, low, close, volume].map(n =>
+                  Number(n)
+                );
+              }).concat(this.chartData);
+              this.$root.$emit("updatedInterval", {symbol, interval});
+            }
+            if (response.results || response.results.length) {
+              this.fetchAllResursive(symbol, interval,  last);
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      },
     updateInterval(symbol, interval){
       if (symbol === this.live) {
         if (interval !== "MAX") {
@@ -214,15 +238,15 @@ export default {
             `https://api.finage.co.uk/agg/crypto/${symbol.slice(0,-1)}/1/week/${this.fiveYearsAgo}/${this.today}?apikey=${this.finageApiKey}`
           )
           .then((response) => {
-            if (response.results.length) {
+            if (response.results || response.results.length) {
               this.chartData = response.results.map(o => {
                 const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
                 return [timestamp, openPrice, high, low, close, volume].map(n =>
                   Number(n)
                 );
               });
-    
               this.$root.$emit("updatedInterval", {symbol, interval});
+              this.fetchAllResursive(symbol, interval,  this.fiveYearsAgo);
             }
           })
           .catch((error) => {
