@@ -64,7 +64,7 @@
       :to="`/${type}/${index.name.replace(/\s+|[' '\/]/g, '-').toLowerCase()}`"
     >
       <div class="d-flex icon-wrapper" :class="index.change > 8 && type === 'cryptocurrency' ? 'fire' : ''">
-        <div class="icon" :class="index.icon ? index.icon : index.symbol.toLowerCase()" :id="index.symbol.toUpperCase()"   />
+        <div class="icon" :class="index.icon ? index.icon : 's-' + index.symbol.toLowerCase()" :id="index.symbol.toUpperCase()"   />
         <h4>{{ index.name }}<span v-if="index.marketOpen" class="indicator"/></h4>
       </div>
       <Price :index="index" :price="index.price" />

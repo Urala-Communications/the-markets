@@ -212,6 +212,10 @@ export default {
           if (response.results.length) {
             this.page++;
             this.cryptocurrency = this.cryptocurrency.concat(response.results);
+            // fetch crypto pricing on load
+            response.results.forEach(item => {
+              this.fetchCrypto(item.symbol);
+            });
             if (this.page > 2)
               this.$root.$emit('addCrypto', response.results);
             $state.loaded();
