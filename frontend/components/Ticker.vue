@@ -194,7 +194,7 @@ export default {
   &.s-miota {background-image: url('./../assets/iota.svg');}
   &.s-ada {background-image: url('./../assets/cardano.svg');}
   &.s-dot {background-image: url('./../assets/polkadot.svg');}
-  &.s-oneinch {background-image: url('./../assets/oneinch.png')}
+  &.s-1inch {background-image: url('./../assets/oneinch.png')}
   &.s-aave  {background-image: url('./../assets/aave.png')}
   &.s-algo  {background-image: url('./../assets/algo.png')}
   &.s-atom  {background-image: url('./../assets/atom.png')}
