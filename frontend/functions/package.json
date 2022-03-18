@@ -1,24 +1,21 @@
 {
-    "name": "coinsapi",
-    "version": "1.0.0",
-    "description": "cloud function get coins data from cmc",
-    "main": "index.js",
-    "scripts": {      
-    },
-    "keywords": [
-      "cloud",
-      "function",
-      "nodejs"
-    ],
-    "author": "9kmmr",
-    "license": "ISC",
-    "dependencies": {
-      "axios": "^0.26.1",
-      "dotenv": "^16.0.0",
-      "firebase-admin": "^10.0.2",
-      "firebase-functions": "^3.18.1"
-    },
-    "devDependencies": { 
-    }
-  }
-  
+  "name": "coinsapi",
+  "version": "1.0.0",
+  "description": "cloud function get coins data from cmc",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [
+    "cloud",
+    "function",
+    "nodejs"
+  ],
+  "author": "9kmmr",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.26.1",
+    "dotenv": "^16.0.0",
+    "firebase-admin": "^10.0.2",
+    "firebase-functions": "^3.18.1"
+  },
+  "devDependencies": {}
+}

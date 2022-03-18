@@ -60,7 +60,7 @@ async function getSingleCoin(symbol){
 async function modifyCSS(symbol){
     const cssString = (`
         .icon  {
-            &.${symbol} {
+            &.s-${symbol} {
                 background-image: url('~@/assets/${symbol}.png');
             }
         }`);
