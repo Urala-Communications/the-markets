@@ -70,14 +70,13 @@ export default {
 
         this.$root.$on("updatedInterval", ({symbol, interval}) => {
             if (this.data.length > 0 && this.$refs.tradingChart && symbol == this.symbol) {
-                this.$refs.tradingChart.resetChart();
-
+                
                 if (interval === "MAX") {
-                    // need remove this & fix somehow
-                    //this.defaultConfig = { DEFAULT_LEN: 500 }
+                    this.defaultConfig = { DEFAULT_LEN: 500 }
                 } else {
                     this.defaultConfig = { DEFAULT_LEN: 40 }
                 }
+                this.$refs.tradingChart.resetChart();
             }
         });
 
