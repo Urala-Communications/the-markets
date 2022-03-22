@@ -182,6 +182,7 @@ export default {
             }
           })
           .catch((error) => {
+            this.$root.$emit("updatedInterval", {symbol, interval});
             console.log(error);
           });
         }
