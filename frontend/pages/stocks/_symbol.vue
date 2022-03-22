@@ -146,7 +146,7 @@ export default {
       fetchAllResursive(symbol, interval, text, lastdate){
         if (this.stopRun) {
 
-          let last =  new Date(Date.parse(lastdate) - 864e5 * 365 * 5 ).toLocaleDateString("fr-CA");
+          let last =  new Date(Date.parse(lastdate) - 864e5 * 365 * 15 ).toLocaleDateString("fr-CA");
           this.$axios
           .$get(
             `https://api.finage.co.uk/agg/stock/${symbol}/${text}/${last}/${lastdate}?limit=3000&apikey=${this.finageApiKey}&sort=desc`
@@ -197,7 +197,7 @@ export default {
               last = new Date(now - 864e5 * 365 * 5).toLocaleDateString("fr-CA");
               break;
             case 'MAX':
-              last = new Date(now - 864e5 * 365 * 5).toLocaleDateString("fr-CA");
+              last = new Date(now - 864e5 * 365 * 15).toLocaleDateString("fr-CA");
               text = '1/week';
               break;
             default:

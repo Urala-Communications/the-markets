@@ -124,7 +124,7 @@ export default {
       },
       fetchAllResursive(symbol, interval, range, lastdate){
         if (this.stopRun) {
-          let last =  new Date(Date.parse(lastdate) - 864e5 * 365 * 5 ).toLocaleDateString("fr-CA");
+          let last =  new Date(Date.parse(lastdate) - 864e5 * 365 * 15 ).toLocaleDateString("fr-CA");
           this.$axios
           .$get(
             `https://api.finage.co.uk/agg/index/${symbol}/${range}/${last}/${lastdate}?limit=3000&apikey=${this.finageApiKey}&sort=asc`
