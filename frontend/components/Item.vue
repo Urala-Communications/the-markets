@@ -13,7 +13,7 @@
             <div class="title row mb-3">
               <div class="col-12 d-flex justify-content-between title-wrapper">
                 <h1 class="d-inline-flex w-100 text-capitalize mb-0">
-                  <div class="icon" :class="item.icon"/>
+                  <div class="icon" :class="type === 'cryptocurrency' ? 's-'+item.icon : item.icon"/>
                   {{ item.name }}
                 </h1>
                 <div v-if="typeof marketStatus !== 'undefined' && marketStatus.length > 0" class="d-inline-flex justify-content-end align-items-center w-100 mt-2">
@@ -25,7 +25,7 @@
           <div class="graph white-well p-0" :class="item.change > 0 ? 'up' : 'down'">
             <div class="d-flex justify-content-between row">
               <div class="d-inline-flex flex-column">
-                <h2 class="price">${{ item.price }}</h2>
+                <h2 class="price"><span v-if="type !== 'indices'">$</span>{{ item.price }}</h2>
                 <p v-if="item.difference" class="diff d-flex flex-column" :class="item.change > 0 ? 'up' : 'down'">
                   <span class="pr-3"><strong class="main-font pr-2">24h Difference:</strong>{{ item.difference > 0 ? '+' : '' }}{{ item.difference }}</span>
                   <span><strong class="main-font pr-2">24h Change:</strong>{{ item.change > 0 ? '+' : '' }}{{ item.change }}%</span>
