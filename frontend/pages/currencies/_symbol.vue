@@ -53,7 +53,8 @@ export default {
         chartData: [],
         chartOptions: null,
         yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
-        today: new Date(Date.now()).toLocaleDateString("fr-CA"),        
+        today: new Date(Date.now()).toLocaleDateString("fr-CA"),
+        stopRun: 0,      
       }
     },
     head() {
@@ -160,6 +161,7 @@ export default {
         })
       },
       fetchAllResursive(symbol, interval, text, lastdate){
+        if (this.stopRun) {
         let last =  new Date(Date.parse(lastdate) - 864e5 * 365 * 5 ).toLocaleDateString("fr-CA");
         this.$axios
           .$get(
@@ -182,6 +184,7 @@ export default {
           .catch((error) => {
             console.log(error);
           });
+        }
       },
       updateInterval(symbol, interval, text){
         if (symbol === this.live) {
@@ -228,6 +231,7 @@ export default {
             });
             this.$root.$emit("updatedInterval", {symbol, interval});
             if (interval === "MAX") {
+              this.stopRun = 1;
               this.fetchAllResursive(symbol, interval, text, last);
             }
           })

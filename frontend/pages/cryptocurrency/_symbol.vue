@@ -64,6 +64,7 @@ export default {
       yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
       today: new Date(Date.now()).toLocaleDateString("fr-CA"),
       fiveYearsAgo: new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString("fr-CA"),
+      stopRun: 0,
     };
   },
   head() {
@@ -188,6 +189,7 @@ export default {
       this.cryptoWS.send(`{"method":"UNSUBSCRIBE","params":["${this.live.toLowerCase()}@aggTrade"],"id":${this.subindex}}`);
     },
     fetchAllResursive(symbol, interval,  lastdate){
+      if (this.stopRun) {
         let last =  new Date(Date.parse(lastdate) - 864e5 * 365 * 5 ).toLocaleDateString("fr-CA");
         this.$axios
           .$get(
@@ -210,8 +212,10 @@ export default {
           .catch((error) => {
             console.log(error);
           });
+      }
       },
     updateInterval(symbol, interval){
+      this.stopRun = 0;
       if (symbol === this.live) {
         if (interval !== "MAX") {
           this.$axios
@@ -233,6 +237,7 @@ export default {
             console.log(error);
           });
         } else {
+          this.stopRun = 1;
           this.$axios
           .$get(
             `https://api.finage.co.uk/agg/crypto/${symbol.slice(0,-1)}/1/week/${this.fiveYearsAgo}/${this.today}?apikey=${this.finageApiKey}`

@@ -72,7 +72,7 @@ export default {
             if (this.data.length > 0 && this.$refs.tradingChart && symbol == this.symbol) {
                 
                 if (interval === "MAX") {
-                    this.defaultConfig = { DEFAULT_LEN: 500 }
+                    this.defaultConfig = { DEFAULT_LEN: this.data.length }
                 } else {
                     this.defaultConfig = { DEFAULT_LEN: 40 }
                 }

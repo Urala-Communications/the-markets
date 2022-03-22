@@ -55,6 +55,7 @@ export default {
         yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
         today: new Date(Date.now()).toLocaleDateString("fr-CA"),
         lastTradeDate: new Date(Date.now()).toLocaleDateString("fr-CA"),
+        stopRun: 0,
       }
     },
     head() {
@@ -143,8 +144,10 @@ export default {
         })
       },
       fetchAllResursive(symbol, interval, text, lastdate){
-        let last =  new Date(Date.parse(lastdate) - 864e5 * 365 * 5 ).toLocaleDateString("fr-CA");
-        this.$axios
+        if (this.stopRun) {
+
+          let last =  new Date(Date.parse(lastdate) - 864e5 * 365 * 5 ).toLocaleDateString("fr-CA");
+          this.$axios
           .$get(
             `https://api.finage.co.uk/agg/stock/${symbol}/${text}/${last}/${lastdate}?limit=3000&apikey=${this.finageApiKey}&sort=desc`
           )
@@ -165,8 +168,10 @@ export default {
           .catch((error) => {
             console.log(error);
           });
+        }
       },
       updateInterval(symbol, interval, text){
+        this.stopRun = 0;
         if (symbol === this.live) {
           const now = Date.now();
           let last = this.yesterday;
@@ -212,6 +217,7 @@ export default {
             });
             this.$root.$emit("updatedInterval", {symbol, interval});
             if (interval === "MAX") {
+              this.stopRun = 1;
               this.fetchAllResursive(symbol, interval, text, last);
             }
           })
@@ -235,10 +241,10 @@ export default {
         if (symbol === this.live) {
           this.$set(this.item, "price", price);
         }
-      })
+      });
       this.$root.$on("changeInterval", ({symbol, interval, text}) => {
         this.updateInterval(symbol, interval, text);
-      })
+      });
       this.fetchDetails();
       this.fetchPrice().then(res => {
         this.fetchAggregates();
@@ -248,7 +254,7 @@ export default {
       this.checkMarketStatus();
       setInterval(() => {
         this.fetchNews()
-      }, 300000)
+      }, 300000);
       setInterval(() => {
         this.checkMarketStatus()
       }, 300000);
