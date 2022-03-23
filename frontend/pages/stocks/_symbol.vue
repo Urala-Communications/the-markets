@@ -55,6 +55,7 @@ export default {
         yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
         today: new Date(Date.now()).toLocaleDateString("fr-CA"),
         lastTradeDate: new Date(Date.now()).toLocaleDateString("fr-CA"),
+        stopRun: 0,
       }
     },
     head() {
@@ -142,8 +143,39 @@ export default {
           console.log(error);
         })
       },
+      fetchAllResursive(symbol, interval, text, lastdate){
+        if (this.stopRun) {
+
+          let last =  new Date(Date.parse(lastdate) - 864e5 * 365 * 15 ).toLocaleDateString("fr-CA");
+          this.$axios
+          .$get(
+            `https://api.finage.co.uk/agg/stock/${symbol}/${text}/${last}/${lastdate}?limit=3000&apikey=${this.finageApiKey}&sort=desc`
+          )
+          .then((response) => {
+            if (response.results || response.results.length) {
+              this.chartData = response.results.map(o => {
+                const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
+                return [timestamp, openPrice, high, low, close, volume].map(n =>
+                  Number(n)
+                );
+              }).sort((a, b) => {
+                return a[0] - b[0];
+              }).concat(this.chartData);
+              this.fetchAllResursive(symbol, interval, text, last);
+            } else {
+              this.$root.$emit("updatedInterval", {symbol, interval});
+            }
+          })
+          .catch((error) => {
+            this.$root.$emit("updatedInterval", {symbol, interval});
+            console.log(error);
+          });
+        }
+      },
       updateInterval(symbol, interval, text){
+        this.stopRun = 0;
         if (symbol === this.live) {
+          const now = Date.now();
           let last = this.yesterday;
           switch (interval) {
             case '1m':
@@ -152,21 +184,21 @@ export default {
               last = this.yesterday;
               break;
             case '30m':
-              last = new Date(Date.now() - 864e5 * 7).toLocaleDateString("fr-CA");
+              last = new Date(now - 864e5 * 7).toLocaleDateString("fr-CA");
               break;
             case '1h':
             case '4h':
-              last = new Date(Date.now() - 864e5 * 30).toLocaleDateString("fr-CA");
+              last = new Date(now - 864e5 * 30).toLocaleDateString("fr-CA");
               break;
             case '1d':
             case '1w':
-              last = new Date(Date.now() - 864e5 * 365).toLocaleDateString("fr-CA");
+              last = new Date(now - 864e5 * 365).toLocaleDateString("fr-CA");
               break;
             case '1M':
-              last = new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString("fr-CA");
+              last = new Date(now - 864e5 * 365 * 5).toLocaleDateString("fr-CA");
               break;
             case 'MAX':
-              last = new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString("fr-CA");
+              last = new Date(now - 864e5 * 365 * 15).toLocaleDateString("fr-CA");
               text = '1/week';
               break;
             default:
@@ -186,6 +218,10 @@ export default {
               return a[0] - b[0];
             });
             this.$root.$emit("updatedInterval", {symbol, interval});
+            if (interval === "MAX") {
+              this.stopRun = 1;
+              this.fetchAllResursive(symbol, interval, text, last);
+            }
           })
           .catch((error) => {
             console.log(error);
@@ -207,10 +243,10 @@ export default {
         if (symbol === this.live) {
           this.$set(this.item, "price", price);
         }
-      })
+      });
       this.$root.$on("changeInterval", ({symbol, interval, text}) => {
         this.updateInterval(symbol, interval, text);
-      })
+      });
       this.fetchDetails();
       this.fetchPrice().then(res => {
         this.fetchAggregates();
@@ -220,7 +256,7 @@ export default {
       this.checkMarketStatus();
       setInterval(() => {
         this.fetchNews()
-      }, 300000)
+      }, 300000);
       setInterval(() => {
         this.checkMarketStatus()
       }, 300000);
