@@ -177,8 +177,9 @@ export default {
               }).sort((a, b) => {
                 return a[0] - b[0];
               }).concat(this.chartData);
-              this.$root.$emit("updatedInterval", {symbol, interval});
               this.fetchAllResursive(symbol, interval, text, last);
+            } else {
+              this.$root.$emit("updatedInterval", {symbol, interval});
             }
           })
           .catch((error) => {

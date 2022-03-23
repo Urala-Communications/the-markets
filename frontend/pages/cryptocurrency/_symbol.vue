@@ -196,24 +196,24 @@ export default {
             `https://api.finage.co.uk/agg/crypto/${symbol.slice(0,-1)}/1/week/${last}/${lastdate}?apikey=${this.finageApiKey}`
           )
           .then((response) => {
-            if (response.results.length) {
+            if (response.results) {
               this.chartData = response.results.map(o => {
                 const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
                 return [timestamp, openPrice, high, low, close, volume].map(n =>
                   Number(n)
                 );
               }).concat(this.chartData);
-              this.$root.$emit("updatedInterval", {symbol, interval});
-            }
-            if (response.results || response.results.length) {
+
               this.fetchAllResursive(symbol, interval,  last);
+            } else {
+              this.$root.$emit("updatedInterval", {symbol, interval});
             }
           })
           .catch((error) => {
             console.log(error);
           });
       }
-      },
+    },
     updateInterval(symbol, interval){
       this.stopRun = 0;
       if (symbol === this.live) {
@@ -243,7 +243,7 @@ export default {
             `https://api.finage.co.uk/agg/crypto/${symbol.slice(0,-1)}/1/week/${this.fiveYearsAgo}/${this.today}?apikey=${this.finageApiKey}`
           )
           .then((response) => {
-            if (response.results || response.results.length) {
+            if (response.results) {
               this.chartData = response.results.map(o => {
                 const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
                 return [timestamp, openPrice, high, low, close, volume].map(n =>
