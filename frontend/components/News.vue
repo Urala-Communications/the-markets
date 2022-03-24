@@ -131,12 +131,12 @@ export default {
       return require(`~/assets/news/${symbol.thumb}`)
     },
     formatDate(date){
-      if(date.includes('ago')){
-        return date
-      } else {
+      // if(date.includes('ago')){
+      //   return date
+      // } else {
         let d = new Date(date)
         return d.toLocaleString('en-GB',{month:'long', year:'numeric', day:'numeric'});
-      }
+      // }
     }
   }
   // mounted(){}

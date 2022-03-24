@@ -112,12 +112,12 @@
             </b-tabs>
           </div>
         </div>
-        <div class="col-12">
+        <!-- <div class="col-12">
           <div class="col-lg-12 mt-4 white-well">
             <News :newsData="newsData"/>
             <Ad feedAd/>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -248,7 +248,7 @@ export default {
         document.querySelectorAll('.icon').forEach(function(icon) {
           if (window.getComputedStyle(icon).backgroundImage == "none") {
             const cid = icon.getAttribute("id");
-            if (self.coins[cid]) {              
+            if (self.coins[cid]) {
               icon.style.backgroundImage  = ('url("'+self.coins[cid][0].logo+'")');
             }
           }
@@ -273,12 +273,13 @@ export default {
         }
       });
       this.$root.$on('updateDefi', (item) => {
-
         this.$set(this.defi[item.indexFound], 'price', item.price);
         this.$set(this.defi[item.indexFound], 'difference', item.difference);
         this.$set(this.defi[item.indexFound], 'change', item.change);
       });
-
+      // this.cryptocurrency.forEach(item => {
+      //   this.fetchNews(item.symbol);
+      // });
       this.defi.forEach(item => {
         this.fetchDefi(item.symbol);
       });

@@ -705,17 +705,27 @@
             }
         }
         .icon  {
+            &.s-srm {
+                background-image: url('~@/assets/srm.png');
+            }
+        }
+        .icon  {
+            &.s-pla {
+                background-image: url('~@/assets/pla.png');
+            }
+        }
+        .icon  {
             &.s-twt {
                 background-image: url('~@/assets/twt.png');
             }
         }
         .icon  {
-            &.s-ogn {
-                background-image: url('~@/assets/ogn.png');
+            &.s-floki {
+                background-image: url('~@/assets/floki.png');
             }
         }
         .icon  {
-            &.s-srm {
-                background-image: url('~@/assets/srm.png');
+            &.s-ogn {
+                background-image: url('~@/assets/ogn.png');
             }
         }
