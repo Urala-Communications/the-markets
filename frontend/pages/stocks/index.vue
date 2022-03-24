@@ -135,23 +135,9 @@ export default {
         this.$set(this.stocks[i], 'difference', item.difference);
         this.$set(this.stocks[i], 'change', item.change);
       });
-      // this.$root.$on('updateRising', (item) => {
-      //   let i = this.rising.findIndex(index => index.name === item.name);
-      //   if(item.name !== 'Dogecoin') {
-      //     this.$set(this.rising[i], 'price', item.price);
-      //     this.$set(this.rising[i], 'difference', item.difference);
-      //     this.$set(this.rising[i], 'change', item.change);
-      //   }
-      // });
       this.stocks.forEach(item => {
         this.fetchNews(item.symbol);
       });
-      setInterval(() => {
-        this.stocks.forEach(item => {
-          this.fetchNews(item.symbol);
-        });
-        // every 5 minutes
-      }, 300000)
     },
   }
 </script>

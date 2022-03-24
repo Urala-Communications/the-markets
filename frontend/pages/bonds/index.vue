@@ -28,12 +28,12 @@
             <IndexList :data="bonds" indexPage type="bonds" />
           </div>
         </div>
-        <div class="col-12 col-lg-7 offset-lg-5">
+        <!-- <div class="col-12 col-lg-7 offset-lg-5">
           <div class="col-lg-12 mt-4 white-well">
             <News :newsData="newsData"/>
             <Ad feedAd/>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -112,15 +112,9 @@ export default {
       });
       this.bonds.forEach((item, index) => {
         this.fetchBonds(index, item.symbol);
-        this.fetchNews(item.symbol);
+        // this.fetchNews(item.symbol);
       });
       this.loading = false;
-      setInterval(() => {
-        this.bonds.forEach(item => {
-          this.fetchNews(item.symbol);
-        });
-        // every 5 minutes
-      }, 300000)
     },
   }
 </script>

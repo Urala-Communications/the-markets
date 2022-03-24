@@ -73,7 +73,7 @@ export default {
             this.low = response.results[0].l;
             this.close = response.results[0].c;
             this.volume = response.results[0].v;
-            console.log("Details")
+            // console.log("Details")
         })
         .catch(error => {
           console.log(error);
@@ -90,8 +90,8 @@ export default {
         this.$set(this.item, 'name', i.name);
         this.$axios.$get(`https://api.finage.co.uk/bonds/us/rate/${i.symbol}?apikey=${this.finageApiKey}`)
         .then(response => {
-          console.log("Price")
-          console.log(response)
+          // console.log("Price")
+          // console.log(response)
           this.item.price = response.value.toFixed(2);
           this.$set(this.item, 'icon', i.icon);
           this.loading = false;
@@ -143,9 +143,9 @@ export default {
                   );
                 }).sort((a, b) => {
                   return a[0] - b[0];
-                });                
-                this.symbol = i.symbol;   
-                this.live = i.symbol;           
+                });
+                this.symbol = i.symbol;
+                this.live = i.symbol;
                 let last = this.chartData[this.chartData.length - 1];
                 this.open = last[1];
                 this.high = last[2]
@@ -167,7 +167,7 @@ export default {
           })
       },
       updateInterval(symbol, interval, text){
-        
+
         if (symbol === this.live) {
           let last = this.yesterday;
           switch (interval) {
@@ -197,13 +197,13 @@ export default {
             default:
               break;
           }
-          
+
           this.$axios
           .$get(
             `https://api.finage.co.uk/agg/index/${i.symbol}/${text}/${last}/${this.yesterday}?limit=3000&apikey=${this.finageApiKey}&sort=desc`
           )
           .then((response) => {
-            
+
             this.chartData = response.results.map(o => {
               const [timestamp, openPrice, high, low, close, volume] = [(new Date(o.t)).getTime(), o.o, o.h, o.l, o.c, o.v];
               return [timestamp, openPrice, high, low, close, volume].map(n =>
@@ -263,10 +263,7 @@ export default {
       setInterval(() => {
         this.checkMarketStatus()
       }, 300000);
-      this.fetchNews();
-      setInterval(() => {
-        this.fetchNews()
-      }, 300000)
+      // this.fetchNews();
     }
   }
 

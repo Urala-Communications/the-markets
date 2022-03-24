@@ -89,8 +89,8 @@
           <div class="row m-0 justify-content-between">
             <div class="col-lg-12 white-well">
               <h2 class="mt-0 mb-1">News</h2>
-              <News :newsData="cryptoNews"/>
-              <News :newsData="stockNews"/>
+              <News :newsData="orderedNews"/>
+              <!-- <News :newsData="stockNews"/> -->
               <!-- <Ad feedAd/> -->
               <!-- <Ad feedAd/> -->
             </div>
@@ -134,24 +134,33 @@ export default {
         chartOptions: null,
         stockNews: [],
         cryptoNews: [],
-        risingNews: [],
+        news: [],
         yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
         today: new Date(Date.now()).toLocaleDateString("fr-CA"),
       }
     },
+    computed: {
+      orderedNews: function () {
+        let dateOrderedNews = this.news.sort((a,b) => {
+          return new Date(b.date) - new Date(a.date);
+        });
+        return dateOrderedNews;
+      }
+    },
     methods: {
-      fetchNews(symbol, type){
+      fetchNews(symbol){
         this.$axios.$get(`https://api.finage.co.uk/news/market/${symbol}?apikey=${this.finageApiKey}`)
         .then(response => {
           // console.log(response)
           if(typeof response.news[0] !== 'undefined'){
-            let newsfeed = type === 'rising' ? this.risingNews : this.stockNews;
+            let newsfeed = this.stockNews;
             let index = newsfeed.findIndex(x => x.title === response.news[0].title);
             let newsItem = response.news[0]
             if(index === -1){
               newsItem.symbol = symbol
               newsItem.type = 'stocks'
               newsfeed.push(newsItem)
+              this.news.push(newsItem)
             }
             // if(newsfeed.length > 8){
             //   newsfeed.pop()
@@ -162,17 +171,19 @@ export default {
           console.log(error);
         })
       },
-      fetchCryptoNews(symbol, type){
+      fetchCryptoNews(symbol){
         this.$axios.$get(`https://api.finage.co.uk/news/cryptocurrency/${symbol}?apikey=${this.finageApiKey}`)
         .then(response => {
           if(typeof response.news[0] !== 'undefined'){
-            let newsfeed = type === 'rising' ? this.risingNews : this.cryptoNews;
+            let newsfeed = this.cryptoNews;
             let index = newsfeed.findIndex(x => x.title === response.news[0].title);
-            let newsItem = response.news[0]
+            let news = response.news;
+            let filteredItem = news.filter(e => !e.date.includes("ago"))[0]
             if(index === -1){
-              newsItem.symbol = symbol
-              newsItem.type = 'cryptocurrency'
-              newsfeed.push(newsItem)
+              filteredItem.symbol = symbol
+              filteredItem.type = 'cryptocurrency'
+              newsfeed.push(filteredItem)
+              this.news.push(filteredItem)
             }
             // if(newsfeed.length > 8){
             //   newsfeed.pop()
@@ -355,7 +366,6 @@ export default {
 
       function checkCryptoList() {
         if (localStorage.getItem('crypto')) {
-
             let topCoins = localStorage.getItem('crypto');
             self.cryptocurrency = JSON.parse(topCoins);
             let homeCrypto = self.cryptocurrency.slice(0,10)

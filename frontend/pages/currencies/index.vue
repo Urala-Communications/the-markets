@@ -28,12 +28,12 @@
             <IndexList :data="currencies.filter(item => item.type === 'currency')" indexPage type="currencies" />
           </div>
         </div>
-        <div class="col-12 col-lg-7 offset-lg-5">
+        <!-- <div class="col-12 col-lg-7 offset-lg-5">
           <div class="col-lg-12 mt-4 white-well">
             <News :newsData="newsData"/>
             <Ad feedAd/>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -69,7 +69,7 @@ export default {
               let newsItem = response.news[0]
               let newsItem2 = response.news[1]
               this.loading = false;
-              if(index === -1){              
+              if(index === -1){
                 this.newsData.push(newsItem)
                 this.newsData.push(newsItem2)
               }
@@ -88,11 +88,11 @@ export default {
         .then(response => {
           /* let indexFound = this.currencies.findIndex(currency => currency.symbol === response.symbol );
           let i = this.currencies[indexFound];
-          i.indexFound = indexFound;          
+          i.indexFound = indexFound;
           i.price = Number(response.price).toFixed(4); */
           this.$set(this.currencies[index], 'price', Number(response.price).toFixed(4));
           this.$set(this.currencies[index], 'difference', response.difference);
-          this.$set(this.currencies[index], 'change', response.change);           
+          this.$set(this.currencies[index], 'change', response.change);
         })
         .catch(error => {
           console.log(error);
@@ -121,18 +121,12 @@ export default {
           this.$set(this.currencies[i], 'change', item.change);
         }
       });
-      
+
       this.filteredCurrencies.forEach((item, index) => {
         this.fetchCurrency(index, item.symbol);
-        this.fetchNews(item.symbol);
+        // this.fetchNews(item.symbol);
       });
       this.loading = false;
-      setInterval(() => {
-        this.filteredCurrencies.forEach(item => {
-          this.fetchNews(item.symbol);
-        });
-        // every 5 minutes
-      }, 300000)
     },
   }
 </script>
