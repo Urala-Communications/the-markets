@@ -64,6 +64,7 @@ export default {
       yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
       today: new Date(Date.now()).toLocaleDateString("fr-CA"),
       fiveYearsAgo: new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString("fr-CA"),
+      stopRun: 0,
     };
   },
   head() {
@@ -187,7 +188,34 @@ export default {
     unsubscribeTrade(){
       this.cryptoWS.send(`{"method":"UNSUBSCRIBE","params":["${this.live.toLowerCase()}@aggTrade"],"id":${this.subindex}}`);
     },
+    fetchAllResursive(symbol, interval,  lastdate){
+      if (this.stopRun) {
+        let last =  new Date(Date.parse(lastdate) - 864e5 * 365 * 5 ).toLocaleDateString("fr-CA");
+        this.$axios
+          .$get(
+            `https://api.finage.co.uk/agg/crypto/${symbol.slice(0,-1)}/1/week/${last}/${lastdate}?apikey=${this.finageApiKey}`
+          )
+          .then((response) => {
+            if (response.results) {
+              this.chartData = response.results.map(o => {
+                const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
+                return [timestamp, openPrice, high, low, close, volume].map(n =>
+                  Number(n)
+                );
+              }).concat(this.chartData);
+
+              this.fetchAllResursive(symbol, interval,  last);
+            } else {
+              this.$root.$emit("updatedInterval", {symbol, interval});
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    },
     updateInterval(symbol, interval){
+      this.stopRun = 0;
       if (symbol === this.live) {
         if (interval !== "MAX") {
           this.$axios
@@ -209,23 +237,25 @@ export default {
             console.log(error);
           });
         } else {
+          this.stopRun = 1;
           this.$axios
           .$get(
             `https://api.finage.co.uk/agg/crypto/${symbol.slice(0,-1)}/1/week/${this.fiveYearsAgo}/${this.today}?apikey=${this.finageApiKey}`
           )
           .then((response) => {
-            if (response.results.length) {
+            if (response.results) {
               this.chartData = response.results.map(o => {
                 const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
                 return [timestamp, openPrice, high, low, close, volume].map(n =>
                   Number(n)
                 );
               });
-    
               this.$root.$emit("updatedInterval", {symbol, interval});
+              this.fetchAllResursive(symbol, interval,  this.fiveYearsAgo);
             }
           })
           .catch((error) => {
+            this.$root.$emit("updatedInterval", {symbol, interval});
             console.log(error);
           });
         }

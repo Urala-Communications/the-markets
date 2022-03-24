@@ -56,6 +56,7 @@ export default {
         chartOptions: null,
         yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
         today: new Date(Date.now()).toLocaleDateString("fr-CA"),
+        stopRun: 0,
       }
     },
     head() {
@@ -186,7 +187,36 @@ export default {
           console.log("finage err: ",error);
         })
       },
+      fetchAllResursive(symbol, interval, text, lastdate){
+        if (this.stopRun) {
+          let last =  new Date(Date.parse(lastdate) - 864e5 * 365 * 5 ).toLocaleDateString("fr-CA");
+          this.$axios
+          .$get(
+            `https://api.finage.co.uk/agg/forex/${symbol}/${text}/${last}/${lastdate}?limit=3000&apikey=${this.finageApiKey}&sort=desc`
+          )
+          .then((response) => {
+            if (response.results || response.results.length) {
+              this.chartData = response.results.map(o => {
+                const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
+                return [timestamp, openPrice, high, low, close, volume].map(n =>
+                  Number(n)
+                );
+              }).sort((a, b) => {
+                return a[0] - b[0];
+              }).concat(this.chartData);
+              this.fetchAllResursive(symbol, interval, text, last);
+            } else {
+              this.$root.$emit("updatedInterval", {symbol, interval});
+            }
+          })
+          .catch((error) => {
+            this.$root.$emit("updatedInterval", {symbol, interval});
+            console.log(error);
+          });
+        }
+      },
       updateInterval(symbol, interval, text){
+        this.stopRun = 0;
         if (symbol === this.live) {
           let last = this.yesterday;
           symbol = symbol.split(":")[0];
@@ -232,6 +262,10 @@ export default {
                 return a[0] - b[0];
               });
               this.$root.$emit("updatedInterval", {symbol, interval});
+              if (interval === "MAX") {
+                this.stopRun = 1;
+                this.fetchAllResursive(symbol, interval, text, last);
+              }
             }
           })
           .catch((error) => {

@@ -263,6 +263,7 @@ export default {
     },
     created() {
       const self = this;
+      this.fetCoinsData();
       this.loading = false; // fix news api bug
       this.$root.$on('updateCrypto', (item) => {
         if (this.cryptocurrency.length) {

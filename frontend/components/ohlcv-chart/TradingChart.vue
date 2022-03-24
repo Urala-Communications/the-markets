@@ -70,13 +70,13 @@ export default {
 
         this.$root.$on("updatedInterval", ({symbol, interval}) => {
             if (this.data.length > 0 && this.$refs.tradingChart && symbol == this.symbol) {
-                this.$refs.tradingChart.resetChart();
-
+                
                 if (interval === "MAX") {
-                    this.defaultConfig = { DEFAULT_LEN: 250 }
+                    this.defaultConfig = { DEFAULT_LEN: this.data.length }
                 } else {
                     this.defaultConfig = { DEFAULT_LEN: 40 }
                 }
+                this.$refs.tradingChart.resetChart();
             }
         });
 
@@ -110,7 +110,10 @@ export default {
                     type: "Candles",
                     data: this.data,
                     indexBased: true,
-                    tf: "1h"   
+                    tf: "1h",
+                    grid: {
+                        logScale: true
+                    }
                 }
             }),
             width: document.querySelector('.row').offsetWidth - 30,
@@ -122,7 +125,7 @@ export default {
             },
             timezone: (new Date()).getTimezoneOffset() / -60,
             defaultConfig:  { DEFAULT_LEN: 40 },
-            overlays: []
+            overlays: [],
         }
     },
 }
