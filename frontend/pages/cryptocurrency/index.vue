@@ -216,12 +216,15 @@ export default {
             response.results.forEach(item => {
               this.fetchCrypto(item.symbol);
             });
+
             if (this.page > 2)
               this.$root.$emit('addCrypto', response.results);
+
             $state.loaded();
             if (this.page > 4) {
               $state.complete();
             }
+
           } else {
             $state.complete();
           }
@@ -230,14 +233,15 @@ export default {
           console.log(error);
         })
       },
-      fetCoinsData() {
+      async fetCoinsData() {
+        const self = this;
         return this.$axios
           .$get(`/api/coins`, {
             json: true,
             gzip: true,
           })
           .then((response) => {
-            this.coins = response;
+            self.coins = response;
           })
           .catch((error) => {
             console.log(error);
@@ -266,7 +270,7 @@ export default {
       this.fetCoinsData();
       this.loading = false; // fix news api bug
       this.$root.$on('updateCrypto', (item) => {
-        if (this.cryptocurrency.length) {
+        if (this.cryptocurrency.length && this.cryptocurrency[item.indexFound]) {
           this.$set(this.cryptocurrency[item.indexFound], 'price', item.price);
           this.$set(this.cryptocurrency[item.indexFound], 'difference', item.difference);
           this.$set(this.cryptocurrency[item.indexFound], 'change', item.change);

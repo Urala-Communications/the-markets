@@ -8,8 +8,12 @@
     ],
     "rewrites": [
       {
-        "source": "/api/**",
+        "source": "/api/coins",
         "function": "coins"
+      },
+      {
+        "source": "/api/search",
+        "function": "search"
       },
       {
         "source": "**",

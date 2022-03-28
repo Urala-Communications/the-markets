@@ -65,6 +65,7 @@ export default {
       today: new Date(Date.now()).toLocaleDateString("fr-CA"),
       fiveYearsAgo: new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString("fr-CA"),
       stopRun: 0,
+      coins: [],
     };
   },
   head() {
@@ -83,16 +84,9 @@ export default {
   },
   methods: {
     fetchDetails() {
-      let i = this.cryptocurrency.find(
-        (item) => item.name.toLowerCase() === this.symbol.replace("-", " ")
-      );
-      if (i) {
-        this.$set(this.item, 'icon', i.symbol);
-        this.$set(this.item, 'name', i.name);
-      }
       this.$axios
         .$get(
-          `https://api.finage.co.uk/detail/cryptocurrency/${i.symbol}?apikey=${this.finageApiKey}`
+          `https://api.finage.co.uk/detail/cryptocurrency/${this.item.symbol}?apikey=${this.finageApiKey}`
         )
         .then((response) => {
           this.profile = response;
@@ -101,13 +95,19 @@ export default {
           console.log(error);
         });
     },
+    checkBackground(){
+      const self = this;
+      document.querySelectorAll('.icon').forEach(function(icon) {
+        if (window.getComputedStyle(icon).backgroundImage == "none") {
+          icon.style.backgroundImage  = ('url("'+self.item.logo+'")');
+        }
+      });
+    },
     fetchPrice() {
-      let i = this.cryptocurrency.find(
-        (item) => item.name.toLowerCase() === this.symbol.replace("-", " ")
-      );
+     
       this.$axios
         .$get(
-          `https://api.finage.co.uk/last/crypto/detailed/${i.symbol.toUpperCase()+"USD"}?apikey=${this.finageApiKey}`
+          `https://api.finage.co.uk/last/crypto/detailed/${this.item.symbol.toUpperCase()+"USD"}?apikey=${this.finageApiKey}`
         )
         .then((response) => {
           this.open = response.open.toFixed(2);
@@ -136,11 +136,9 @@ export default {
         });
     },
     fetchAggregates() {
-      let i = this.cryptocurrency.find(
-        (item) => item.name.toLowerCase() === this.symbol.replace("-", " ")
-      );
+      
       // this.$axios.$get(`https://api.finage.co.uk/agg/crypto/${i.symbol}/1/day/${fiveYearsAgo}/${this.today}?limit=5000&apikey=${this.finageApiKey}`)
-      this.$axios.$get(`https://api.binance.com/api/v3/klines?limit=1000&symbol=${i.symbol.toUpperCase()+"USDT"}&interval=1d`)
+      this.$axios.$get(`https://api.binance.com/api/v3/klines?limit=1000&symbol=${this.item.symbol.toUpperCase()+"USDT"}&interval=1d`)
         .then((response) => {
           this.chartData = response.map(o => {
             const [timestamp, openPrice, high, low, close, volume] = [...o];
@@ -148,8 +146,8 @@ export default {
               Number(n)
             );
           })
-          this.symbol = i.symbol;
-          this.live = i.symbol.toUpperCase()+"USDT";
+          //this.symbol = i.symbol;
+          this.live = this.item.symbol.toUpperCase()+"USDT";
           let last = this.chartData[this.chartData.length - 1];
           this.open = last[1];
           this.high = last[2]
@@ -262,12 +260,10 @@ export default {
       }
     },
     fetchNews() {
-      let i = this.cryptocurrency.find(
-        (item) => item.name.toLowerCase() === this.symbol.replace("-", " ")
-      );
+      
       this.$axios
         .$get(
-          `https://api.finage.co.uk/news/cryptocurrency/${i.symbol}?apikey=${this.finageApiKey}`
+          `https://api.finage.co.uk/news/cryptocurrency/${this.item.symbol}?apikey=${this.finageApiKey}`
         )
         .then((response) => {
           // filter matching articles
@@ -288,17 +284,29 @@ export default {
           console.log(error);
         });
     },
+    findCoin(){
+      return this.$store.getters.GET_COINS.find(coin => coin.name.toLowerCase().replace(" ", "-") == this.symbol.toLowerCase());
+    },
+    async searchCoin(slug){
+      try {
+        return this.$axios
+          .$get(`/api/search?slug=${slug}`);
+      } catch (error) {
+        return null;
+      }
+    },
+    fetchInfos(){
+      this.$set(this.item, 'icon', this.item.symbol);
+      this.fetchDetails();
+      this.checkMarketStatus();
+      this.fetchPrice();
+      this.fetchAggregates();
+      this.fetchNews();
+    }
   },
   created() {
-    // let topCoins = localStorage.getItem('crypto');
-    // this.coins = JSON.parse(topCoins)
-    // this.coins.forEach((item) => {
-    //   let indexFound = item.cmc_rank - 1;
-    //   let i = this.coins[indexFound];
-    // });
-    // console.log(item)
-    // this.$set(this.item, "name", this.cryptocurrency[item.indexFound].name);
-    // this.$set(this.item, "icon", this.cryptocurrency[item.indexFound].icon);
+    const self = this;
+    
     this.$root.$on("updateCrypto", (item) => {
       if (item.symbol === this.symbol.replace("-", " ")) {
         //this.$set(this.item, "price", item.price);
@@ -307,27 +315,34 @@ export default {
         this.$set(this.item, "time", item.time);
       }
     });
+
     this.$root.$on("updateTrade", ({symbol, time, price, volumn}) => {
       if (symbol === this.live) {
         this.$set(this.item, "price", price);
       }
     })
-    const self = this;
-    function checkCryptoList() {
-      if (localStorage.getItem('crypto')) {        
-          let topCoins = localStorage.getItem('crypto');
-          self.cryptocurrency = JSON.parse(topCoins);
 
-          self.fetchDetails();
-          self.checkMarketStatus();
-          self.fetchPrice();
-          self.fetchAggregates();
-          self.fetchNews();
+    async function checkCryptoList() {
+      if (self.$store.getters.COINS_LENGTH) {
+          
+          self.cryptocurrency =  self.$store.getters.GET_COINS;
+
+          self.item =  Object.assign({},self.findCoin() ) ;
+          if (Object.keys(self.item).length === 0) {
+            let thiscoin = await self.searchCoin(self.symbol.toLowerCase().replace(" ", "-").trim());
+            if (thiscoin.hasOwnProperty("id")) {
+              self.symbol = thiscoin.symbol;
+              self.item = {... self.item, ...thiscoin };              
+            }
+            self.fetchInfos();
+          } else {
+            self.fetchInfos();
+          }
         } else {
-            setTimeout(checkCryptoList, 250);
+            setTimeout(checkCryptoList, 50);
         }
     }
-    setTimeout(checkCryptoList, 250);   
+    setTimeout(checkCryptoList, 50);   
     
     this.$root.$on("changeInterval", ({symbol, interval, text}) => {
       this.updateInterval(symbol, interval, text);
@@ -341,6 +356,10 @@ export default {
     setInterval(() => {
       this.checkMarketStatus();
     }, 300000);
+  },
+  mounted() {
+    this.checkBackground();
+    window.addEventListener('scroll', this.checkBackground);
   },
   beforeDestroy() {
     this.unsubscribeTrade();
