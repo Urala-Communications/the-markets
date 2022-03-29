@@ -183,7 +183,7 @@ export default {
         axios: this.$axios,
       });
 
-      if (!this.res) return;
+      if (!res) return;
 
       this.marketStatus = res.currencies.crypto;
     },

@@ -73,6 +73,36 @@ export const queries = {
       }
     `,
 
+    bonds: `
+      query finageBonds($suffix: String!, $symbol: String!) {
+        finageBonds(params: {suffix: $suffix, symbol: $symbol}) {
+          symbol
+          value
+          date
+        }
+      }
+    `,
+
+    detailStock: `
+      query finageDetailStock($symbol: String!) {
+        finageDetailStock(params: { symbol: $symbol }) {
+          name
+          symbol
+          logo
+          url
+          description
+          exchange
+          ceo
+          industry
+          state
+          address
+          employees
+          sector
+          marketcap
+        }
+      }
+    `,
+
     detailCrypto: `
       query finageDetailCrypto($symbol: String!) {
         finageDetailCrypto(params: { symbol: $symbol }) {
@@ -109,6 +139,31 @@ export const queries = {
           symbol
           price
           volume
+          ask
+          bid
+          open
+          high
+          low
+          close
+          marketCap
+          yearHigh
+          yearLow
+          timestamp
+        }
+      }
+    `,
+
+    lastMulti: `
+      query finageLastMulti($suffix: String!, $symbols: [String]) {
+        finageLastMulti(params: { suffix: $suffix }, queries: { symbols: $symbols }) {
+          symbol
+          ask
+          bid
+          price
+          asize
+          bsize
+          timestamp
+          volume
           open
           high
           low
@@ -122,19 +177,32 @@ export const queries = {
 
     agg: `
       query finageAgg(
-        $suffix: String!, $symbol: String!, $period: String!, $multiplier: String!, $from: String!, $to: String!
+        $suffix: String!, $symbol: String!, $period: String, $multiplier: String, $from: String, $to: String
         ) {
         finageAgg(params: { 
           suffix: $suffix, symbol: $symbol, period: $period, multiplier: $multiplier, from: $from, to: $to 
-        }) {
+        }, queries: { limit: 1825 }) {
           results {
             o
             h
             l
             c
+            v
+            t
           }
         }
       }
     `,
+  },
+};
+
+export const methods = {
+  async fetchMarketStatus(axios) {
+    const res = await useQuery({
+      query: "finage.marketStatus",
+      axios,
+    });
+
+    return res;
   },
 };

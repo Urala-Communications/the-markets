@@ -1,14 +1,21 @@
 <template>
   <div v-if="loading">
-    <div class="container d-flex justify-content-around w-50 pt-5 vh-100 text-center">
-      <div class="loading-logo mt-5" role="status"/>
+    <div
+      class="
+        container
+        d-flex
+        justify-content-around
+        w-50
+        pt-5
+        vh-100
+        text-center
+      "
+    >
+      <div class="loading-logo mt-5" role="status" />
     </div>
   </div>
   <div v-else>
-    <div
-      class="list-page content container w-100 buffer"
-      :class="view"
-    >
+    <div class="list-page content container w-100 buffer" :class="view">
       <div class="row m-0 index-list" id="movers">
         <h2 class="col-12">Movers</h2>
         <!-- <div class="toggle col-12">
@@ -37,69 +44,73 @@
 </template>
 
 <script>
-import {rising} from "../market.js";
-  import IndexList from '../components/IndexList.vue'
-  export default {
-    components: {
-      IndexList
-    },
-    data() {
-      return {
-        finageApiKey: process.env.finageApiKey,
-        loading: true,
-        rising,
-        view: 'list',
-        chartData: null,
-        chartOptions: null,
-        newsData: []
-      }
-    },
-    methods: {
-      fetchNews(symbol){
-        this.$axios.$get(`https://api.finage.co.uk/news/market/${symbol}?apikey=${this.finageApiKey}`)
-        .then(response => {
-          if(typeof response[0] !== 'undefined'){
-            let index = this.newsData.findIndex(x => x.title === response[0].title);
-            if(index === -1){
-              this.newsData.push(response[0])
+import { useQuery } from "@/services/graphql.js";
+import { rising } from "../market.js";
+import IndexList from "../components/IndexList.vue";
+export default {
+  components: {
+    IndexList,
+  },
+  data() {
+    return {
+      finageApiKey: process.env.finageApiKey,
+      loading: true,
+      rising,
+      view: "list",
+      chartData: null,
+      chartOptions: null,
+      newsData: [],
+    };
+  },
+  methods: {
+    fetchNews(symbol) {
+      useQuery({
+        query: "finage.news",
+        variables: { market: "market", symbol },
+        axios: this.$axios,
+      })
+        .then((response) => {
+          if (typeof response[0] !== "undefined") {
+            let index = this.newsData.findIndex(
+              (x) => x.title === response[0].title
+            );
+            if (index === -1) {
+              this.newsData.push(response[0]);
             }
-            if(this.newsData.length > 16){
-              this.newsData.pop()
+            if (this.newsData.length > 16) {
+              this.newsData.pop();
             }
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
-        })
-      },
-      showGrid() {
-        this.view = 'grid';
-      },
-      showList() {
-        this.view = 'list';
-      },
-
-    },
-    created() {
-      this.$root.$on('updateRising', (update) => {
-        this.rising = update;
-        this.$nextTick(() => {
-          this.loading = false;
         });
+    },
+    showGrid() {
+      this.view = "grid";
+    },
+    showList() {
+      this.view = "list";
+    },
+  },
+  created() {
+    this.$root.$on("updateRising", (update) => {
+      this.rising = update;
+      this.$nextTick(() => {
+        this.loading = false;
       });
-      this.rising.forEach(item => {
+    });
+    this.rising.forEach((item) => {
+      this.fetchNews(item.symbol);
+    });
+    setInterval(() => {
+      this.rising.forEach((item) => {
         this.fetchNews(item.symbol);
       });
-      setInterval(() => {
-        this.rising.forEach(item => {
-          this.fetchNews(item.symbol);
-        });
-        // every 5 minutes
-      }, 300000)
-    },
-  }
+      // every 5 minutes
+    }, 300000);
+  },
+};
 </script>
 
-<style lang="scss">
-
-</style>
+<style lang="scss"></style>
