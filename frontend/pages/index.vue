@@ -35,13 +35,13 @@
                 <h2>Crypto
                   <NuxtLink class="index-link" to="/cryptocurrency">View all</NuxtLink>
                 </h2>
-                <IndexList :data="cryptocurrency" type="cryptocurrency" />
+                <IndexList :data="cryptocurrency.slice(0,10)" type="cryptocurrency" />
               </div>
               <div class="col-12 white-well">
                 <h2>Currencies
                   <NuxtLink class="index-link" to="/currencies">View all</NuxtLink>
                 </h2>
-                <IndexList :data="currencies" type="currencies" />
+                <IndexList :data="currencies.slice(0,6)" type="currencies" />
               </div>
               <div class="col-12 white-well bonds">
                 <h2>Bonds
@@ -55,7 +55,7 @@
                 <h2>Indices
                   <NuxtLink class="index-link" to="/indices">View all</NuxtLink>
                 </h2>
-                <IndexList :data="indices" type="indices" />
+                <IndexList :data="indices.slice(0,11)" type="indices" />
                 <span class="smaller pl-2">*real-time derived</span>
               </div>
               <!-- <div class="col-12 white-well">
@@ -68,29 +68,29 @@
                 <h2>Commodities
                   <NuxtLink class="index-link" to="/commodities">View all</NuxtLink>
                 </h2>
-                <IndexList :data="commodities" type="commodities" />
+                <IndexList :data="commodities.slice(0,6)" type="commodities" />
               </div>
               <div class="col-12 white-well">
                 <h2>Stocks
                   <NuxtLink class="index-link" to="/stocks">View all</NuxtLink>
                 </h2>
-                <IndexList :data="stocks" type="stocks" />
+                <IndexList :data="stocks.slice(0,10)" type="stocks" />
               </div>
             </div>
-            <div class="col-12">
+            <!-- <div class="col-12">
               <div class="col-12 white-well">
                 <h2 class="pt-3">Personal Finance</h2>
                 <Articles :articles="articles" />
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
         <div class="col-12 col-lg-4 mb-5 news-section">
           <div class="row m-0 justify-content-between">
             <div class="col-lg-12 white-well">
-              <h2 class="mt-0">News</h2>
-              <News :newsData="cryptoNews"/>
-              <News :newsData="stockNews"/>
+              <h2 class="mt-0 mb-1">News</h2>
+              <News :newsData="orderedNews"/>
+              <!-- <News :newsData="stockNews"/> -->
               <!-- <Ad feedAd/> -->
               <!-- <Ad feedAd/> -->
             </div>
@@ -134,49 +134,60 @@ export default {
         chartOptions: null,
         stockNews: [],
         cryptoNews: [],
-        risingNews: [],
+        news: [],
         yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
         today: new Date(Date.now()).toLocaleDateString("fr-CA"),
       }
     },
+    computed: {
+      orderedNews: function () {
+        let dateOrderedNews = this.news.sort((a,b) => {
+          return new Date(b.date) - new Date(a.date);
+        });
+        return dateOrderedNews;
+      }
+    },
     methods: {
-      fetchNews(symbol, type){
+      fetchNews(symbol){
         this.$axios.$get(`https://api.finage.co.uk/news/market/${symbol}?apikey=${this.finageApiKey}`)
         .then(response => {
           // console.log(response)
           if(typeof response.news[0] !== 'undefined'){
-            let newsfeed = type === 'rising' ? this.risingNews : this.stockNews;
+            let newsfeed = this.stockNews;
             let index = newsfeed.findIndex(x => x.title === response.news[0].title);
             let newsItem = response.news[0]
             if(index === -1){
               newsItem.symbol = symbol
               newsItem.type = 'stocks'
               newsfeed.push(newsItem)
+              this.news.push(newsItem)
             }
-            if(newsfeed.length > 41){
-              newsfeed.pop()
-            }
+            // if(newsfeed.length > 8){
+            //   newsfeed.pop()
+            // }
           }
         })
         .catch(error => {
           console.log(error);
         })
       },
-      fetchCryptoNews(symbol, type){
+      fetchCryptoNews(symbol){
         this.$axios.$get(`https://api.finage.co.uk/news/cryptocurrency/${symbol}?apikey=${this.finageApiKey}`)
         .then(response => {
           if(typeof response.news[0] !== 'undefined'){
-            let newsfeed = type === 'rising' ? this.risingNews : this.cryptoNews;
+            let newsfeed = this.cryptoNews;
             let index = newsfeed.findIndex(x => x.title === response.news[0].title);
-            let newsItem = response.news[0]
+            let news = response.news;
+            let filteredItem = news.filter(e => !e.date.includes("ago"))[0]
             if(index === -1){
-              newsItem.symbol = symbol
-              newsItem.type = 'cryptocurrency'
-              newsfeed.push(newsItem)
+              filteredItem.symbol = symbol
+              filteredItem.type = 'cryptocurrency'
+              newsfeed.push(filteredItem)
+              this.news.push(filteredItem)
             }
-            if(newsfeed.length > 41){
-              newsfeed.pop()
-            }
+            // if(newsfeed.length > 8){
+            //   newsfeed.pop()
+            // }
           }
         })
         .catch(error => {
@@ -258,11 +269,6 @@ export default {
         .then(() => {
           this.$axios.$get(`https://api.finage.co.uk/agg/index/${symbol}/1day/2021-01-01/${this.today}?limit=1825&apikey=${this.finageApiKey}`)
           .then(response => {
-            // if(typeof response.p !== 'undefined'){
-            //   let i = this.indices.find( indice => indice.symbol === response.symbol );
-            // } else {
-            //   let i = this.indices.find( indice => indice.symbol === response.symbol && indice.cfd );
-            // }
             let indexFound = this.indices.findIndex( indice => indice.symbol === response.symbol );
             let i = this.indices[indexFound];
             i.indexFound = indexFound;
@@ -271,7 +277,7 @@ export default {
             i.difference = i.difference.toFixed(2)
             i.change = (i.priceNumber - last.c) / last.c * 100
             i.change = i.change.toFixed(2)
-            i.price = parseFloat(last.c);
+            i.price = parseFloat(last.c).toFixed(2);
             this.$root.$emit('updateIndice', i);
           })
           .catch(error => {
@@ -287,7 +293,7 @@ export default {
         .then(response => {
           // console.log(response)
           let i = this.indices.find( indice => indice.symbol === response.symbol );
-          i.price = Number(response.value).toFixed(4);
+          i.price = Number(response.value).toFixed(2);
           this.$root.$emit('updateBond', i);
         })
         .catch(error => {
@@ -301,7 +307,7 @@ export default {
           this.commodities.forEach(item => {
             let match = response.filter(element => element["Symbol"] === item.symbol);
             if(match.length > 0){
-              item.price = match[0]['Last'];
+              item.price = match[0]['Last'].toFixed(2);
               item.change = match[0]['DailyChange'];
               item.difference = match[0]['DailyPercentualChange'];
               item.ticker = match[0]['Ticker'];
@@ -350,7 +356,7 @@ export default {
             this.fetchIndice(item.symbol);
           }
         }
-      }); 
+      });
       this.currencies.forEach(item => {
         this.fetchCurrency(item.symbol);
       });
@@ -360,10 +366,10 @@ export default {
 
       function checkCryptoList() {
         if (localStorage.getItem('crypto')) {
-          
             let topCoins = localStorage.getItem('crypto');
             self.cryptocurrency = JSON.parse(topCoins);
-            self.cryptocurrency.forEach(item => {
+            let homeCrypto = self.cryptocurrency.slice(0,10)
+            homeCrypto.forEach(item => {
               self.fetchCryptoNews(item.symbol);
             });
           } else {
@@ -372,6 +378,11 @@ export default {
       }
 
       setTimeout(checkCryptoList, 250);
+      this.$root.$on("addCrypto", (cryptoLists) => {
+        if (this.cryptocurrency.length && this.cryptocurrency.length < 200) {
+          this.cryptocurrency = this.cryptocurrency.concat(cryptoLists);
+        }
+      })
 
       this.$root.$on('updateCrypto', (item) => {
         if (this.cryptocurrency.length) {
@@ -406,10 +417,18 @@ export default {
         });
       });
       this.$root.$on('updateIndice', (item) => {
-        let itemIndex = this.indices.findIndex(index => index.name === item.name);
-        this.$set(this.indices[itemIndex], 'price', item.price);
-        this.$set(this.indices[itemIndex], 'difference', item.difference);
-        this.$set(this.indices[itemIndex], 'change', item.change);
+        //let itemIndex = this.indices.findIndex(index => index.name === item.name);
+        const itemIndex = item.indexFound ;
+        if (itemIndex !== -1) {
+          // let t = this.indices[item.indexFound];
+          // t.price = item.price;
+          // t.difference = item.difference;
+          // t.change = item.change;
+          // this.indices.splice(item.indexFound, 1, t);
+          this.$set(this.indices[itemIndex], 'price', item.price);
+          this.$set(this.indices[itemIndex], 'difference', item.difference);
+          this.$set(this.indices[itemIndex], 'change', item.change);
+        }
       });
       this.$root.$on('updateBond', (item) => {
         let itemIndex = this.bonds.findIndex(index => index.name === item.name);
@@ -421,10 +440,9 @@ export default {
       });
       this.bonds = this.bonds.filter(item => item.type === 'homeBond');
 
-      this.stocks.forEach(item => {
-        if(item.symbol !== 'AMC' || item.symbol !== 'GME' || item.symbol !== 'BB' || item.symbol !== 'TSLA'){
-          this.fetchNews(item.symbol);
-        }
+      let homeStocks = this.stocks.slice(0,8)
+      homeStocks.forEach(item => {
+        this.fetchNews(item.symbol);
       });
     }
   }
@@ -460,16 +478,16 @@ export default {
   justify-content: space-between;
   min-height: calc(100vh - 603px); // height of nav/ads/footer
   /* canvas{ display: none !important;} */
-  &.home {
-    .white-well:not(.indices, .crypto) .instrument.index:nth-of-type(n+7){
+  /* &.home { */
+    /* .white-well:not(.indices, .crypto) .instrument.index:nth-of-type(n+7){
       display: none;
     }
     .indices, .crypto{
       .instrument.index:nth-of-type(n+11){
         display: none;
       }
-    }
-  }
+    } */
+  /* } */
   &.home .mover.index:nth-of-type(n+7){
     display: none;
   }
@@ -501,7 +519,7 @@ export default {
   .white-well{
     margin-bottom: 30px;
     padding-top: 19px;
-    &.bonds{min-height: 332px;}
+    /* &.bonds{min-height: 332px;} */
   }
 }
 
@@ -542,11 +560,11 @@ export default {
 
 h2 {
   font-family: 'Nunito', serif;
-  font-family: 'Press Start 2P', sans-serif;
-  letter-spacing: -1px;
+  /* font-family: 'Press Start 2P', sans-serif; */
+  /* letter-spacing: -1px; */
   text-transform: uppercase;
-  /* font-size: 20px; */
-  font-size: 16px;
+  font-size: 20px;
+  /* font-size: 16px; */
   font-weight: 800;
   margin-bottom: 1rem;
   display: flex;

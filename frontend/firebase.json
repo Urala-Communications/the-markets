@@ -8,9 +8,28 @@
     ],
     "rewrites": [
       {
+        "source": "/api/**",
+        "function": "coins"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(jpg|jpeg|gif|png|svg|js|css)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "max-age=8380800"
+          }
+        ]
+      }
     ]
+  },
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs16"
   }
 }

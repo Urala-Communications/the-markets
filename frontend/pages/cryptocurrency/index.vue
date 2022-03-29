@@ -123,12 +123,12 @@
             </b-tabs>
           </div>
         </div>
-        <div class="col-12">
+        <!-- <div class="col-12">
           <div class="col-lg-12 mt-4 white-well">
             <News :news-data="newsData" />
             <Ad feed-ad />
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>

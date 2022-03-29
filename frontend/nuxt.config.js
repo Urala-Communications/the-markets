@@ -67,6 +67,7 @@ export default {
     // '@nuxtjs/fontawesome'
     '@/modules/sitemapgenerator',
     // '@/modules/algoliaindex'
+    '@/modules/cryptologocheck',
   ],
 
   dev: process.env.NODE_ENV !== 'production',
@@ -89,6 +90,7 @@ export default {
 
   styleResources: {
     scss: [
+      '~/assets/scss/coinlogos.scss',
       '~/assets/scss/variables.scss',
     ]
   },

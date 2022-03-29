@@ -186,77 +186,78 @@ export default {
   &.gbp {
     background-image: url('./../assets/uk.svg');
   }
-  &.btc, &.btcb {background-image: url('./../assets/bitcoin.gif');}
-  &.eth {background-image: url('./../assets/eth.gif');}
-  &.doge {background-image: url('./../assets/doge.gif');}
-  &.xrp {background-image: url('./../assets/xrp.gif');}
-  &.miota {background-image: url('./../assets/iota.gif');}
-  &.ada {background-image: url('./../assets/cardano.gif');}
-  &.dot {background-image: url('./../assets/dot.gif');}
-  &.oneinch {background-image: url('./../assets/1inch.gif')}
-  &.aave  {background-image: url('./../assets/aave.gif')}
-  &.algo  {background-image: url('./../assets/algo.gif')}
-  &.atom  {background-image: url('./../assets/cosmos.gif')}
-  &.avax  {background-image: url('./../assets/avalanche.gif')}
-  &.axs  {background-image: url('./../assets/axie.gif')}
-  &.bat  {background-image: url('./../assets/bat.gif')}
-  &.bnb  {background-image: url('./../assets/bnb.gif')}
-  &.bch  {background-image: url('./../assets/bch.png')}
-  &.busd  {background-image: url('./../assets/busd.png')}
-  &.cake  {background-image: url('./../assets/pancake.gif');}
-  &.comp  {background-image: url('./../assets/compound.gif')}
-  &.crv  {background-image: url('./../assets/crv.gif')}
-  &.cro  {background-image: url('./../assets/cro.png')}
-  &.dash  {background-image: url('./../assets/dash.gif')}
-  &.enj  {background-image: url('./../assets/enjin.gif')}
-  &.etc  {background-image: url('./../assets/ethereumClassic.gif')}
-  &.fil {background-image: url('./../assets/filecoin.gif')}
-  &.flow {background-image: url('./../assets/flow.png')}
-  &.grt  {background-image: url('./../assets/graph.gif')}
-  &.gala  {background-image: url('./../assets/gala.png')}
-  &.icp  {background-image: url('./../assets/icp.png')}
-  &.link  {background-image: url('./../assets/link.gif')}
-  &.ltc  {background-image: url('./../assets/litecoin.gif')}
-  &.luna  {background-image: url('./../assets/terra.gif')}
-  &.mana  {background-image: url('./../assets/decentraland.gif'); }
-  &.matic  {background-image: url('./../assets/polygon.gif')}
-  &.mkr  {background-image: url('./../assets/maker.gif')}
-  &.neo  {background-image: url('./../assets/neo.gif'); }
-  &.shib  {background-image: url('./../assets/shiba.gif')}
-  &.sol  {background-image: url('./../assets/solana.gif')}
-  &.sand  {background-image: url('./../assets/sand.png')}
-  &.sushi  {background-image: url('./../assets/sushi.gif')}
-  &.trx  {background-image: url('./../assets/tron.gif')}
-  &.uni  {background-image: url('./../assets/uniswap.gif')}
-  &.yfi  {background-image: url('./../assets/yearn.gif')}
-  &.vet  {background-image: url('./../assets/vechain.gif')}
-  &.xlm  {background-image: url('./../assets/stellar.gif')}
-  &.zil  {background-image: url('./../assets/zilliqa.gif')}
-  &.theta  {background-image: url('./../assets/theta.gif')}
-  &.ftt  {background-image: url('./../assets/ftx.gif')}
-  &.ftm  {background-image: url('./../assets/fantom.gif')}
-  &.hbar  {background-image: url('./../assets/hedera.gif')}
-  &.dai  {background-image: url('./../assets/dai.gif')}
-  &.egld  {background-image: url('./../assets/elrond.gif')}
-  &.near  {background-image: url('./../assets/near.gif')}
-  &.xtz  {background-image: url('./../assets/tezos.gif')}
-  &.xmr  {background-image: url('./../assets/monero.gif')}
-  &.eos  {background-image: url('./../assets/eos.gif')}
-  &.hnt  {background-image: url('./../assets/helium.gif')}
-  &.lrc  {background-image: url('./../assets/loopring.gif')}
-  &.usdt  {background-image: url('./../assets/usdt.png')}
-  &.ust  {background-image: url('./../assets/ust.png')}
-  &.usdc  {background-image: url('./../assets/usdc.png')}
-  &.wbtc  {background-image: url('./../assets/wbtc.png')}
-  &.ceth {background-image: url('./../assets/ceth.png');}
-  &.lido, &.steth {background-image: url('./../assets/lido.png');}
-  &.cdai {background-image: url('./../assets/cdai.png');}
-  &.frax {background-image: url('./../assets/frax.png');}
-  &.klay {background-image: url('./../assets/klay.png');}
-  &.leo {background-image: url('./../assets/leo.png');}
-  &.omi {background-image: url('./../assets/ecomi.png');}
-  &.mim {background-image: url('./../assets/mim.png');}
-  &.okb {background-image: url('./../assets/okb.png');}
+
+  &.s-btc, &.s-btcb {background-image: url('./../assets/btc.svg');}
+  &.s-eth {background-image: url('./../assets/eth.svg');}
+  &.s-doge {background-image: url('./../assets/dogecoin.svg');}
+  &.s-xrp {background-image: url('./../assets/xrp.svg');}
+  &.s-miota {background-image: url('./../assets/iota.svg');}
+  &.s-ada {background-image: url('./../assets/cardano.svg');}
+  &.s-dot {background-image: url('./../assets/polkadot.svg');}
+  &.s-1inch {background-image: url('./../assets/oneinch.png')}
+  &.s-aave  {background-image: url('./../assets/aave.png')}
+  &.s-algo  {background-image: url('./../assets/algo.png')}
+  &.s-atom  {background-image: url('./../assets/atom.png')}
+  &.s-avax  {background-image: url('./../assets/avax.png')}
+  &.s-axs  {background-image: url('./../assets/axie.png')}
+  &.s-bat  {background-image: url('./../assets/bat.png')}
+  &.s-bnb  {background-image: url('./../assets/bnb.png')}
+  &.s-bch  {background-image: url('./../assets/bch.png')}
+  &.s-busd  {background-image: url('./../assets/busd.png')}
+  &.s-cake  {background-image: url('./../assets/cake.png');}
+  &.s-comp  {background-image: url('./../assets/comp.png')}
+  &.s-crv  {background-image: url('./../assets/crv.png')}
+  &.s-cro  {background-image: url('./../assets/cro.png')}
+  &.s-dash  {background-image: url('./../assets/dash.png')}
+  &.s-enj  {background-image: url('./../assets/enj.png')}
+  &.s-etc  {background-image: url('./../assets/etc.png')}
+  &.s-fil {background-image: url('./../assets/file.png')}
+  &.s-flow {background-image: url('./../assets/flow.png')}
+  &.s-grt  {background-image: url('./../assets/grt.png')}
+  &.s-gala  {background-image: url('./../assets/gala.png')}
+  &.s-icp  {background-image: url('./../assets/icp.png')}
+  &.s-link  {background-image: url('./../assets/link.png')}
+  &.s-ltc  {background-image: url('./../assets/ltc.png')}
+  &.s-luna  {background-image: url('./../assets/luna.png')}
+  &.s-mana  {background-image: url('./../assets/mana.png'); }
+  &.s-matic  {background-image: url('./../assets/matic.png')}
+  &.s-mkr  {background-image: url('./../assets/mkr.png')}
+  &.s-neo  {background-image: url('./../assets/neo.png'); }
+  &.s-shib  {background-image: url('./../assets/shiba.png')}
+  &.s-sol  {background-image: url('./../assets/sol.png')}
+  &.s-sand  {background-image: url('./../assets/sand.png')}
+  &.s-sushi  {background-image: url('./../assets/sushi.png')}
+  &.s-trx  {background-image: url('./../assets/tron.png')}
+  &.s-uni  {background-image: url('./../assets/uni.png')}
+  &.s-yfi  {background-image: url('./../assets/yfi.png')}
+  &.s-vet  {background-image: url('./../assets/vet.png')}
+  &.s-xlm  {background-image: url('./../assets/xlm.png')}
+  &.s-zil  {background-image: url('./../assets/zil.png')}
+  &.s-theta  {background-image: url('./../assets/theta.png')}
+  &.s-ftt  {background-image: url('./../assets/ftt.png')}
+  &.s-ftm  {background-image: url('./../assets/ftm.png')}
+  &.s-hbar  {background-image: url('./../assets/hbar.png')}
+  &.s-dai  {background-image: url('./../assets/dai.png')}
+  &.s-egld  {background-image: url('./../assets/egld.png')}
+  &.s-near  {background-image: url('./../assets/near.png')}
+  &.s-xtz  {background-image: url('./../assets/tezos.gif')}
+  &.s-xmr  {background-image: url('./../assets/xmr.png')}
+  &.s-eos  {background-image: url('./../assets/eos.png')}
+  &.s-hnt  {background-image: url('./../assets/hnt.png')}
+  &.s-lrc  {background-image: url('./../assets/lrc.png')}
+  &.s-usdt  {background-image: url('./../assets/usdt.png')}
+  &.s-ust  {background-image: url('./../assets/ust.png')}
+  &.s-usdc  {background-image: url('./../assets/usdc.png')}
+  &.s-wbtc  {background-image: url('./../assets/wbtc.png')}
+  &.s-ceth {background-image: url('./../assets/ceth.png');}
+  &.s-lido, &.s-steth {background-image: url('./../assets/lido.png');}
+  &.s-cdai {background-image: url('./../assets/cdai.png');}
+  &.s-frax {background-image: url('./../assets/frax.png');}
+  &.s-klay {background-image: url('./../assets/klay.png');}
+  &.s-leo {background-image: url('./../assets/leo.png');}
+  &.s-omi {background-image: url('./../assets/ecomi.png');}
+  &.s-mim {background-image: url('./../assets/mim.png');}
+  &.s-okb {background-image: url('./../assets/okb.png');}
   // commodities
   &.gold {
     background-image: url('./../assets/gold.svg');

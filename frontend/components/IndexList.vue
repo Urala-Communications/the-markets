@@ -3,7 +3,7 @@
     <div class="grid grid-header">
       <div class="pb-2"><strong>Symbol</strong></div>
       <div class="pb-2"><strong>Name</strong></div>
-      <div class="pb-2"><strong>Price</strong></div>
+      <div class="pb-2 justify-content-end"><strong>Price</strong></div>
       <div class="pb-2 justify-content-center"><strong>% Change</strong></div>
       <div class="pb-2 justify-content-center"><strong>$ Change</strong></div>
     </div>
@@ -27,16 +27,14 @@
             class="instrument index d-flex"
             :to="`/${type}/${index.name.replace(/\s+|[' '\/]/g, '-').toLowerCase()}`"
           >
-            <div class="icon-wrapper" :class="index.change > 3 && type === 'cryptocurrency' ? 'fire' : ''">
-              <i class="icon" :class="index.icon ? index.icon : index.symbol.toLowerCase()" />
-              <!-- <i v-else class="icon" :style="{backgroundImage:`url(${index.thumbnail})`}" /> -->
-              <!-- :style="{backgroundImage:`url(./_nuxt/assets/${index.icon}.png)`}" would be nice if all imgs were same type png/svg-->
+            <div class="icon-wrapper" :class="index.change > 8 && type === 'cryptocurrency' ? 'fire' : ''">
+              <i class="icon" :class="index.icon ? index.icon : 's-'+index.symbol.toLowerCase()" :id="index.symbol.toUpperCase()" />
             </div>
             {{ index.name }}
             <span v-if="index.marketOpen" class="indicator"/>
           </NuxtLink>
         </div>
-        <div class="price ask number-font"><span v-if="type !== 'indices'">$</span>{{ index.price }}</div>
+        <div class="justify-content-end price ask number-font"><span v-if="type !== 'indices'">$</span>{{ index.price }}</div>
         <div class="justify-content-center number-font">
           <Price v-if="index.change" :index="index" :difference="index.change" />
         </div>
@@ -65,8 +63,8 @@
       :class="index.change > 0 ? 'up' : 'down'"
       :to="`/${type}/${index.name.replace(/\s+|[' '\/]/g, '-').toLowerCase()}`"
     >
-      <div class="d-flex icon-wrapper" :class="index.change > 3 && type === 'cryptocurrency' ? 'fire' : ''">
-        <div class="icon" :class="index.icon ? index.icon : index.symbol.toLowerCase()"/>
+      <div class="d-flex icon-wrapper" :class="index.change > 8 && type === 'cryptocurrency' ? 'fire' : ''">
+        <div class="icon" :class="index.icon ? index.icon : 's-' + index.symbol.toLowerCase()" :id="index.symbol.toUpperCase()"   />
         <h4>{{ index.name }}<span v-if="index.marketOpen" class="indicator"/></h4>
       </div>
       <Price :index="index" :price="index.price" />
@@ -239,12 +237,13 @@ export default {
   /* border-bottom: 1px solid #e3e3e3; */
   transition: 0.2s ease-in-out;
   h4 {
-    font-family: 'Press Start 2P', sans-serif;
-    letter-spacing: -1px;
-    word-spacing: -4px;
+    /* font-family: 'Press Start 2P', sans-serif; */
+    font-family: 'Nunito', serif;
+    /* letter-spacing: -1px; */
+    /* word-spacing: -4px; */
     display: inline-flex;
-    /* font-size: 14px; */
-    font-size: 10px;
+    font-size: 14px;
+    /* font-size: 10px; */
     margin-top: 0;
     align-items: center;
     margin-bottom: 0;

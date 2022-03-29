@@ -39,12 +39,12 @@
             />
           </div>
         </div>
-        <div class="col-12 col-lg-7 offset-lg-5">
+        <!-- <div class="col-12 col-lg-7 offset-lg-5">
           <div class="col-lg-12 mt-4 white-well">
             <News :newsData="newsData" />
             <Ad feedAd />
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
