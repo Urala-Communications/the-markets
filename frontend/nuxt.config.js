@@ -6,7 +6,7 @@ const cmcApiKey = process.env.CMC_KEY;
 const ALGOLIA_APPID = process.env.ALGOLIA_APPID;
 const ALGOLIA_APIKEY = process.env.ALGOLIA_APIKEY;
 const ALGOLIA_INDEXNAME = process.env.ALGOLIA_INDEXNAME;
-
+const API_SERVER_KEY = process.env.API_SERVER_KEY;
 
 // const strapiBaseUri = process.env.STRAPI_URL || "http://localhost:1337";
 // const strapiBaseUri = process.env.NODE_ENV === 'development' ? "http://localhost:1337" : "https://the-markets-cms.herokuapp.com";
@@ -24,36 +24,59 @@ export default {
     liveApiUrl,
     ALGOLIA_APPID,
     ALGOLIA_APIKEY,
-    ALGOLIA_INDEXNAME
+    ALGOLIA_INDEXNAME,
+    API_SERVER_KEY,
   },
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
-    title: 'The Markets - Live Charts for Financial Markets & the Global Community of Traders. Bitcoin, Ethereum, Doge, Shiba, Memes, Crypto, Indices, Stocks, Forex, Bonds, CFDs and more.',
+    title:
+      "The Markets - Live Charts for Financial Markets & the Global Community of Traders. Bitcoin, Ethereum, Doge, Shiba, Memes, Crypto, Indices, Stocks, Forex, Bonds, CFDs and more.",
     meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'title', name: 'title', content: 'The Markets' },
-      { hid: 'description', name: 'description', content: 'Live Charts for Financial Markets & the Global Community of Traders. Bitcoin, Ethereum, Doge, Shiba, Memes, Crypto, Indices, Stocks, Forex, Bonds, CFDs and more.' },
-      { hid: 'keywords', name: 'keywords', content: 'live market, cfds, indices, stocks, crypto, cryptocurrency, bitcoin, commodities, forex, currencies, bonds, market news, market insights' },
-      { name: 'apple-mobile-web-app-title', content: 'The Markets - live charts for financial markets & the global community of traders' },
+      { charset: "utf-8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { hid: "title", name: "title", content: "The Markets" },
+      {
+        hid: "description",
+        name: "description",
+        content:
+          "Live Charts for Financial Markets & the Global Community of Traders. Bitcoin, Ethereum, Doge, Shiba, Memes, Crypto, Indices, Stocks, Forex, Bonds, CFDs and more.",
+      },
+      {
+        hid: "keywords",
+        name: "keywords",
+        content:
+          "live market, cfds, indices, stocks, crypto, cryptocurrency, bitcoin, commodities, forex, currencies, bonds, market news, market insights",
+      },
+      {
+        name: "apple-mobile-web-app-title",
+        content:
+          "The Markets - live charts for financial markets & the global community of traders",
+      },
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      { rel: 'apple-touch-icon', type: 'image/png', href: '/apple-touch-icon.png' },
-      { rel: 'android-chrome', type: 'image/png', href: '/android-chrome-192x192.png' },
-    ]
+      { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+      {
+        rel: "apple-touch-icon",
+        type: "image/png",
+        href: "/apple-touch-icon.png",
+      },
+      {
+        rel: "android-chrome",
+        type: "image/png",
+        href: "/android-chrome-192x192.png",
+      },
+    ],
   },
 
   loading: false,
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
-  css: [
-  ],
+  css: [],
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [
-    '~/plugins/vue-directives',
-    { src: "~/plugins/gtag.js", mode: 'client' },
+    "~/plugins/vue-directives",
+    { src: "~/plugins/gtag.js", mode: "client" },
     { src: "~/plugins/highcharts.js", ssr: true },
     { src: "~/plugins/vue-instantsearch.js" },
   ],
@@ -65,55 +88,52 @@ export default {
   buildModules: [
     // '@nuxtjs/dotenv',
     // '@nuxtjs/fontawesome'
-    '@/modules/sitemapgenerator',
+    "@/modules/sitemapgenerator",
     // '@/modules/algoliaindex'
-    '@/modules/cryptologocheck',
+    "@/modules/cryptologocheck",
   ],
 
-  dev: process.env.NODE_ENV !== 'production',
+  dev: process.env.NODE_ENV !== "production",
 
   devServer: {
-    clientLogLevel: "silent"
+    clientLogLevel: "silent",
   },
 
   fontawesome: {
     icons: {
-      solid: true
-    }
+      solid: true,
+    },
   },
 
-  'google-adsense': {
-    id: 'ca-pub-7227085508439540'
+  "google-adsense": {
+    id: "ca-pub-7227085508439540",
   },
 
-  serverMiddleware: ['~/api/index'],
+  serverMiddleware: ["~/api/index"],
 
   styleResources: {
-    scss: [
-      '~/assets/scss/coinlogos.scss',
-      '~/assets/scss/variables.scss',
-    ]
+    scss: ["~/assets/scss/coinlogos.scss", "~/assets/scss/variables.scss"],
   },
 
   watchers: {
     webpack: {
       ignored: /node_modules/,
-      poll: 3000
-    }
+      poll: 3000,
+    },
   },
 
   // Modules (https://go.nuxtjs.dev/config-modules)
   modules: [
     // https://go.nuxtjs.dev/bootstrap
-    'bootstrap-vue/nuxt',
-    '@nuxtjs/proxy',
-    '@nuxtjs/style-resources',
-    '@nuxtjs/axios',
-    '@nuxtjs/google-adsense',
+    "bootstrap-vue/nuxt",
+    "@nuxtjs/proxy",
+    "@nuxtjs/style-resources",
+    "@nuxtjs/axios",
+    "@nuxtjs/google-adsense",
     "@nuxtjs/markdownit",
     "@nuxtjs/strapi",
-    '@nuxtjs/firebase',
-    '@nuxtjs/sitemap'
+    "@nuxtjs/firebase",
+    "@nuxtjs/sitemap",
   ],
 
   firebase: {
@@ -124,50 +144,50 @@ export default {
       storageBucket: "themarkets.appspot.com",
       messagingSenderId: "523290113240",
       appId: "1:523290113240:web:842a2726513bdead0f93ad",
-      measurementId: "G-C2H6JMSF7Z"
+      measurementId: "G-C2H6JMSF7Z",
     },
     services: {
-      firestore: true
-    }
+      firestore: true,
+    },
   },
 
   firestore: {
     memoryOnly: false, // default
-    chunkName: process.env.NODE_ENV !== 'production' ? 'firebase-auth' : '[id]', // default
+    chunkName: process.env.NODE_ENV !== "production" ? "firebase-auth" : "[id]", // default
     enablePersistence: true,
     emulatorPort: 8080,
-    emulatorHost: 'localhost',
+    emulatorHost: "localhost",
     settings: {
       // Firestore Settings - currently only works in SPA mode
-    }
+    },
   },
 
   axios: {
-    proxy: true
+    proxy: true,
   },
 
   publicRuntimeConfig: {
     axios: {
-      browserBaseURL: process.env.BROWSER_BASE_URL
-    }
+      browserBaseURL: process.env.BROWSER_BASE_URL,
+    },
   },
 
   privateRuntimeConfig: {
     axios: {
-      baseURL: process.env.BASE_URL
-    }
+      baseURL: process.env.BASE_URL,
+    },
   },
 
   proxy: {
-    '/cmcapi': {
-      target: 'https://pro-api.coinmarketcap.com',
+    "/cmcapi": {
+      target: "https://pro-api.coinmarketcap.com",
       changeOrigin: true,
-      pathRewrite: { '^/cmcapi': '/' },
+      pathRewrite: { "^/cmcapi": "/" },
     },
-    '/tecapi': {
-      target: 'https://api.tradingeconomics.com',
+    "/tecapi": {
+      target: "https://api.tradingeconomics.com",
       changeOrigin: true,
-      pathRewrite: { '^/tecapi': '/' },
+      pathRewrite: { "^/tecapi": "/" },
     },
   },
 
@@ -221,11 +241,11 @@ export default {
         useShortDoctype: true,
         minifyURLs: true,
         removeComments: true,
-        removeEmptyElements: true
-      }
+        removeEmptyElements: true,
+      },
     },
     babel: {
-      "sourceType": "unambiguous",
+      sourceType: "unambiguous",
       compact: true,
       presets(env, [preset, options]) {
         return [["@babel/preset-env", {}]];
@@ -234,26 +254,24 @@ export default {
         [
           "@babel/plugin-transform-runtime",
           {
-            regenerator: true
-          }
-        ]
-      ]
+            regenerator: true,
+          },
+        ],
+      ],
     },
     // loaders:  {
     //   vue: {
     //     prettify: false
     //   }
     // },
-    transpile: ['vue-instantsearch', 'instantsearch.js/es'],
+    transpile: ["vue-instantsearch", "instantsearch.js/es"],
   },
   sitemap: {
-    hostname: 'https://themarkets.io',
+    hostname: "https://themarkets.io",
     gzip: true,
-    routes: [
-    ]
+    routes: [],
   },
   generate: {
-    crawler: false // default - true
-  }
-
-}
+    crawler: false, // default - true
+  },
+};

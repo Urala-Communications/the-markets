@@ -133,10 +133,18 @@ export default {
         })
         .then(() => {
           this.stocks.forEach((item) => {
-            this.$axios
-              .$get(
-                `https://api.finage.co.uk/agg/stock/${item.symbol}/1/day/2021-01-01/${this.today}?limit=1825&apikey=${this.finageApiKey}`
-              )
+            useQuery({
+              query: "finage.agg",
+              variables: {
+                suffix: "stock",
+                symbol: item.symbol,
+                period: "1",
+                multiplier: "day",
+                from: "2021-01-01",
+                to: this.today,
+              },
+              axios: this.$axios,
+            })
               .then((response) => {
                 const indexFound = this.stocks.findIndex(
                   (stock) => stock.symbol === response.symbol

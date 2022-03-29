@@ -12,7 +12,10 @@ export const gqlQuery =
     return axios({
       url: "http://localhost:4000/",
       method: "post",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        authorization: process.env.API_SERVER_KEY,
+      },
       data: {
         query,
         variables,
