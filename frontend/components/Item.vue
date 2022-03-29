@@ -102,7 +102,7 @@
               </div>
             </div>
             <div v-if="open" class="col-12 col-lg-6 pr-0">
-              <div v-if="news.length > 0" class="col-12">
+              <div v-if="news.length > 0" class="col-12 white-well">
                 <h5>News</h5>
                 <News :newsData="news"/>
               </div>
@@ -316,7 +316,7 @@ export default {
     display: block;
     width: 100%;
     /* color: #90a4be; */
-    color: #454545;
+    /* color: #454545; */
   }
   .title {
     p{
@@ -362,9 +362,9 @@ export default {
       padding-top: 10px;
       padding-bottom: 10px;
       margin-bottom: 2rem;
-      p{
+      /* p{
         margin-bottom: 0;
-      }
+      } */
     }
   }
   .overflow {
@@ -386,7 +386,7 @@ export default {
   .news{
     .card .card-body{
       margin-left: 0 !important;
-      padding: 15px !important;
+      padding: 5px 0 !important;
     }
   }
 

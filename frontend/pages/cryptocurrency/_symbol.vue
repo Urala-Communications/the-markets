@@ -223,14 +223,14 @@ export default {
             `https://api.binance.com/api/v3/klines?limit=1000&symbol=${symbol}&interval=${interval}`
           )
           .then((response) => {
-  
+
             this.chartData = response.map(o => {
               const [timestamp, openPrice, high, low, close, volume] = [...o];
               return [timestamp, openPrice, high, low, close, volume].map(n =>
                 Number(n)
               );
             });
-  
+
             this.$root.$emit("updatedInterval", {symbol, interval});
           })
           .catch((error) => {
@@ -267,7 +267,7 @@ export default {
       );
       this.$axios
         .$get(
-          `https://api.finage.co.uk/news/cryptocurrency/${i.symbol}?apikey=${this.finageApiKey}`
+          `https://api.finage.co.uk/news/cryptocurrency/${i.symbol}?range=7days&apikey=${this.finageApiKey}`
         )
         .then((response) => {
           // filter matching articles
@@ -276,7 +276,7 @@ export default {
           //   newsfeed.push(response.news[0])
           // }
           //console.log("NEWS");
-          // console.log(response)
+          console.log(response)
           this.news = response.news;
           // ?type=video
           // this.news.video = true;
@@ -314,7 +314,7 @@ export default {
     })
     const self = this;
     function checkCryptoList() {
-      if (localStorage.getItem('crypto')) {        
+      if (localStorage.getItem('crypto')) {
           let topCoins = localStorage.getItem('crypto');
           self.cryptocurrency = JSON.parse(topCoins);
 
@@ -327,14 +327,14 @@ export default {
             setTimeout(checkCryptoList, 250);
         }
     }
-    setTimeout(checkCryptoList, 250);   
-    
+    setTimeout(checkCryptoList, 250);
+
     this.$root.$on("changeInterval", ({symbol, interval, text}) => {
       this.updateInterval(symbol, interval, text);
     })
     this.subscribeTrade();
     this.listenTrade();
-    // 
+    //
     // setInterval(() => {
     //     this.fetchNews();
     // }, 300000);
