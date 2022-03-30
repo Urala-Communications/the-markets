@@ -98,7 +98,7 @@ export default {
     checkBackground() {
       const self = this;
       document.querySelectorAll(".icon").forEach(function (icon) {
-        if (window.getComputedStyle(icon).backgroundImage == "none") {
+        if (window.getComputedStyle(icon).backgroundImage == "none" && self.item.logo) {
           icon.style.backgroundImage = 'url("' + self.item.logo + '")';
         }
       });
@@ -139,9 +139,9 @@ export default {
       this.live = this.item.symbol.toUpperCase() + "USDT";
       // this.$axios.$get(`https://api.finage.co.uk/agg/crypto/${i.symbol}/1/day/${fiveYearsAgo}/${this.today}?limit=5000&apikey=${this.finageApiKey}`)
       let allcheck = true;
-      let binanceCheck = await this.fetchDataByBinance(this.item.symbol, "1d");
+      let binanceCheck = await this.fetchDataByBinance(this.live, "1d");
       if (!binanceCheck) {
-        let finageCheck = await this.fetchDataByFinage(this.item.symbol, "1/day");
+        let finageCheck = await this.fetchDataByFinage(this.item.symbol.toLowerCase()+ "usd", "1/day");
         if (!finageCheck) {
           let coinGeckoCheck = await this.fetchDataByCoinGecko(this.item.symbol, "1");
           allcheck = coinGeckoCheck;
@@ -226,7 +226,7 @@ export default {
         // console.log('nomax')
         let binanceCheck = await this.fetchDataByBinance(symbol, interval);
         if (!binanceCheck) {
-          let finageCheck = await this.fetchDataByFinage(symbol, interval);
+          let finageCheck = await this.fetchDataByFinage(symbol.toLowerCase().slice(0, -1), interval);
           if (!finageCheck) {
 
             let coinGeckoCheck = await this.fetchDataByCoinGecko(symbol, interval);            
@@ -242,7 +242,7 @@ export default {
         this.stopRun = 1;
         let binanceCheck = await this.fetchDataByBinance(symbol, interval);
         if (!binanceCheck) {
-          let finageCheck = await this.fetchDataByFinage(symbol, interval);
+          let finageCheck = await this.fetchDataByFinage(symbol.toLowerCase().slice(0, -1), interval);
           if (!finageCheck) {
             let coinGeckoCheck = await this.fetchDataByCoinGecko(symbol, interval);
             this.$root.$emit("updatedInterval", { symbol, interval });
