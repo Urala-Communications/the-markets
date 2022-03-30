@@ -16,7 +16,7 @@
                   <div class="icon" :class="type === 'cryptocurrency' ? 's-'+item.icon : item.icon"  :id="item.icon.toUpperCase()"  />
                   {{ item.name }}
                 </h1>
-                <div v-if="typeof marketStatus !== 'undefined' && marketStatus.length > 0" class="d-inline-flex justify-content-end align-items-center w-100 mt-2">
+                <div v-if="typeof marketStatus !== 'undefined' && marketStatus.length > 0" class="d-inline-flex justify-content-end align-items-center mt-2">
                   <span class="status text-uppercase font-weight-bold" :class="marketStatus === 'open' ? 'green' : 'red'">Market {{ marketStatus }}</span>
                 </div>
               </div>
@@ -246,6 +246,7 @@ export default {
   }
   .status{
     font-size: 13px;
+    width: 102px;
     position: relative;
     color: $green;
     &:before{
