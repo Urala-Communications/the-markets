@@ -365,9 +365,9 @@ export default {
       this.checkMarketStatus();
 
       function checkCryptoList() {
-        if (localStorage.getItem('crypto')) {
-            let topCoins = localStorage.getItem('crypto');
-            self.cryptocurrency = JSON.parse(topCoins);
+        if (self.$store.getters.COINS_LENGTH) {
+            // let topCoins = localStorage.getItem('crypto');
+            self.cryptocurrency =  self.$store.getters.GET_COINS  // JSON.parse(topCoins);
             let homeCrypto = self.cryptocurrency.slice(0,10)
             homeCrypto.forEach(item => {
               self.fetchCryptoNews(item.symbol);

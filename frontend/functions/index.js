@@ -5,7 +5,6 @@ const cmc_api_key = process.env.CMC_KEY;
 const finage_api_key = process.env.FINAGE_API_KEY;
 
 exports.coins =  functions.https.onRequest(async (req, res) => {
-
   res.set('Access-Control-Allow-Origin', process.env.SITE_URL);
   if (req.method === 'OPTIONS') {
     // Send response to OPTIONS requests
@@ -20,7 +19,50 @@ exports.coins =  functions.https.onRequest(async (req, res) => {
       res.status(200).send(allCoinsData);
     }
   }
-})
+});
+
+exports.search =  functions.https.onRequest(async (req, res) => {
+  res.set('Access-Control-Allow-Origin', process.env.SITE_URL);
+  if (req.method === 'OPTIONS') {
+    // Send response to OPTIONS requests
+    res.set('Access-Control-Allow-Methods', 'GET');
+    res.set('Access-Control-Allow-Headers', 'Content-Type');
+    res.set('Access-Control-Max-Age', '3600');
+    res.status(204).send('');
+  } else {
+    const coin = await searchCoin(req.query.slug??"");
+    res.status(200).send(coin);
+  }
+});
+
+async function searchCoin(slug) {
+  try {
+    const coinData = await axios.get(`https://pro-api.coinmarketcap.com/v2/cryptocurrency/info?slug=${slug}`, {
+      headers: {
+        "X-CMC_PRO_API_KEY": cmc_api_key
+      },
+      json: true,
+      gzip: true
+    });
+    if (!coinData.data.status.error_code) {
+      return await coinData.data.data[Object.keys(coinData.data.data)];
+    } else {
+      return await coinData.data;
+    }
+  } catch (error) {
+    if (error.response){
+      //do something   
+      console.log( "response: ",error.response)
+      return await error.response.data; 
+    } else if(error.request){ 
+    //do something else    
+    console.log(error.request)
+    } else if(error.message){
+    //do something other than the other two    
+    console.log(error.message)
+    }
+  }
+}
 
 async function getTopCoins() {
   try {
