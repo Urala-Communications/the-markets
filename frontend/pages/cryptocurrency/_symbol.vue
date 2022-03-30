@@ -38,7 +38,7 @@ export default {
       finageApiKey: process.env.finageApiKey,
       liveApiUrl: process.env.liveApiUrl,
       item: {
-        name: '',
+        name: "",
         price: 0,
         icon: "",
       },
@@ -65,6 +65,7 @@ export default {
       today: new Date(Date.now()).toLocaleDateString("fr-CA"),
       fiveYearsAgo: new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString("fr-CA"),
       stopRun: 0,
+      coins: [],
     };
   },
   head() {
@@ -83,31 +84,29 @@ export default {
   },
   methods: {
     fetchDetails() {
-      let i = this.cryptocurrency.find(
-        (item) => item.name.toLowerCase() === this.symbol.replace("-", " ")
-      );
-      if (i) {
-        this.$set(this.item, 'icon', i.symbol);
-        this.$set(this.item, 'name', i.name);
-      }
       this.$axios
         .$get(
-          `https://api.finage.co.uk/detail/cryptocurrency/${i.symbol}?apikey=${this.finageApiKey}`
+          `https://api.finage.co.uk/detail/cryptocurrency/${this.item.symbol}?apikey=${this.finageApiKey}`
         )
         .then((response) => {
           this.profile = response;
         })
         .catch((error) => {
-          console.log(error);
+          // console.log(error);
         });
     },
+    checkBackground() {
+      const self = this;
+      document.querySelectorAll(".icon").forEach(function (icon) {
+        if (window.getComputedStyle(icon).backgroundImage == "none" && self.item.logo) {
+          icon.style.backgroundImage = 'url("' + self.item.logo + '")';
+        }
+      });
+    },
     fetchPrice() {
-      let i = this.cryptocurrency.find(
-        (item) => item.name.toLowerCase() === this.symbol.replace("-", " ")
-      );
       this.$axios
         .$get(
-          `https://api.finage.co.uk/last/crypto/detailed/${i.symbol.toUpperCase()+"USD"}?apikey=${this.finageApiKey}`
+          `https://api.finage.co.uk/last/crypto/detailed/${this.item.symbol.toUpperCase() + "USD"}?apikey=${this.finageApiKey}`
         )
         .then((response) => {
           this.open = response.open.toFixed(2);
@@ -120,7 +119,7 @@ export default {
           this.yearLow = response.yearLow.toFixed(2);
         })
         .catch((error) => {
-          console.log(error);
+          // console.log(error);
         });
     },
     checkMarketStatus() {
@@ -132,142 +131,314 @@ export default {
           this.marketStatus = response.currencies.crypto;
         })
         .catch((error) => {
-          console.log(error);
+          // console.log(error);
         });
     },
-    fetchAggregates() {
-      let i = this.cryptocurrency.find(
-        (item) => item.name.toLowerCase() === this.symbol.replace("-", " ")
-      );
+    async fetchAggregates() {
+      const self = this;
+      this.live = this.item.symbol.toUpperCase() + "USDT";
       // this.$axios.$get(`https://api.finage.co.uk/agg/crypto/${i.symbol}/1/day/${fiveYearsAgo}/${this.today}?limit=5000&apikey=${this.finageApiKey}`)
-      this.$axios.$get(`https://api.binance.com/api/v3/klines?limit=1000&symbol=${i.symbol.toUpperCase()+"USDT"}&interval=1d`)
-        .then((response) => {
-          this.chartData = response.map(o => {
-            const [timestamp, openPrice, high, low, close, volume] = [...o];
-            return [timestamp, openPrice, high, low, close, volume].map(n =>
-              Number(n)
-            );
-          })
-          this.symbol = i.symbol;
-          this.live = i.symbol.toUpperCase()+"USDT";
-          let last = this.chartData[this.chartData.length - 1];
-          this.open = last[1];
-          this.high = last[2]
-          this.low = last[3];
-          this.close = last[4];
-          this.volume = last[5];
-          this.loading = false;
-          if (this.cryptoWS.readyState === 1) {
-            this.cryptoWS.send(`{"method":"SUBSCRIBE","params":["${this.live.toLowerCase()}@aggTrade"],"id":${this.subindex}}`);
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      let allcheck = true;
+      let binanceCheck = await this.fetchDataByBinance(this.live, "1d");
+      if (!binanceCheck) {
+        let finageCheck = await this.fetchDataByFinage(this.item.symbol.toLowerCase()+ "usd", "1/day");
+        if (!finageCheck) {
+          let coinGeckoCheck = await this.fetchDataByCoinGecko(this.item.symbol, "1");
+          allcheck = coinGeckoCheck;
+        }
+      }
+      if (allcheck) {
+        // console.log("chartdata",this.chartData);
+        this.loading = false;
+
+        let last = this.chartData[this.chartData.length - 1];
+        this.open = last[1];
+        this.high = last[2]
+        this.low = last[3];
+        this.close = last[4];
+        this.volume = last[5];
+        this.price = last[4];
+        
+        this.$set(this.item, "price", last[4]);
+        
+        if (this.cryptoWS.readyState === 1) {
+          this.cryptoWS.send(`{"method":"SUBSCRIBE","params":["${this.live.toLowerCase()}@aggTrade"],"id":${this.subindex}}`);
+        }
+      }
     },
-    subscribeTrade(){
+    subscribeTrade() {
       this.cryptoWS.onopen = () => {
         if (this.live)
           this.cryptoWS.send(`{"method":"SUBSCRIBE","params":["${this.live.toLowerCase()}@aggTrade"],"id":${this.subindex}}`);
-      }
+      };
     },
-    listenTrade(){
+    listenTrade() {
       this.cryptoWS.onmessage = (msg) => {
         let data = JSON.parse(msg.data);
         if (data.stream == `${this.live.toLowerCase()}@aggTrade`) {
-          this.$root.$emit("updateTrade",
-          {
+          this.$root.$emit("updateTrade", {
             symbol: this.live,
             time: data.data.E,
             price: Number(data.data.p),
             volumn: Number(data.data.q),
           });
         }
-      }
+      };
     },
-    unsubscribeTrade(){
+    unsubscribeTrade() {
       this.cryptoWS.send(`{"method":"UNSUBSCRIBE","params":["${this.live.toLowerCase()}@aggTrade"],"id":${this.subindex}}`);
     },
-    fetchAllResursive(symbol, interval,  lastdate){
+    fetchAllResursive(symbol, interval, lastdate) {
       if (this.stopRun) {
-        let last =  new Date(Date.parse(lastdate) - 864e5 * 365 * 5 ).toLocaleDateString("fr-CA");
+        let last = new Date(
+          Date.parse(lastdate) - 864e5 * 365 * 5
+        ).toLocaleDateString("fr-CA");
         this.$axios
           .$get(
             `https://api.finage.co.uk/agg/crypto/${symbol.slice(0,-1)}/1/week/${last}/${lastdate}?apikey=${this.finageApiKey}`
           )
           .then((response) => {
             if (response.results) {
-              this.chartData = response.results.map(o => {
-                const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
-                return [timestamp, openPrice, high, low, close, volume].map(n =>
-                  Number(n)
-                );
-              }).concat(this.chartData);
+              this.chartData = response.results
+                .map((o) => {
+                  const [timestamp, openPrice, high, low, close, volume] = [o.t,o.o,o.h,o.l,o.c,o.v];
+                  return [timestamp, openPrice, high, low, close, volume].map(
+                    (n) => Number(n)
+                  );
+                })
+                .concat(this.chartData);
 
-              this.fetchAllResursive(symbol, interval,  last);
+              this.fetchAllResursive(symbol, interval, last);
             } else {
-              this.$root.$emit("updatedInterval", {symbol, interval});
+              this.$root.$emit("updatedInterval", { symbol, interval });
             }
           })
           .catch((error) => {
-            console.log(error);
+            // console.log(error);
+            this.$root.$emit("updatedInterval", { symbol, interval });
           });
       }
     },
-    updateInterval(symbol, interval){
+    async fetchHistorical(symbol, interval) {
+      this.stopRun = 0;
+      
+      if (interval !== "MAX") {
+        // console.log('nomax')
+        let binanceCheck = await this.fetchDataByBinance(symbol, interval);
+        if (!binanceCheck) {
+          let finageCheck = await this.fetchDataByFinage(symbol.toLowerCase().slice(0, -1), interval);
+          if (!finageCheck) {
+
+            let coinGeckoCheck = await this.fetchDataByCoinGecko(symbol, interval);            
+            this.$root.$emit("updatedInterval", { symbol, interval });
+
+          } else {
+            this.$root.$emit("updatedInterval", { symbol, interval });
+          }
+        } else {
+          this.$root.$emit("updatedInterval", { symbol, interval });
+        }
+      } else {
+        this.stopRun = 1;
+        let binanceCheck = await this.fetchDataByBinance(symbol, interval);
+        if (!binanceCheck) {
+          let finageCheck = await this.fetchDataByFinage(symbol.toLowerCase().slice(0, -1), interval);
+          if (!finageCheck) {
+            let coinGeckoCheck = await this.fetchDataByCoinGecko(symbol, interval);
+            this.$root.$emit("updatedInterval", { symbol, interval });
+          } else {
+            this.$root.$emit("updatedInterval", { symbol, interval });
+            this.fetchAllResursive(symbol, interval, this.fiveYearsAgo);
+          }
+        } else {
+          this.$root.$emit("updatedInterval", { symbol, interval });
+        }
+      }
+    },
+    updateInterval(symbol, interval, text) {
       this.stopRun = 0;
       if (symbol === this.live) {
         if (interval !== "MAX") {
           this.$axios
-          .$get(
-            `https://api.binance.com/api/v3/klines?limit=1000&symbol=${symbol}&interval=${interval}`
-          )
-          .then((response) => {
-  
-            this.chartData = response.map(o => {
-              const [timestamp, openPrice, high, low, close, volume] = [...o];
-              return [timestamp, openPrice, high, low, close, volume].map(n =>
-                Number(n)
-              );
+            .$get(
+              `https://api.binance.com/api/v3/klines?limit=1000&symbol=${symbol}&interval=${interval}`
+            )
+            .then((response) => {
+              this.chartData = response.map((o) => {
+                const [timestamp, openPrice, high, low, close, volume] = [...o];
+                return [timestamp, openPrice, high, low, close, volume].map(
+                  (n) => Number(n)
+                );
+              });
+
+              this.$root.$emit("updatedInterval", { symbol, interval });
+            })
+            .catch((error) => {
+              // console.log(error);
             });
-  
-            this.$root.$emit("updatedInterval", {symbol, interval});
-          })
-          .catch((error) => {
-            console.log(error);
-          });
         } else {
           this.stopRun = 1;
           this.$axios
-          .$get(
-            `https://api.finage.co.uk/agg/crypto/${symbol.slice(0,-1)}/1/week/${this.fiveYearsAgo}/${this.today}?apikey=${this.finageApiKey}`
-          )
-          .then((response) => {
-            if (response.results) {
-              this.chartData = response.results.map(o => {
-                const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
-                return [timestamp, openPrice, high, low, close, volume].map(n =>
-                  Number(n)
-                );
-              });
-              this.$root.$emit("updatedInterval", {symbol, interval});
-              this.fetchAllResursive(symbol, interval,  this.fiveYearsAgo);
-            }
-          })
-          .catch((error) => {
-            this.$root.$emit("updatedInterval", {symbol, interval});
-            console.log(error);
-          });
+            .$get(
+              `https://api.finage.co.uk/agg/crypto/${symbol.slice(0, -1)}/1/week/${this.fiveYearsAgo}/${this.today}?apikey=${this.finageApiKey}`
+            )
+            .then((response) => {
+              if (response.results) {
+                this.chartData = response.results.map((o) => {
+                  const [timestamp, openPrice, high, low, close, volume] = [o.t,o.o,o.h,o.l,o.c,o.v];
+                  return [timestamp, openPrice, high, low, close, volume].map(
+                    (n) => Number(n)
+                  );
+                });
+                this.$root.$emit("updatedInterval", { symbol, interval });
+                this.fetchAllResursive(symbol, interval, this.fiveYearsAgo);
+              }
+            })
+            .catch((error) => {
+              this.$root.$emit("updatedInterval", { symbol, interval });
+              // console.log(error);
+            });
         }
       }
     },
+    async fetchDataByBinance(symbol, interval){
+      try {
+        let res = await this.$axios.$get(`https://api.binance.com/api/v3/klines?limit=1000&symbol=${symbol}&interval=${interval}`);
+        // console.log("binance res",res);
+        if (res) {
+
+          this.chartData = res.map((o) => {
+                  const [timestamp, openPrice, high, low, close, volume] = [...o];
+                  return [timestamp, openPrice, high, low, close, volume].map(
+                    (n) => Number(n)
+                  );
+                });
+          return true;
+        } else
+        return false;
+      } catch (error) {
+        // console.log("binance fetch err: ", error);
+        return false;
+      }
+    },
+    async fetchDataByFinage(symbol, interval){
+      let last = this.yesterday;
+      let text="";
+      switch (interval) {
+        
+        case '1m':
+          text = '1/minute';
+          last = this.yesterday;
+          break;
+        case '5m':
+          text = '5/minute';
+          last = this.yesterday;
+          break;
+        case '15m':
+          text = '15/minute';
+          last = this.yesterday;
+          break;
+        case '30m':
+          text = '30/minute';
+          last = new Date(Date.now() - 864e5 * 7).toLocaleDateString("fr-CA");
+          break;
+        case '1h':
+          text = '1/hour';
+          last = new Date(Date.now() - 864e5 * 30).toLocaleDateString("fr-CA");
+          break;
+        case '4h':
+          text = '4/hour';
+          last = new Date(Date.now() - 864e5 * 30).toLocaleDateString("fr-CA");
+          break;
+        case '1d':
+          text = '1/day';
+          last = new Date(Date.now() - 864e5 * 365).toLocaleDateString("fr-CA");
+          break;
+        case '1w':
+          text = '1/week';
+          last = new Date(Date.now() - 864e5 * 365).toLocaleDateString("fr-CA");
+          break;
+        case '1M':
+          text = '1/month';
+          last = new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString("fr-CA");
+          break;
+        case 'MAX':
+          text = '1/week';
+          last = new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString("fr-CA");
+          break;
+        default:
+          break;
+      }
+      try {
+        let res = await this.$axios.$get(`https://api.finage.co.uk/agg/crypto/${symbol}/${text}/${last}/${this.today}?apikey=${this.finageApiKey}`);
+        // console.log("finage res",res)
+        if (res.results) {
+          this.chartData = res.results.map((o) => {
+            const [timestamp, openPrice, high, low, close, volume] = [o.t,o.o,o.h,o.l,o.c,o.v,];
+            return [timestamp, openPrice, high, low, close, volume].map(
+                (n) => Number(n)
+            );
+          });
+          return true;
+        } else
+        return false;
+      } catch (error) {
+        // console.log("finage fetch err: ", error);
+        return false;
+      }
+    },
+    async fetchDataByCoinGecko(symbol, interval){
+      let day=1;
+      switch (interval) {
+        case '1m':
+        case '5m':
+        case '15m':
+        case '30m':
+        case '1h':
+        case '4h':
+          day=1;
+          break;
+        case '1d':
+          day=7;
+          break;
+        case '1w':
+          day=90;
+          break;
+        case '1M':
+          day=365;
+          break;
+        case 'MAX':
+          day='max';
+          break;
+        default:
+          break;
+      }
+      try {
+        let res = await this.$axios.$get(`https://api.coingecko.com/api/v3/coins/${this.item.slug.toLowerCase()}/ohlc?vs_currency=usd&days=${day}`);
+        // console.log("cg res", res);
+        if (res) {
+          this.chartData = res.map((o) => {
+            const [timestamp, openPrice, high, low, close, volume] = [
+              ...o,
+              0,
+            ];
+            return [timestamp, openPrice, high, low, close, volume].map(
+              (n) => Number(n)
+            );
+          });
+          return true;
+        } else 
+        return false;
+        
+      } catch (error) {
+        // console.log("coingecko fetch err: ", error);
+        return false;
+      }
+    },
     fetchNews() {
-      let i = this.cryptocurrency.find(
-        (item) => item.name.toLowerCase() === this.symbol.replace("-", " ")
-      );
       this.$axios
         .$get(
-          `https://api.finage.co.uk/news/cryptocurrency/${i.symbol}?apikey=${this.finageApiKey}`
+          `https://api.finage.co.uk/news/cryptocurrency/${this.item.symbol}?apikey=${this.finageApiKey}`
         )
         .then((response) => {
           // filter matching articles
@@ -285,20 +456,44 @@ export default {
           }
         })
         .catch((error) => {
-          console.log(error);
+          // console.log(error);
         });
+    },
+    findCoin() {
+      return this.$store.getters.GET_COINS.find(
+        (coin) =>
+          coin.name.toLowerCase().replace(" ", "-") == this.symbol.toLowerCase()
+      );
+    },
+    async searchCoin(slug) {
+      try {
+        return this.$axios.$get(`/api/search?slug=${slug}`, 
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+          },
+          json: true,
+          gzip: true
+        }
+        );
+      } catch (error) {
+        return null;
+      }
+    },
+    fetchInfos() {
+      this.$set(this.item, "icon", this.item.symbol);
+      // console.log(this.item)
+      this.fetchDetails();
+      this.checkMarketStatus();
+      this.fetchPrice();
+      this.fetchAggregates();
+      this.fetchNews();
     },
   },
   created() {
-    // let topCoins = localStorage.getItem('crypto');
-    // this.coins = JSON.parse(topCoins)
-    // this.coins.forEach((item) => {
-    //   let indexFound = item.cmc_rank - 1;
-    //   let i = this.coins[indexFound];
-    // });
-    // console.log(item)
-    // this.$set(this.item, "name", this.cryptocurrency[item.indexFound].name);
-    // this.$set(this.item, "icon", this.cryptocurrency[item.indexFound].icon);
+    const self = this;
+
     this.$root.$on("updateCrypto", (item) => {
       if (item.symbol === this.symbol.replace("-", " ")) {
         //this.$set(this.item, "price", item.price);
@@ -307,40 +502,54 @@ export default {
         this.$set(this.item, "time", item.time);
       }
     });
-    this.$root.$on("updateTrade", ({symbol, time, price, volumn}) => {
+
+    this.$root.$on("updateTrade", ({ symbol, time, price, volumn }) => {
       if (symbol === this.live) {
         this.$set(this.item, "price", price);
       }
-    })
-    const self = this;
-    function checkCryptoList() {
-      if (localStorage.getItem('crypto')) {        
-          let topCoins = localStorage.getItem('crypto');
-          self.cryptocurrency = JSON.parse(topCoins);
+    });
 
-          self.fetchDetails();
-          self.checkMarketStatus();
-          self.fetchPrice();
-          self.fetchAggregates();
-          self.fetchNews();
+    async function checkCryptoList() {
+      if (self.$store.getters.COINS_LENGTH) {
+        self.cryptocurrency = self.$store.getters.GET_COINS;
+
+        self.item = Object.assign({}, self.findCoin());
+        if (Object.keys(self.item).length === 0) {
+          let thiscoin = await self.searchCoin(
+            self.symbol.toLowerCase().replace(" ", "-").trim()
+          );
+          if (thiscoin.hasOwnProperty("id")) {
+            self.symbol = thiscoin.symbol;
+            self.item = { ...self.item, ...thiscoin };
+            self.profile = thiscoin;
+            self.fetchInfos();
+          }
         } else {
-            setTimeout(checkCryptoList, 250);
+          self.fetchInfos();
         }
+      } else {
+        setTimeout(checkCryptoList, 50);
+      }
     }
-    setTimeout(checkCryptoList, 250);   
-    
-    this.$root.$on("changeInterval", ({symbol, interval, text}) => {
-      this.updateInterval(symbol, interval, text);
-    })
+    setTimeout(checkCryptoList, 50);
+
+    this.$root.$on("changeInterval", ({ symbol, interval, text }) => {
+      this.fetchHistorical(symbol, interval);
+      //this.updateInterval(symbol, interval, text);
+    });
     this.subscribeTrade();
     this.listenTrade();
-    // 
+    //
     // setInterval(() => {
     //     this.fetchNews();
     // }, 300000);
     setInterval(() => {
       this.checkMarketStatus();
     }, 300000);
+  },
+  mounted() {
+    this.checkBackground();
+    window.addEventListener("scroll", this.checkBackground);
   },
   beforeDestroy() {
     this.unsubscribeTrade();
