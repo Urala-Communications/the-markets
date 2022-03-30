@@ -467,7 +467,7 @@ export default {
     },
     async searchCoin(slug) {
       try {
-        return this.$axios.$get(`http://localhost:5001/themarkets/us-central1/search?slug=${slug}`, 
+        return this.$axios.$get(`/api/search?slug=${slug}`, 
         {
           headers: {
             'Content-Type': 'application/json',
