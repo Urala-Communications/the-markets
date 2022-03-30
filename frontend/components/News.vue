@@ -258,7 +258,7 @@ export default {
       .card-title{
         /* font-size: 12px; */
       }
-      .card-text .card-text{display: none !important;}
+      /* .card-text .card-text{display: none !important;} */
     }
   }
 }

@@ -29,16 +29,17 @@
                 <p v-if="item.difference" class="diff d-flex flex-column" :class="item.change > 0 ? 'up' : 'down'">
                   <span class="pr-3"><strong class="main-font pr-2">24h Difference:</strong>{{ item.difference > 0 ? '+' : '' }}{{ item.difference }}</span>
                   <span><strong class="main-font pr-2">24h Change:</strong>{{ item.change > 0 ? '+' : '' }}{{ item.change }}%</span>
+                  <span v-if="marketCap"><strong>Marketcap:</strong>${{ marketCap }}</span>
                 </p>
               </div>
-              <div v-if="open" class="detail col-12 d-inline-flex flex-column text-right">
+              <!-- <div v-if="open" class="detail col-12 d-inline-flex flex-column text-right">
                 <span><strong>Open:</strong>${{ open }}</span>
                 <span><strong>High:</strong>${{ high }}</span>
                 <span><strong>Low:</strong>${{ low }}</span>
                 <span><strong>Close:</strong>${{ close }}</span>
                 <span><strong>Volume:</strong>{{ volume }}</span>
                 <span v-if="marketCap"><strong>Marketcap:</strong>${{ marketCap }}</span>
-              </div>
+              </div> -->
             </div>
 
             <!-- <chart
@@ -416,6 +417,7 @@ export default {
     .graph {
       .d-flex.row{
         flex-direction: column;
+        margin: 0;
       }
       .diff{
         margin-bottom: 5px;
