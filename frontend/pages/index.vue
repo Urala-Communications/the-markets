@@ -55,7 +55,7 @@
                 <h2>Indices
                   <NuxtLink class="index-link" to="/indices">View all</NuxtLink>
                 </h2>
-                <IndexList :data="indices.slice(0,11)" type="indices" />
+                <IndexList :data="indices.slice(0,10)" type="indices" />
                 <span class="smaller pl-2">*real-time derived</span>
               </div>
               <!-- <div class="col-12 white-well">
@@ -149,7 +149,7 @@ export default {
     },
     methods: {
       fetchNews(symbol){
-        this.$axios.$get(`https://api.finage.co.uk/news/market/${symbol}?apikey=${this.finageApiKey}`)
+        this.$axios.$get(`https://api.finage.co.uk/news/market/${symbol}?apikey=${this.finageApiKey}&limit=1`)
         .then(response => {
           // console.log(response)
           if(typeof response.news[0] !== 'undefined'){
@@ -172,7 +172,7 @@ export default {
         })
       },
       fetchCryptoNews(symbol){
-        this.$axios.$get(`https://api.finage.co.uk/news/cryptocurrency/${symbol}?apikey=${this.finageApiKey}`)
+        this.$axios.$get(`https://api.finage.co.uk/news/cryptocurrency/${symbol}?apikey=${this.finageApiKey}&limit=1`)
         .then(response => {
           if(typeof response.news[0] !== 'undefined'){
             let newsfeed = this.cryptoNews;
@@ -601,10 +601,13 @@ h2 {
   }
 }
 
+@media(max-width:768px){
+  .white-well{
+    padding: 20px 16px 24px;
+  }
+}
+
 @media(max-width: 400px){
-  /* .content.container{
-    padding: 0 0.5rem;
-  } */
   hr{
     margin-top: 0.5rem;
   }

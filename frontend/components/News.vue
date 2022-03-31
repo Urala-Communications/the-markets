@@ -35,7 +35,7 @@
       target="_blank"
     >
       <b-card no-body>
-        <b-row v-if="item.symbol">
+        <b-row>
           <b-col class="d-flex align-items-center col-12">
             <b-card-body class="pr-0 pb-0 pt-0">
               <b-card-text>
@@ -61,7 +61,7 @@
             <b-card-img :src="getThumb(item)" alt="image"></b-card-img>
           </b-col> -->
         </b-row>
-        <b-row v-else>
+        <!-- <b-row v-else>
           <b-col md="12">
             <b-card-body>
               <b-card-text>
@@ -71,7 +71,7 @@
               </b-card-text>
             </b-card-body>
           </b-col>
-        </b-row>
+        </b-row> -->
       </b-card>
     </a>
   </div>
@@ -147,6 +147,7 @@ export default {
 
 .news{
   flex-direction: column;
+  a:last-of-type .card{border-bottom: none;}
 }
 
 .card {
@@ -159,7 +160,6 @@ export default {
   background: #ffffff;
   .row {overflow: hidden;}
   .card-img {
-
     margin-right: 0;
     border-radius: 18px;
     box-shadow: 0px 2.5px 9px 0 rgba(218, 226, 239, 0.5);
@@ -258,7 +258,7 @@ export default {
       .card-title{
         /* font-size: 12px; */
       }
-      .card-text .card-text{display: none !important;}
+      /* .card-text .card-text{display: none !important;} */
     }
   }
 }

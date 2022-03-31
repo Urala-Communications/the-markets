@@ -56,7 +56,7 @@ export default {
     padding: 5px;
     border-radius: 3px;
     @media (max-width: 768px) {
-        left: 0px;
+        left: 10px;
     }
 }
 .timeframe {
