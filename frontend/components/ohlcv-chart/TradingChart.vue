@@ -23,7 +23,7 @@
 <script>
 import { TradingVue, DataCube } from 'trading-vue-js';
 import TFSelector from '~/components/ohlcv-chart/TFSelector.vue'
-
+import Overlays from 'tvjs-overlays'
 export default {
     name: 'TradingChart',
     
@@ -114,7 +114,17 @@ export default {
                     grid: {
                         logScale: true
                     }
+                },
+                onchart: [
+                {
+                    type: 'EMA',name: 'EMA 50', data: [],
+                    settings: {color: "#f7890c", length: 50}
+                },
+                {
+                    type: 'EMA',name: 'EMA 200', data: [],
+                    settings: {color: "purple", length: 200}
                 }
+                ],
             }),
             width: document.querySelector('.row').offsetWidth - 30,
             height: 470,
@@ -125,7 +135,9 @@ export default {
             },
             timezone: (new Date()).getTimezoneOffset() / -60,
             defaultConfig:  { DEFAULT_LEN: 40 },
-            overlays: [],
+            overlays: [
+                Overlays['EMA']
+            ],
         }
     },
 }
