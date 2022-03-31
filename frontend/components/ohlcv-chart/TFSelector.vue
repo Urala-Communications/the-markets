@@ -40,7 +40,7 @@ export default {
     },
     data() {
         return {
-            selected: this.$props.charts.length > 4 ? 4 : 0
+            selected: this.$props.charts.length > 6 ? 6 : 0
         }
     }
 }
