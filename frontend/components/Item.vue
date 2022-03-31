@@ -29,7 +29,7 @@
                 <p v-if="item.difference" class="diff d-flex flex-column" :class="item.change > 0 ? 'up' : 'down'">
                   <span class="pr-3"><strong class="main-font pr-2">24h Difference:</strong>{{ item.difference > 0 ? '+' : '' }}{{ item.difference }}</span>
                   <span><strong class="main-font pr-2">24h Change:</strong>{{ item.change > 0 ? '+' : '' }}{{ item.change }}%</span>
-                  <span v-if="marketCap"><strong>Marketcap:</strong>${{ marketCap }}</span>
+                  <span v-if="marketCap"><strong class="main-font pr-2">Marketcap:</strong>${{ convertToReadableNumber(marketCap) }}</span>
                 </p>
               </div>
               <!-- <div v-if="open" class="detail col-12 d-inline-flex flex-column text-right">
@@ -104,8 +104,8 @@
             </div>
             <div v-if="open" class="col-12 col-lg-6 pr-0">
               <div v-if="news.length > 0" class="col-12 white-well">
-                <h5>News</h5>
-                <News :newsData="news"/>
+                <h5 class="mb-0">News</h5>
+                <News :newsData="orderedNews"/>
               </div>
             </div>
             <!-- <div class="col-12 col-lg-4">
@@ -193,9 +193,29 @@ export default {
     }
 
   },
+  computed: {
+    orderedNews: function () {
+      let dateOrderedNews = this.news.sort((a,b) => {
+        return new Date(b.date) - new Date(a.date);
+      });
+      return dateOrderedNews;
+    }
+  },
   methods: {
     getchart() {
       return this.$refs.Chart
+    },
+    convertToReadableNumber(labelValue) {
+      // Nine Zeroes for Billions
+      return Math.abs(Number(labelValue)) >= 1.0e+9
+      ? (Math.abs(Number(labelValue)) / 1.0e+9).toFixed(2) + "B"
+      // Six Zeroes for Millions
+      : Math.abs(Number(labelValue)) >= 1.0e+6
+      ? (Math.abs(Number(labelValue)) / 1.0e+6).toFixed(2) + "M"
+      // Three Zeroes for Thousands
+      : Math.abs(Number(labelValue)) >= 1.0e+3
+      ? (Math.abs(Number(labelValue)) / 1.0e+3).toFixed(2) + "K"
+      : Math.abs(Number(labelValue));
     }
   },
   created(){
@@ -247,7 +267,7 @@ export default {
   }
   .status{
     font-size: 13px;
-    width: 102px;
+    width: 120px;
     position: relative;
     color: $green;
     &:before{
@@ -410,9 +430,9 @@ export default {
         padding-top: 10px;
       }
     }
-    .info.row{
+    /* .info.row{
       padding: 0 1rem;
-    }
+    } */
   }
   @media(max-width:440px){
     .graph {

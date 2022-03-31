@@ -601,10 +601,13 @@ h2 {
   }
 }
 
+@media(max-width:768px){
+  .white-well{
+    padding: 20px 16px 24px;
+  }
+}
+
 @media(max-width: 400px){
-  /* .content.container{
-    padding: 0 0.5rem;
-  } */
   hr{
     margin-top: 0.5rem;
   }
