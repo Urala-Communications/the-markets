@@ -36,6 +36,7 @@
                   <IndexList :data="cryptocurrency" type="cryptocurrency" indexPage />
                   <infinite-loading @infinite="lazyLoadCrypto">
                     <span slot="no-more"/>
+                    <span slot="no-results"/>
                   </infinite-loading>
                 </b-card-text>
               </b-tab>
@@ -207,11 +208,19 @@ export default {
         })
       },
       lazyLoadCrypto($state){
+        try {
+          let ctList = sessionStorage.getItem("cryptoList")
+          if (ctList)
+            this.cryptocurrency = JSON.parse(ctList);
+        } catch (error) {
+        }
+        if (this.cryptocurrency.length < 200)
         this.$axios.$get(`https://api.finage.co.uk/list/cryptocurrency?apikey=${finageApiKey}&limit=50&page=${this.page}`)
         .then(response => {
           if (response.results.length) {
             this.page++;
             this.cryptocurrency = this.cryptocurrency.concat(response.results);
+            sessionStorage.setItem("cryptoList", JSON.stringify(this.cryptocurrency))
             // fetch crypto pricing on load
             response.results.forEach(item => {
               this.fetchCrypto(item.symbol);
@@ -232,6 +241,7 @@ export default {
         .catch(error => {
           console.log(error);
         })
+        else $state.complete();
       },
       async fetCoinsData() {
         const self = this;
