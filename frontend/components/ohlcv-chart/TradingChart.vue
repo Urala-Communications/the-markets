@@ -1,10 +1,10 @@
 <template>
     <div class="trading-chart-container">
-        <trading-vue 
-        :data="chart" 
+        <trading-vue
+        :data="chart"
         :title-txt="symbol"
-        :toolbar="false"        
-        :width="this.width" 
+        :toolbar="false"
+        :width="this.width"
         :height="this.height"
         :color-back="colors.colorBack"
         :color-grid="colors.colorGrid"
@@ -14,7 +14,7 @@
         :chart-config="this.defaultConfig"
         ref="tradingChart">
         </trading-vue>
-        
+
         <tf-selector :charts="charts" v-on:selected="on_selected">
         </tf-selector>
     </div>
@@ -26,7 +26,7 @@ import TFSelector from '~/components/ohlcv-chart/TFSelector.vue'
 import Overlays from 'tvjs-overlays'
 export default {
     name: 'TradingChart',
-    
+
     props: {
         data: {
             type: Array
@@ -38,10 +38,10 @@ export default {
     components: { TradingVue, TFSelector },
     methods: {
         onResize(event) {
-            this.width = document.querySelector('.graph').offsetWidth - 20          
+            this.width = document.querySelector('.graph').offsetWidth - 20
         },
         on_selected(tf) {
-            this.$root.$emit("changeInterval", {symbol: this.symbol, interval: tf.name, text: tf.text})            
+            this.$root.$emit("changeInterval", {symbol: this.symbol, interval: tf.name, text: tf.text})
         }
     },
     watch: {
@@ -50,15 +50,15 @@ export default {
         }
     },
     mounted() {
-        
-        window.addEventListener('resize', this.onResize); 
-        
+
+        window.addEventListener('resize', this.onResize);
+
         this.$root.$on("updateKline", (updateData) => {})
         this.$root.$on("updateCrypto", (updateData) => {})
         this.$root.$on("updateTrade", ({symbol, time, price, volumn}) => {
-            
+
             if (this.data.length > 0 && this.$refs.tradingChart && symbol === this.symbol) {
-                
+
                 this.chart.update({
                     t: time,
                     price: price,
@@ -70,7 +70,7 @@ export default {
 
         this.$root.$on("updatedInterval", ({symbol, interval}) => {
             if (this.data.length > 0 && this.$refs.tradingChart && symbol == this.symbol) {
-                
+
                 if (interval === "MAX") {
                     this.defaultConfig = { DEFAULT_LEN: this.data.length }
                 } else {
@@ -80,8 +80,8 @@ export default {
             }
         });
 
-        this.$root.$on("limitRange", (symbol) => {            
-            if (this.data.length > 0 && this.$refs.tradingChart && symbol == this.symbol) {                
+        this.$root.$on("limitRange", (symbol) => {
+            if (this.data.length > 0 && this.$refs.tradingChart && symbol == this.symbol) {
                 this.charts = [{label: "1d", value:"1d", text: "1/day"}];
             }
         });
@@ -92,7 +92,7 @@ export default {
     },
     data() {
         return {
-            
+
             charts:[
                 {label: "1m", value:"1m", text: "1/minute"},
                 {label: "5m", value:"5m", text: "5/minute"},
@@ -105,7 +105,7 @@ export default {
                 {label: "1M", value:"1M", text: "1/month"},
                 {label: "MAX", value:"MAX", text: "MAX"}
             ],
-            chart: new DataCube({ 
+            chart: new DataCube({
                 chart: {
                     type: "Candles",
                     data: this.data,
@@ -122,7 +122,7 @@ export default {
                 },
                 {
                     type: 'EMA',name: 'EMA 100', data: [],
-                    settings: {color: "#74fcfdb3", length: 100}
+                    settings: {color: "#20c997", length: 100}
                 },
                 {
                     type: 'EMA',name: 'EMA 200', data: [],
