@@ -134,7 +134,7 @@ export default {
         let i = this.stocks.find( item => item.name.toLowerCase() === this.symbol);
         this.$axios.$get(`https://api.finage.co.uk/news/market/${i.symbol}?apikey=${this.finageApiKey}`)
         .then(response => {
-          this.news = response.news;
+          this.news = response.news.filter(e => !e.date.includes("ago"));
           if(this.news.length > 16){
             this.news.pop()
           }

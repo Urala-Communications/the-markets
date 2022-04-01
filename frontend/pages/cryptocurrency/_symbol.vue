@@ -158,9 +158,9 @@ export default {
         this.close = last[4];
         this.volume = last[5];
         this.price = last[4];
-        
+
         this.$set(this.item, "price", last[4]);
-        
+
         if (this.cryptoWS.readyState === 1) {
           this.cryptoWS.send(`{"method":"SUBSCRIBE","params":["${this.live.toLowerCase()}@aggTrade"],"id":${this.subindex}}`);
         }
@@ -221,7 +221,7 @@ export default {
     },
     async fetchHistorical(symbol, interval) {
       this.stopRun = 0;
-      
+
       if (interval !== "MAX") {
         // console.log('nomax')
         let binanceCheck = await this.fetchDataByBinance(symbol, interval);
@@ -229,7 +229,7 @@ export default {
           let finageCheck = await this.fetchDataByFinage(symbol.toLowerCase().slice(0, -1), interval);
           if (!finageCheck) {
 
-            let coinGeckoCheck = await this.fetchDataByCoinGecko(symbol, interval);            
+            let coinGeckoCheck = await this.fetchDataByCoinGecko(symbol, interval);
             this.$root.$emit("updatedInterval", { symbol, interval });
 
           } else {
@@ -325,7 +325,7 @@ export default {
       let last = this.yesterday;
       let text="";
       switch (interval) {
-        
+
         case '1m':
           text = '1/minute';
           last = this.yesterday;
@@ -427,9 +427,9 @@ export default {
             );
           });
           return true;
-        } else 
+        } else
         return false;
-        
+
       } catch (error) {
         // console.log("coingecko fetch err: ", error);
         return false;
@@ -441,16 +441,7 @@ export default {
           `https://api.finage.co.uk/news/cryptocurrency/${this.item.symbol}?apikey=${this.finageApiKey}`
         )
         .then((response) => {
-          // filter matching articles
-          // let index = newsfeed.findIndex(x => x.title === response.news[0].title);
-          // if(index === -1){
-          //   newsfeed.push(response.news[0])
-          // }
-          //console.log("NEWS");
-          // console.log(response)
-          this.news = response.news;
-          // ?type=video
-          // this.news.video = true;
+          this.news = response.news.filter(e => !e.date.includes("ago"));
           if (this.news.length > 16) {
             this.news.pop();
           }
@@ -467,7 +458,7 @@ export default {
     },
     async searchCoin(slug) {
       try {
-        return this.$axios.$get(`/api/search?slug=${slug}`, 
+        return this.$axios.$get(`/api/search?slug=${slug}`,
         {
           headers: {
             'Content-Type': 'application/json',
