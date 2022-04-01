@@ -121,6 +121,10 @@ export default {
                     settings: {color: "#f7890c", length: 50}
                 },
                 {
+                    type: 'EMA',name: 'EMA 100', data: [],
+                    settings: {color: "#74fcfdb3", length: 100}
+                },
+                {
                     type: 'EMA',name: 'EMA 200', data: [],
                     settings: {color: "purple", length: 200}
                 }
