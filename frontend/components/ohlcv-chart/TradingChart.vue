@@ -110,7 +110,7 @@ export default {
                     type: "Candles",
                     data: this.data,
                     indexBased: true,
-                    tf: "1h",
+                    tf: "1d",
                     grid: {
                         logScale: true
                     }

@@ -209,14 +209,26 @@ export default {
             `https://api.finage.co.uk/agg/stock/${symbol}/${text}/${last}/${this.lastTradeDate}?limit=3000&apikey=${this.finageApiKey}&sort=desc`
           )
           .then((response) => {
-            this.chartData = response.results.map(o => {
-              const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
-              return [timestamp, openPrice, high, low, close, volume].map(n =>
-                Number(n)
-              );
-            }).sort((a, b) => {
-              return a[0] - b[0];
-            });
+            if (interval=='1d') {
+              let t = new Date();
+              this.chartData = response.results.map(o => {
+                const [timestamp, openPrice, high, low, close, volume] = [((t=new Date(o.t)).setUTCHours(0,0,0,0)&&t.getTime()), o.o, o.h, o.l, o.c, o.v];
+                return [timestamp, openPrice, high, low, close, volume].map(n =>
+                  Number(n)
+                );
+              }).sort((a, b) => {
+                return a[0] - b[0];
+              });
+            } else 
+              this.chartData = response.results.map(o => {
+                const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
+                return [timestamp, openPrice, high, low, close, volume].map(n =>
+                  Number(n)
+                );
+              }).sort((a, b) => {
+                return a[0] - b[0];
+              });
+            
             this.$root.$emit("updatedInterval", {symbol, interval});
             if (interval === "MAX") {
               this.stopRun = 1;
