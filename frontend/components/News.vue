@@ -42,7 +42,7 @@
                 <!-- <p v-if="item.source" class="category">{{ item.source }}</p> -->
                 <p class="card-text source">{{ item.source }} | {{ formatDate(item.date) }}</p>
                 <h5 class="card-title" v-snip="2">{{ item.title }}</h5>
-                <p class="card-text" v-snip="2">{{ item.description }}</p>
+                <p v-if="item.symbol" class="card-text" v-snip="2">{{ item.description }}</p>
                 <span>{{ item.time }}</span>
               </b-card-text>
             </b-card-body>
@@ -131,15 +131,10 @@ export default {
       return require(`~/assets/news/${symbol.thumb}`)
     },
     formatDate(date){
-      // if(date.includes('ago')){
-      //   return date
-      // } else {
         let d = new Date(date)
         return d.toLocaleString('en-GB',{month:'long', year:'numeric', day:'numeric'});
-      // }
     }
   }
-  // mounted(){}
 }
 </script>
 
