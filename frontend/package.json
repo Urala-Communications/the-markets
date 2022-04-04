@@ -40,6 +40,7 @@
     "trading-vue-js": "^1.0.2",
     "tradingeconomics": "^1.0.12",
     "tradingeconomics-stream": "^0.2.0",
+    "tvjs-overlays": "^0.5.0",
     "vue": "^2.6.14",
     "vue-infinite-loading": "^2.4.5",
     "vue-instantsearch": "^3.3.0",
