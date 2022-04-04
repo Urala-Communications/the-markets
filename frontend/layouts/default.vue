@@ -67,26 +67,36 @@ export default {
   },
   methods: {
     async fetchCoinsByMarketCap() {
-      return this.$axios.$get(`https://api.finage.co.uk/list/cryptocurrency?apikey=${finageApiKey}&limit=50`, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        },
-        json: true,
-        gzip: true
-      })
-      .then((response) => {
-        // console.log(response.results)
-        this.$store.commit('SET_COINS', response.results);
-        this.coins = response.results;
-        /* let topCoins = response.results
-        this.coins = topCoins;
-        return this.writeCryptoLists(topCoins) */
-        // this.writeToFirestore(response)
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      try {
+        let ctList = sessionStorage.getItem("cryptoList")
+        if (ctList) {
+          let ct = JSON.parse(ctList);
+          this.coins = ct;
+        } else 
+          this.$axios.$get(`https://api.finage.co.uk/list/cryptocurrency?apikey=${finageApiKey}&limit=50`, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*'
+            },
+            json: true,
+            gzip: true
+          })
+          .then((response) => {
+            // console.log(response.results)
+            //this.$store.commit('SET_COINS', response.results);
+            if (response.results.length) {
+              this.coins = response.results;
+              this.writeCryptoLists(response.results)
+            }
+            /* let topCoins = response.results
+            this.coins = topCoins;
+            return this.writeCryptoLists(topCoins) */
+            // this.writeToFirestore(response)
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } catch(err){}
     },
     writeCryptoLists(coins){
       // create list of symbols for sockets
@@ -103,8 +113,8 @@ export default {
           }
         }
       }
-      localStorage.setItem('coinList', coinList.join());
-      localStorage.setItem('crypto', JSON.stringify(coins));
+      sessionStorage.setItem('coinList', coinList.join());
+      sessionStorage.setItem('cryptoList', JSON.stringify(coins));
     },
     getGDPR() {
       if (process.browser) {

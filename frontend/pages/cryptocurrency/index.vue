@@ -210,38 +210,40 @@ export default {
       lazyLoadCrypto($state){
         try {
           let ctList = sessionStorage.getItem("cryptoList")
-          if (ctList)
+          if (ctList) {
             this.cryptocurrency = JSON.parse(ctList);
-        } catch (error) {
-        }
-        if (this.cryptocurrency.length < 200)
-        this.$axios.$get(`https://api.finage.co.uk/list/cryptocurrency?apikey=${finageApiKey}&limit=50&page=${this.page}`)
-        .then(response => {
-          if (response.results.length) {
-            this.page++;
-            this.cryptocurrency = this.cryptocurrency.concat(response.results);
-            sessionStorage.setItem("cryptoList", JSON.stringify(this.cryptocurrency))
-            // fetch crypto pricing on load
-            response.results.forEach(item => {
-              this.fetchCrypto(item.symbol);
-            });
-
-            if (this.page > 2)
-              this.$root.$emit('addCrypto', response.results);
-
-            $state.loaded();
-            if (this.page > 4) {
+            this.page = this.cryptocurrency.length / 50 + 1;
+          }
+          if (this.cryptocurrency.length < 200)
+          this.$axios.$get(`https://api.finage.co.uk/list/cryptocurrency?apikey=${finageApiKey}&limit=50&page=${this.page}`)
+          .then(response => {
+            if (response.results.length) {
+              //this.page++;
+              this.cryptocurrency = this.cryptocurrency.concat(response.results);
+              sessionStorage.setItem("cryptoList", JSON.stringify(this.cryptocurrency))
+              // fetch crypto pricing on load
+              response.results.forEach(item => {
+                this.fetchCrypto(item.symbol);
+              });
+  
+              if (this.page > 2)
+                this.$root.$emit('addCrypto', response.results);
+  
+              $state.loaded();
+              if (this.page > 4) {
+                $state.complete();
+              }
+  
+            } else {
               $state.complete();
             }
-
-          } else {
-            $state.complete();
-          }
-        })
-        .catch(error => {
-          console.log(error);
-        })
-        else $state.complete();
+          })
+          .catch(error => {
+            console.log(error);
+          })
+          else $state.complete();
+        } catch (error) {
+        }
       },
       async fetCoinsData() {
         const self = this;

@@ -365,16 +365,16 @@ export default {
       this.checkMarketStatus();
 
       function checkCryptoList() {
-        if (self.$store.getters.COINS_LENGTH) {
-            // let topCoins = localStorage.getItem('crypto');
-            self.cryptocurrency =  self.$store.getters.GET_COINS  // JSON.parse(topCoins);
-            let homeCrypto = self.cryptocurrency.slice(0,10)
-            homeCrypto.forEach(item => {
-              self.fetchCryptoNews(item.symbol);
-            });
-          } else {
-              setTimeout(checkCryptoList, 250);
-          }
+        let topCoins = sessionStorage.getItem('cryptoList');
+        if (topCoins) {
+          self.cryptocurrency =  JSON.parse(topCoins);
+          let homeCrypto = self.cryptocurrency.slice(0,10)
+          homeCrypto.forEach(item => {
+            self.fetchCryptoNews(item.symbol);
+          });
+        } else {
+            setTimeout(checkCryptoList, 250);
+        }
       }
 
       setTimeout(checkCryptoList, 250);
