@@ -89,6 +89,7 @@
           <div class="row m-0 justify-content-between">
             <div class="col-lg-12 white-well">
               <h2 class="mt-0 mb-1">News</h2>
+              <VueRssFeed :feedUrl="feedUrl" :name="name" :limit="limit"/>
               <News :newsData="orderedNews"/>
               <!-- <News :newsData="stockNews"/> -->
               <!-- <Ad feedAd/> -->
@@ -105,11 +106,13 @@
 import { currencies, stocks, indices, bonds, rising, commodities} from "./../market.js";
 import Ad from "./../components/Ad.vue";
 import Articles from "./../components/Articles";
+import VueRssFeed from "vue-rss-feed";
 export default {
     components: {
       IndexList: () => import('./../components/IndexList'),
       Ad,
-      Articles
+      Articles,
+      VueRssFeed
     },
     async asyncData({ $strapi }) {
       return {
@@ -137,6 +140,9 @@ export default {
         news: [],
         yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
         today: new Date(Date.now()).toLocaleDateString("fr-CA"),
+        feedUrl: "https://rss.app/feeds/pjdrNrPLR7odNCva.xml",
+        name: "",
+        limit: 5,
       }
     },
     computed: {
@@ -585,6 +591,22 @@ h2 {
   background-color: #4647ff;
   &:hover {
     color: #fff;
+  }
+}
+
+.vue-rss-feed{
+  h1{display: none;}
+  .article{
+    padding: 0.75rem;
+    border-radius: 12px;
+    border: none;
+    box-shadow: 1px 3px 9px 1px rgb(218 226 239 / 55%);
+    img{border-radius: 12px;}
+    img + div {display: none;}
+    h3{
+      font-size: 14px;
+      font-weight: 700;
+    }
   }
 }
 

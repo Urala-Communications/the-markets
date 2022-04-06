@@ -7,15 +7,15 @@
         no-body
       >
         <b-row>
-          <b-col class="pr-0">
+          <!-- <b-col class="pr-0">
             <b-embed
               type="iframe"
               aspect="16by9"
               :src="item.url"
               allowfullscreen
             ></b-embed>
-            <!-- <iframe width="560" height="315" :src="item.url" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> -->
-          </b-col>
+            <iframe width="560" height="315" :src="item.url" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> -->
+          <!-- </b-col>  -->
           <b-col class="d-flex align-items-center">
             <b-card-body class="pl-0 pb-0 pt-0">
               <b-card-text>
