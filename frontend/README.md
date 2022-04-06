@@ -2,7 +2,7 @@
 
 [themarkets.io](https://themarkets.io/)
 
-## Build Setup 
+## Build Setup
 
 ```bash
 # install dependencies
@@ -23,6 +23,12 @@ $ npm run build
 $ cd frontend
 $ npm run build
 $ firebase deploy
+
+# firebase emulator
+$ cd frontend
+$ npm run-script generate
+$ firebase emulators:start
+
 ```
 
 -------------
@@ -123,7 +129,7 @@ EURUSD, USDJPY, USDKRW, USDTRY, GBPUSD, USDBRL, USDILS, USDRUB
 ### Commodities
 EU Carbon Offsets, Gold, Silver, Natural Gas, Crude Oil, Brent Oil, Coffee, Platinum, Cobalt, Solar Energy Index, Wind Energy Index, CRB Index, LME Index
 
-### Stocks 
+### Stocks
 Apple, Pfizer, Amazon, Facebook, Microsoft, Moderna, NIO, Tesla, Nvidia, Xpeng, Palantir, Boeing, Santander, Alibaba, Gamestop, AMC, BlackBerry
 
 ### Indices
