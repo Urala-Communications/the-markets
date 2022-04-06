@@ -459,12 +459,12 @@ export default {
           // console.log(error);
         });
     },
-    findCoin() {
+    /* findCoin() {
       return this.$store.getters.GET_COINS.find(
         (coin) =>
           coin.name.toLowerCase().replace(" ", "-") == this.symbol.toLowerCase()
       );
-    },
+    }, */
     async searchCoin(slug) {
       try {
         return this.$axios.$get(`/api/search?slug=${slug}`, 
@@ -495,7 +495,7 @@ export default {
     const self = this;
 
     this.$root.$on("updateCrypto", (item) => {
-      if (item.symbol === this.symbol.replace("-", " ")) {
+      if (item.symbol === this.symbol.replace("-", " ") && this.item) {
         //this.$set(this.item, "price", item.price);
         this.$set(this.item, "difference", item.difference);
         this.$set(this.item, "change", item.change);
@@ -504,21 +504,26 @@ export default {
     });
 
     this.$root.$on("updateTrade", ({ symbol, time, price, volumn }) => {
-      if (symbol === this.live) {
+      if (symbol === this.live && this.item) {
         this.$set(this.item, "price", price);
       }
     });
 
     async function checkCryptoList() {
-      if (self.$store.getters.COINS_LENGTH) {
-        self.cryptocurrency = self.$store.getters.GET_COINS;
+      let ctList = sessionStorage.getItem("cryptoList")
+      if (ctList) {
+        self.cryptocurrency = JSON.parse(ctList);
 
-        self.item = Object.assign({}, self.findCoin());
-        if (Object.keys(self.item).length === 0) {
+        self.item = self.cryptocurrency.find(
+          (coin) =>
+            coin.name.toLowerCase().replace(" ", "-") == self.symbol.toLowerCase()
+        );
+
+        if (!self.item) {
           let thiscoin = await self.searchCoin(
             self.symbol.toLowerCase().replace(" ", "-").trim()
           );
-          if (thiscoin.hasOwnProperty("id")) {
+          if (thiscoin && thiscoin.hasOwnProperty("id")) {
             self.symbol = thiscoin.symbol;
             self.item = { ...self.item, ...thiscoin };
             self.profile = thiscoin;

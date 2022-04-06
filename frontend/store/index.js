@@ -7,6 +7,11 @@ export const mutations = {
     // console.log('SET_COINS', value)
     state.coins = value
   },
+  UPDATE_COIN (state, payload) {
+    const item = state.coins[payload.indexFound];
+    Object.assign(item, payload);
+  }
+
 }
 
 export const getters = {
