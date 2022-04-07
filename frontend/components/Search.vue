@@ -1,5 +1,5 @@
 <template>
-  <ais-instant-search :search-client="searchClient" :index-name="indexName"  >
+  <ais-instant-search :search-client="algoliaClient" :index-name="indexName" :stalled-search-delay="100"   >
     <ais-configure
       :hits-per-page.camel="8"
     />
@@ -16,7 +16,7 @@
               :to="item.url"
               @click.native="resetSearch"
             >
-              <span v-if="item.icon || item.symbol" class="icon" :class="item.icon ? item.icon : item.symbol.toLowerCase()"/>
+              <span v-if="item.icon || item.symbol" class="icon" :class="item.icon ? (item.type==='cryptocurrency' ? ('s-' + item.icon) : item.icon): (item.type==='cryptocurrency' ? ('s-' + item.symbol.toLowerCase()) : item.symbol.toLowerCase())"/>
               {{item.title ? item.title : item.name ? item.name : item.symbol}}
               <span>{{item.symbol}}</span>
             </NuxtLink>
@@ -73,7 +73,7 @@ const searchClient = {
 export default {
   data() {
     return {
-      searchClient,
+      algoliaClient,
       indexName,
       middlewares: [insightsMiddleware],
     };
