@@ -72,7 +72,7 @@ export default {
         if (ctList) {
           let ct = JSON.parse(ctList);
           this.coins = ct;
-        } else 
+        } else
           this.$axios.$get(`https://api.finage.co.uk/list/cryptocurrency?apikey=${finageApiKey}&limit=50`, {
             headers: {
               'Content-Type': 'application/json',
@@ -564,8 +564,8 @@ export default {
 /* @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap'); */
 html, body {
   font-family: 'Archivo', sans-serif;
+  font-display:swap;
   font-size: 16px;
-  /* word-spacing: 1px; */
   overflow-x: hidden;
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
