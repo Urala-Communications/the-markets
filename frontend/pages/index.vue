@@ -105,19 +105,12 @@
 <script>
 import { currencies, stocks, indices, bonds, rising, commodities} from "./../market.js";
 import Ad from "./../components/Ad.vue";
-import Articles from "./../components/Articles";
 import VueRssFeed from "vue-rss-feed";
 export default {
     components: {
       IndexList: () => import('./../components/IndexList'),
       Ad,
-      Articles,
       VueRssFeed
-    },
-    async asyncData({ $strapi }) {
-      return {
-        articles: await $strapi.find("articles"),
-      };
     },
     data() {
       return {
@@ -141,8 +134,8 @@ export default {
         yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
         today: new Date(Date.now()).toLocaleDateString("fr-CA"),
         feedUrl: "https://rss.app/feeds/pjdrNrPLR7odNCva.xml",
-        name: "",
-        limit: 5,
+        name: '',
+        limit: 3,
       }
     },
     computed: {
