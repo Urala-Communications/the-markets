@@ -79,6 +79,12 @@ export default {
     };
   },
   methods: {
+    async coinGeckoCryptoSearch(symbol){
+      try {
+        return await this.$axios.get(`https://api.coingecko.com/api/v3/search?query=${symbol}`)
+      } catch (error) {
+      }
+    },
     resetSearch() {
       // clear the search input
       document
