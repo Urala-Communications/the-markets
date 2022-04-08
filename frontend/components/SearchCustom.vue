@@ -2,14 +2,14 @@
 <template>
     <div class="ais-Hits">
         <ol class="ais-Hits-list">
-            <li v-if="coins.length === 0 && !noresult" class="ais-Hits-item">
+            <li v-if="coins.length === 0 && query.length && !noresult" class="ais-Hits-item">
                 <a href="">
                     <span></span>
                     Searching ...
                     <span></span>
                 </a>
             </li>
-            <li v-if="coins.length === 0 && noresult" class="ais-Hits-item">
+            <li v-if="coins.length === 0 && query.length && noresult" class="ais-Hits-item">
                 <a href="">
                     <span></span>
                     No Results
@@ -19,7 +19,7 @@
             
             <li v-for="item in coins" :key="item.name" class="ais-Hits-item" >
                 <NuxtLink
-                    :to="`/cryptocurrency/${item.id}`"
+                    :to="`/cryptocurrency/${item.symbol}`"
                     @click.native="resetSearch"
                 >
                     <span v-if="item.icon || item.symbol" :id="item.symbol"  class="icon s-icon" :class="item.icon ? item.icon: 's-' + item.symbol.toLowerCase()"
@@ -65,6 +65,7 @@ export default {
         },
         resetSearch() {
             // clear the search input
+            this.query = "";
             document
                 .querySelectorAll('.ais-SearchBox-input')
                 .forEach((e) => (e.value = ''))

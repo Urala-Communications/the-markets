@@ -30,14 +30,14 @@ exports.search =  functions.https.onRequest(async (req, res) => {
     res.set('Access-Control-Max-Age', '3600');
     res.status(204).send('');
   } else {
-    const coin = await searchCoin(req.query.slug??"");
+    const coin = await searchCoin(req.query.slug??null, req.query.symbol??null);
     res.status(200).send(coin);
   }
 });
 
-async function searchCoin(slug) {
+async function searchCoin(slug=null, symbol=null) {
   try {
-    const coinData = await axios.get(`https://pro-api.coinmarketcap.com/v2/cryptocurrency/info?slug=${slug}`, {
+    const coinData = await axios.get(`https://pro-api.coinmarketcap.com/v2/cryptocurrency/info?${slug?("slug="+slug+"&"):""}${symbol?("symbol="+symbol):""}`, {
       headers: {
         "X-CMC_PRO_API_KEY": cmc_api_key
       },
