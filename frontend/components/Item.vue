@@ -118,6 +118,9 @@
               </div>
             </div> -->
           </div>
+          <div class="white-well col-12">
+            <Disqus shortname="themarkets-io"/>
+          </div>
         </div>
       </div>
     </div>
@@ -127,12 +130,14 @@
 <script>
 import Chart from '~/components/Chart.vue'
 import TradingChart from '~/components/ohlcv-chart/TradingChart.vue'
+import { Disqus } from 'vue-disqus'
 
 export default {
   name: 'Item',
   components: {
     Chart,
-    TradingChart
+    TradingChart,
+    Disqus
   },
   props: {
     item: {

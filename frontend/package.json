@@ -69,6 +69,7 @@
     "prettier": "^2.1.2",
     "sass": "^1.29.0",
     "sass-loader": "^10.1.0",
+    "vue-disqus": "^4.0.1",
     "vue-gtag": "^1.16.1"
   }
 }
