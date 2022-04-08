@@ -2,6 +2,21 @@
 <template>
     <div class="ais-Hits">
         <ol class="ais-Hits-list">
+            <li v-if="coins.length === 0 && !noresult" class="ais-Hits-item">
+                <a href="">
+                    <span></span>
+                    Searching ...
+                    <span></span>
+                </a>
+            </li>
+            <li v-if="coins.length === 0 && noresult" class="ais-Hits-item">
+                <a href="">
+                    <span></span>
+                    No Results
+                    <span></span>
+                </a>
+            </li>
+            
             <li v-for="item in coins" :key="item.name" class="ais-Hits-item" >
                 <NuxtLink
                     :to="`/cryptocurrency/${item.id}`"
@@ -29,14 +44,22 @@ export default {
     },
     data() {
         return {
-            coins: []
+            coins: [],
+            noresult: 0
         }
     },
     methods: {
         async coinGeckoCryptoSearch(symbol){
             this.$axios.get(`https://api.coingecko.com/api/v3/search?query=${symbol}`).then((response) => {
                 if (response.data) {
-                    this.coins = response.data.coins.filter(a => a.market_cap_rank!=null ).slice(0, 12);
+                    if (response.data.coins) {
+                        this.coins = response.data.coins.filter(a => a.market_cap_rank!=null ).slice(0, 12);
+                        this.noresult = 0;
+                        if (!this.coins.length) {
+                            this.noresult = 1
+                        }
+                    } else 
+                        this.noresult = 1
                 }
             }).catch((error) => {})
         },
