@@ -13,7 +13,7 @@
             <div class="title row mb-3">
               <div class="col-12 d-flex justify-content-between title-wrapper">
                 <h1 class="d-inline-flex w-100 text-capitalize mb-0">
-                  <div class="icon" :class="type === 'cryptocurrency' ? 's-'+item.icon : item.icon"  :id="item.icon.toUpperCase()"  />
+                  <div class="icon" :class="type === 'cryptocurrency' ? 's-'+item.icon : item.icon"  :id="item.icon.toUpperCase()"  :style="item.logo ? `background-image: url(${item.logo})`:''"  />
                   {{ item.name }}
                 </h1>
                 <div v-if="typeof marketStatus !== 'undefined' && marketStatus.length > 0" class="d-inline-flex justify-content-end align-items-center mt-2">

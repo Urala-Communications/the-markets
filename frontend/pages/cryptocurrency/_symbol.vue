@@ -560,8 +560,8 @@ export default {
     }, 300000);
   },
   mounted() {
-    this.checkBackground();
-    window.addEventListener("scroll", this.checkBackground);
+    // this.checkBackground();
+    // window.addEventListener("scroll", this.checkBackground);
   },
   beforeDestroy() {
     this.unsubscribeTrade();
