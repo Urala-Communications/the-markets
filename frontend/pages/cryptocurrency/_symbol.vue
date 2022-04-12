@@ -74,7 +74,7 @@ export default {
       title:
         this.symbol.toUpperCase().replace("-", " ") +
         " $" +
-        this.item.price +
+        this.item?.price +
         " - " +
         "The Markets - Live Charts for Financial Markets & the Global Community of Traders. Bitcoin, Ethereum, Doge, Shiba, Memes, Crypto, Indices, Stocks, Forex, Bonds, CFDs and more.",
     };
@@ -500,7 +500,7 @@ export default {
 
     this.$root.$on("updateCrypto", (item) => {
       if (item.symbol === this.symbol.replace("-", " ") && this.item) {
-        //this.$set(this.item, "price", item.price);
+        this.$set(this.item, "price", item.price);
         this.$set(this.item, "difference", item.difference);
         this.$set(this.item, "change", item.change);
         this.$set(this.item, "time", item.time);

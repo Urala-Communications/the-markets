@@ -2,14 +2,14 @@
 <template>
     <div class="ais-Hits">
         <ol class="ais-Hits-list">
-            <li v-if="coins.length === 0 && query.length && !noresult" class="ais-Hits-item">
+            <li v-if="coins.length === 0 && currentqs.length && !noresult" class="ais-Hits-item">
                 <a href="">
                     <span></span>
                     Searching ...
                     <span></span>
                 </a>
             </li>
-            <li v-if="coins.length === 0 && query.length && noresult" class="ais-Hits-item">
+            <li v-if="coins.length === 0 && currentqs.length && noresult" class="ais-Hits-item">
                 <a href="">
                     <span></span>
                     No Results
@@ -45,6 +45,7 @@ export default {
     data() {
         return {
             coins: [],
+            currentqs: "",
             noresult: 0
         }
     },
@@ -65,13 +66,21 @@ export default {
         },
         resetSearch() {
             // clear the search input
-            this.query = "";
+            this.currentqs = "";
             document
                 .querySelectorAll('.ais-SearchBox-input')
                 .forEach((e) => (e.value = ''))
             document.querySelectorAll('.ais-Hits-item').forEach((e) => e.remove())
             this.coins = [];
         }
+    },
+    watch: {
+        query: {
+            handler(after) {
+                this.currentqs = after;
+            },
+            immediate: true,
+        },
     },
     mounted(){
         const self = this;
