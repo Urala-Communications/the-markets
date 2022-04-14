@@ -133,7 +133,7 @@ export default {
         news: [],
         yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
         today: new Date(Date.now()).toLocaleDateString("fr-CA"),
-        feedUrl: "https://rss.app/feeds/pjdrNrPLR7odNCva.xml",
+        feedUrl: "https://rss.app/feeds/B8PsgfUBGpB6mM7A.xml",
         name: '',
         limit: 3,
       }
