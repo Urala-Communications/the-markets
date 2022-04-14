@@ -1,5 +1,5 @@
 <template>
-  <ais-instant-search :search-client="searchClient" :index-name="indexName"  >
+  <ais-instant-search :search-client="algoliaClient" :index-name="indexName" :stalled-search-delay="100" >
     <ais-configure
       :hits-per-page.camel="8"
     />
@@ -9,14 +9,14 @@
     <ais-state-results>
       <template slot-scope="{ query, hits }">
         <!-- First condition -->
-        <div v-if="!hits.length"></div>
+        <SearchCustom v-if="!hits.length" :query="query" />
         <ais-hits ref="searchHits" v-else-if="query.length > 0">
           <template v-slot:item="{item}" >
             <NuxtLink
               :to="item.url"
               @click.native="resetSearch"
             >
-              <span v-if="item.icon || item.symbol" class="icon" :class="item.icon ? item.icon : item.symbol.toLowerCase()"/>
+              <span v-if="item.icon || item.symbol" class="icon" :class="item.icon ? (item.type==='cryptocurrency' ? ('s-' + item.icon) : item.icon): (item.type==='cryptocurrency' ? ('s-' + item.symbol.toLowerCase()) : item.symbol.toLowerCase())"/>
               {{item.title ? item.title : item.name ? item.name : item.symbol}}
               <span>{{item.symbol}}</span>
             </NuxtLink>
@@ -34,6 +34,7 @@ import algoliasearch from 'algoliasearch/lite';
 import 'instantsearch.css/themes/satellite-min.css';
 import aa from 'search-insights';
 import { createInsightsMiddleware } from 'instantsearch.js/es/middlewares'
+import SearchCustom from './SearchCustom.vue'
 
 const insightsMiddleware = createInsightsMiddleware({
   insightsClient: aa,
@@ -71,12 +72,15 @@ const searchClient = {
 };
 
 export default {
+  components: {
+    SearchCustom
+  },
   data() {
     return {
-      searchClient,
+      algoliaClient,
       indexName,
       middlewares: [insightsMiddleware],
-    };
+    }
   },
   methods: {
     resetSearch() {

@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import { isArray } from "util";
 import Item from "~/components/Item.vue";
 export default {
   components: {
@@ -73,7 +74,7 @@ export default {
       title:
         this.symbol.toUpperCase().replace("-", " ") +
         " $" +
-        this.item.price +
+        this.item?.price +
         " - " +
         "The Markets - Live Charts for Financial Markets & the Global Community of Traders. Bitcoin, Ethereum, Doge, Shiba, Memes, Crypto, Indices, Stocks, Forex, Bonds, CFDs and more.",
     };
@@ -141,7 +142,7 @@ export default {
       let allcheck = true;
       let binanceCheck = await this.fetchDataByBinance(this.live, "1d");
       if (!binanceCheck) {
-        let finageCheck = await this.fetchDataByFinage(this.item.symbol.toLowerCase()+ "usd", "1/day");
+        let finageCheck = await this.fetchDataByFinage(this.item.symbol.toLowerCase()+ "usd", "1d");
         if (!finageCheck) {
           let coinGeckoCheck = await this.fetchDataByCoinGecko(this.item.symbol, "1");
           allcheck = coinGeckoCheck;
@@ -367,6 +368,8 @@ export default {
           last = new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString("fr-CA");
           break;
         default:
+          text = '1/day';
+          last = new Date(Date.now() - 864e5 * 365).toLocaleDateString("fr-CA");
           break;
       }
       try {
@@ -413,8 +416,9 @@ export default {
         default:
           break;
       }
+      
       try {
-        let res = await this.$axios.$get(`https://api.coingecko.com/api/v3/coins/${this.item.slug.toLowerCase()}/ohlc?vs_currency=usd&days=${day}`);
+        let res = await this.$axios.$get(`https://api.coingecko.com/api/v3/coins/${this.item.slug?this.item.slug.toLowerCase():(this.item.symbol.toLowerCase())}/ohlc?vs_currency=usd&days=${day}`);
         // console.log("cg res", res);
         if (res) {
           this.chartData = res.map((o) => {
@@ -465,9 +469,9 @@ export default {
           coin.name.toLowerCase().replace(" ", "-") == this.symbol.toLowerCase()
       );
     }, */
-    async searchCoin(slug) {
+    async searchCoin(symbol) {
       try {
-        return this.$axios.$get(`/api/search?slug=${slug}`, 
+        return this.$axios.$get(`/api/search?symbol=${symbol}`, 
         {
           headers: {
             'Content-Type': 'application/json',
@@ -496,7 +500,7 @@ export default {
 
     this.$root.$on("updateCrypto", (item) => {
       if (item.symbol === this.symbol.replace("-", " ") && this.item) {
-        //this.$set(this.item, "price", item.price);
+        this.$set(this.item, "price", item.price);
         this.$set(this.item, "difference", item.difference);
         this.$set(this.item, "change", item.change);
         this.$set(this.item, "time", item.time);
@@ -518,16 +522,19 @@ export default {
           (coin) =>
             coin.name.toLowerCase().replace(" ", "-") == self.symbol.toLowerCase()
         );
-
+        
         if (!self.item) {
           let thiscoin = await self.searchCoin(
             self.symbol.toLowerCase().replace(" ", "-").trim()
           );
-          if (thiscoin && thiscoin.hasOwnProperty("id")) {
-            self.symbol = thiscoin.symbol;
-            self.item = { ...self.item, ...thiscoin };
-            self.profile = thiscoin;
-            self.fetchInfos();
+          if (thiscoin.length) {
+            thiscoin = thiscoin[0];
+            if (thiscoin && thiscoin.hasOwnProperty("id")) {
+              self.symbol = thiscoin.symbol;
+              self.item = { ...self.item, ...thiscoin };
+              self.profile = thiscoin;
+              self.fetchInfos();
+            }
           }
         } else {
           self.fetchInfos();
@@ -553,8 +560,8 @@ export default {
     }, 300000);
   },
   mounted() {
-    this.checkBackground();
-    window.addEventListener("scroll", this.checkBackground);
+    // this.checkBackground();
+    // window.addEventListener("scroll", this.checkBackground);
   },
   beforeDestroy() {
     this.unsubscribeTrade();
