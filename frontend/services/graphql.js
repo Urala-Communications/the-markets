@@ -10,7 +10,10 @@ export const gqlQuery =
   (axios) =>
   (query, variables = {}) => {
     return axios({
-      url: "http://localhost:4000/",
+      url:
+        process.env.NODE_ENV !== "production"
+          ? "http://localhost:4000/"
+          : "https://us-central1-markets-data-node.cloudfunctions.net/graphql",
       method: "post",
       headers: {
         "Content-Type": "application/json",
