@@ -34,7 +34,8 @@
 </template>
 
 <script>
-import { stocks } from "../../market.js";
+import { stocks } from "../../market.js"import { useQuery } from "@/services/graphql.js";
+b
 import Item from "~/components/Item.vue";
 export default {
   components: {
@@ -89,10 +90,11 @@ export default {
         (item) => item.name.toLowerCase() === this.symbol
       );
       this.$set(this.item, "name", i.name);
-      this.$axios
-        .$get(
-          `https://api.finage.co.uk/detail/stock/${i.symbol}?apikey=${this.finageApiKey}`
-        )
+      useQuery({
+        query: "finage.detailStock",
+        variables: { symbol: i.symbol },
+        axios: this.$axios,
+      })
         .then((response) => {
           this.profile = response;
         })
@@ -104,10 +106,12 @@ export default {
       let i = this.stocks.find(
         (item) => item.name.toLowerCase() === this.symbol
       );
-      return this.$axios
-        .$get(
-          `https://api.finage.co.uk/last/stock/${i.symbol}?apikey=${this.finageApiKey}`
-        )
+      return useQuery({
+        query: "finage.last",
+        variables: { suffix: "stock", symbol: i.symbol },
+        axios: this.$axios,
+      })
+        .t
         .then((response) => {
           this.item.price = response.ask.toFixed(2);
           this.$set(this.item, "icon", i.icon);
@@ -140,11 +144,18 @@ export default {
       let i = this.stocks.find(
         (item) => item.name.toLowerCase() === this.symbol
       );
-      let last = new Date(Date.now() - 864e5 * 30).toLocaleDateString("fr-CA");
-      this.$axios
-        .$get(
-          `https://api.finage.co.uk/agg/stock/${i.symbol}/1/hour/${last}/${this.lastTradeDate}?limit=3000&apikey=${this.finageApiKey}&sort=desc`
-        )
+     useQuery({
+        query: "finage.agg",
+        variables: {
+          suffix: "stock",
+          symbol: i.symbol,
+          period: "1",
+          multiplier: "hour",
+          from: last,
+          to: this.lastTradeDate,
+        },
+        axios: this.$axios,
+      })
         .then((response) => {
           this.chartData = response.results
             .map((o) => {
@@ -181,10 +192,11 @@ export default {
       let i = this.stocks.find(
         (item) => item.name.toLowerCase() === this.symbol
       );
-      this.$axios
-        .$get(
-          `https://api.finage.co.uk/news/market/${i.symbol}?apikey=${this.finageApiKey}`
-        )
+      useQuery({
+        query: "finage.news",
+        variables: { market: "market", symbol: i.symbol },
+        axios: this.$axios,
+      })
         .then((response) => {
           this.news = response.news;
           if (this.news.length > 16) {
@@ -267,10 +279,17 @@ export default {
           default:
             break;
         }
-        this.$axios
-          .$get(
-            `https://api.finage.co.uk/agg/stock/${symbol}/${text}/${last}/${this.lastTradeDate}?limit=3000&apikey=${this.finageApiKey}&sort=desc`
-          )
+        useQuery({
+          query: "finage.agg",
+          variables: {
+            suffix: "stock",
+            symbol,
+            period: text,
+            from: last,
+            to: this.lastTradeDate,
+          },
+          axios: this.$axios,
+        })
           .then((response) => {
             if (interval == "1d") {
               let t = new Date();
