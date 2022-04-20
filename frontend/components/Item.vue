@@ -13,10 +13,10 @@
             <div class="title row mb-3">
               <div class="col-12 d-flex justify-content-between title-wrapper">
                 <h1 class="d-inline-flex w-100 text-capitalize mb-0">
-                  <div class="icon" :class="type === 'cryptocurrency' ? 's-'+item.icon : item.icon"/>
+                  <div class="icon" :class="type === 'cryptocurrency' ? 's-'+item.icon : item.icon"  :id="item.icon.toUpperCase()"  />
                   {{ item.name }}
                 </h1>
-                <div v-if="typeof marketStatus !== 'undefined' && marketStatus.length > 0" class="d-inline-flex justify-content-end align-items-center w-100 mt-2">
+                <div v-if="typeof marketStatus !== 'undefined' && marketStatus.length > 0" class="d-inline-flex justify-content-end align-items-center mt-2">
                   <span class="status text-uppercase font-weight-bold" :class="marketStatus === 'open' ? 'green' : 'red'">Market {{ marketStatus }}</span>
                 </div>
               </div>
@@ -29,16 +29,17 @@
                 <p v-if="item.difference" class="diff d-flex flex-column" :class="item.change > 0 ? 'up' : 'down'">
                   <span class="pr-3"><strong class="main-font pr-2">24h Difference:</strong>{{ item.difference > 0 ? '+' : '' }}{{ item.difference }}</span>
                   <span><strong class="main-font pr-2">24h Change:</strong>{{ item.change > 0 ? '+' : '' }}{{ item.change }}%</span>
+                  <span v-if="marketCap"><strong class="main-font pr-2">Marketcap:</strong>${{ convertToReadableNumber(marketCap) }}</span>
                 </p>
               </div>
-              <div v-if="open" class="detail col-12 d-inline-flex flex-column text-right">
+              <!-- <div v-if="open" class="detail col-12 d-inline-flex flex-column text-right">
                 <span><strong>Open:</strong>${{ open }}</span>
                 <span><strong>High:</strong>${{ high }}</span>
                 <span><strong>Low:</strong>${{ low }}</span>
                 <span><strong>Close:</strong>${{ close }}</span>
                 <span><strong>Volume:</strong>{{ volume }}</span>
                 <span v-if="marketCap"><strong>Marketcap:</strong>${{ marketCap }}</span>
-              </div>
+              </div> -->
             </div>
 
             <!-- <chart
@@ -102,9 +103,9 @@
               </div>
             </div>
             <div v-if="open" class="col-12 col-lg-6 pr-0">
-              <div v-if="news.length > 0" class="col-12">
-                <h5>News</h5>
-                <News :newsData="news"/>
+              <div v-if="news.length > 0" class="col-12 white-well">
+                <h5 class="mb-0">News</h5>
+                <News :newsData="orderedNews"/>
               </div>
             </div>
             <!-- <div class="col-12 col-lg-4">
@@ -117,6 +118,9 @@
               </div>
             </div> -->
           </div>
+          <div class="white-well col-12">
+            <Disqus shortname="themarkets-io"/>
+          </div>
         </div>
       </div>
     </div>
@@ -126,12 +130,14 @@
 <script>
 import Chart from '~/components/Chart.vue'
 import TradingChart from '~/components/ohlcv-chart/TradingChart.vue'
+import { Disqus } from 'vue-disqus'
 
 export default {
   name: 'Item',
   components: {
     Chart,
-    TradingChart
+    TradingChart,
+    Disqus
   },
   props: {
     item: {
@@ -192,9 +198,29 @@ export default {
     }
 
   },
+  computed: {
+    orderedNews: function () {
+      let dateOrderedNews = this.news.sort((a,b) => {
+        return new Date(b.date) - new Date(a.date);
+      });
+      return dateOrderedNews;
+    }
+  },
   methods: {
     getchart() {
       return this.$refs.Chart
+    },
+    convertToReadableNumber(labelValue) {
+      // Nine Zeroes for Billions
+      return Math.abs(Number(labelValue)) >= 1.0e+9
+      ? (Math.abs(Number(labelValue)) / 1.0e+9).toFixed(2) + "B"
+      // Six Zeroes for Millions
+      : Math.abs(Number(labelValue)) >= 1.0e+6
+      ? (Math.abs(Number(labelValue)) / 1.0e+6).toFixed(2) + "M"
+      // Three Zeroes for Thousands
+      : Math.abs(Number(labelValue)) >= 1.0e+3
+      ? (Math.abs(Number(labelValue)) / 1.0e+3).toFixed(2) + "K"
+      : Math.abs(Number(labelValue));
     }
   },
   created(){
@@ -246,6 +272,7 @@ export default {
   }
   .status{
     font-size: 13px;
+    width: 120px;
     position: relative;
     color: $green;
     &:before{
@@ -316,7 +343,7 @@ export default {
     display: block;
     width: 100%;
     /* color: #90a4be; */
-    color: #454545;
+    /* color: #454545; */
   }
   .title {
     p{
@@ -362,9 +389,9 @@ export default {
       padding-top: 10px;
       padding-bottom: 10px;
       margin-bottom: 2rem;
-      p{
+      /* p{
         margin-bottom: 0;
-      }
+      } */
     }
   }
   .overflow {
@@ -386,7 +413,7 @@ export default {
   .news{
     .card .card-body{
       margin-left: 0 !important;
-      padding: 15px !important;
+      padding: 5px 0 !important;
     }
   }
 
@@ -408,14 +435,15 @@ export default {
         padding-top: 10px;
       }
     }
-    .info.row{
+    /* .info.row{
       padding: 0 1rem;
-    }
+    } */
   }
   @media(max-width:440px){
     .graph {
       .d-flex.row{
         flex-direction: column;
+        margin: 0;
       }
       .diff{
         margin-bottom: 5px;

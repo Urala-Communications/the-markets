@@ -67,24 +67,36 @@ export default {
   },
   methods: {
     async fetchCoinsByMarketCap() {
-      return this.$axios.$get(`https://api.finage.co.uk/list/cryptocurrency?apikey=${finageApiKey}&limit=50`, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*'
-        },
-        json: true,
-        gzip: true
-      })
-      .then((response) => {
-        // console.log(response.results)
-        let topCoins = response.results
-        this.coins = topCoins;
-        return this.writeCryptoLists(topCoins)
-        // this.writeToFirestore(response)
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      try {
+        let ctList = sessionStorage.getItem("cryptoList")
+        if (ctList) {
+          let ct = JSON.parse(ctList);
+          this.coins = ct;
+        } else
+          this.$axios.$get(`https://api.finage.co.uk/list/cryptocurrency?apikey=${finageApiKey}&limit=50`, {
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*'
+            },
+            json: true,
+            gzip: true
+          })
+          .then((response) => {
+            // console.log(response.results)
+            //this.$store.commit('SET_COINS', response.results);
+            if (response.results.length) {
+              this.coins = response.results;
+              this.writeCryptoLists(response.results)
+            }
+            /* let topCoins = response.results
+            this.coins = topCoins;
+            return this.writeCryptoLists(topCoins) */
+            // this.writeToFirestore(response)
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } catch(err){}
     },
     writeCryptoLists(coins){
       // create list of symbols for sockets
@@ -101,8 +113,8 @@ export default {
           }
         }
       }
-      localStorage.setItem('coinList', coinList.join());
-      localStorage.setItem('crypto', JSON.stringify(coins));
+      sessionStorage.setItem('coinList', coinList.join());
+      sessionStorage.setItem('cryptoList', JSON.stringify(coins));
     },
     getGDPR() {
       if (process.browser) {
@@ -111,15 +123,15 @@ export default {
     },
     connectSockets() {
       // FOREX
-      function checkCryptoList() {
-        if (localStorage.getItem('crypto')) {
-            this.coins = JSON.parse(localStorage.getItem("crypto"))
+      /* function checkCryptoList() {
+        if (this.coins.length) {
+            // this.coins = JSON.parse(localStorage.getItem("crypto"))
           } else {
               setTimeout(checkCryptoList, 250);
           }
       }
 
-      setTimeout(checkCryptoList, 250);
+      setTimeout(checkCryptoList, 250); */
       this.forexWS.onopen = () => {
         // console.log("FOREX Socket connection established");
         this.forexWS.send(JSON.stringify({"action": "subscribe", "symbols": "EUR/USD,USD/JPY,USD/KRW,USD/TRY,GBP/USD,USD/BRL,USD/ILS,USD/RUB,XAU/USD,XAG/USD,WTI/USD,XBR/USD"}));
@@ -171,10 +183,9 @@ export default {
         // console.log("CRYPTO Socket connection established");
         const self = this;
         function checkCoinList() {
-          if (localStorage.getItem('coinList')) {
-
-            let coinList = localStorage.getItem('coinList');
-            self.cryptoWS.send(JSON.stringify({"action": "subscribe", "symbols": coinList + 'CRVUSD,CETHUSD,STETHUSD,CDAIUSD'}))
+          if (self.coins.length) {
+            //let coinList = localStorage.getItem('coinList');
+            self.cryptoWS.send(JSON.stringify({"action": "subscribe", "symbols": self.coins.map(coin => coin.symbol.toUpperCase()).join("USD,") + 'CRVUSD,CETHUSD,STETHUSD,CDAIUSD'}))
 
           } else {
               setTimeout(checkCoinList, 250);
@@ -524,9 +535,9 @@ export default {
       if (this.coins.length && this.coins.length < 200) {
         this.coins = this.coins.concat(cryptoLists);
         let coinLists = cryptoLists.map(crypto => crypto.symbol.toUpperCase()+"USD").join();
-        let coinList = localStorage.getItem('coinList');
-        localStorage.setItem('coinList', coinList+","+coinLists);
-        localStorage.setItem('crypto', JSON.stringify(this.coins));
+        //let coinList = localStorage.getItem('coinList');
+        //localStorage.setItem('coinList', coinList+","+coinLists);
+        //localStorage.setItem('crypto', JSON.stringify(this.coins));
         this.cryptoWS.send(JSON.stringify({"action": "subscribe", "symbols": coinLists }))
       }
     })
@@ -553,8 +564,8 @@ export default {
 /* @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap'); */
 html, body {
   font-family: 'Archivo', sans-serif;
+  font-display:swap;
   font-size: 16px;
-  /* word-spacing: 1px; */
   overflow-x: hidden;
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;

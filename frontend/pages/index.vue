@@ -55,7 +55,7 @@
                 <h2>Indices
                   <NuxtLink class="index-link" to="/indices">View all</NuxtLink>
                 </h2>
-                <IndexList :data="indices.slice(0,11)" type="indices" />
+                <IndexList :data="indices.slice(0,10)" type="indices" />
                 <span class="smaller pl-2">*real-time derived</span>
               </div>
               <!-- <div class="col-12 white-well">
@@ -89,6 +89,7 @@
           <div class="row m-0 justify-content-between">
             <div class="col-lg-12 white-well">
               <h2 class="mt-0 mb-1">News</h2>
+              <VueRssFeed :feedUrl="feedUrl" :name="name" :limit="limit"/>
               <News :newsData="orderedNews"/>
               <!-- <News :newsData="stockNews"/> -->
               <!-- <Ad feedAd/> -->
@@ -104,17 +105,12 @@
 <script>
 import { currencies, stocks, indices, bonds, rising, commodities} from "./../market.js";
 import Ad from "./../components/Ad.vue";
-import Articles from "./../components/Articles";
+import VueRssFeed from "vue-rss-feed";
 export default {
     components: {
       IndexList: () => import('./../components/IndexList'),
       Ad,
-      Articles
-    },
-    async asyncData({ $strapi }) {
-      return {
-        articles: await $strapi.find("articles"),
-      };
+      VueRssFeed
     },
     data() {
       return {
@@ -137,6 +133,9 @@ export default {
         news: [],
         yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
         today: new Date(Date.now()).toLocaleDateString("fr-CA"),
+        feedUrl: "https://rss.app/feeds/pjdrNrPLR7odNCva.xml",
+        name: '',
+        limit: 3,
       }
     },
     computed: {
@@ -149,7 +148,7 @@ export default {
     },
     methods: {
       fetchNews(symbol){
-        this.$axios.$get(`https://api.finage.co.uk/news/market/${symbol}?apikey=${this.finageApiKey}`)
+        this.$axios.$get(`https://api.finage.co.uk/news/market/${symbol}?apikey=${this.finageApiKey}&limit=1`)
         .then(response => {
           // console.log(response)
           if(typeof response.news[0] !== 'undefined'){
@@ -172,7 +171,7 @@ export default {
         })
       },
       fetchCryptoNews(symbol){
-        this.$axios.$get(`https://api.finage.co.uk/news/cryptocurrency/${symbol}?apikey=${this.finageApiKey}`)
+        this.$axios.$get(`https://api.finage.co.uk/news/cryptocurrency/${symbol}?apikey=${this.finageApiKey}&limit=1`)
         .then(response => {
           if(typeof response.news[0] !== 'undefined'){
             let newsfeed = this.cryptoNews;
@@ -365,16 +364,16 @@ export default {
       this.checkMarketStatus();
 
       function checkCryptoList() {
-        if (localStorage.getItem('crypto')) {
-            let topCoins = localStorage.getItem('crypto');
-            self.cryptocurrency = JSON.parse(topCoins);
-            let homeCrypto = self.cryptocurrency.slice(0,10)
-            homeCrypto.forEach(item => {
-              self.fetchCryptoNews(item.symbol);
-            });
-          } else {
-              setTimeout(checkCryptoList, 250);
-          }
+        let topCoins = sessionStorage.getItem('cryptoList');
+        if (topCoins) {
+          self.cryptocurrency =  JSON.parse(topCoins);
+          let homeCrypto = self.cryptocurrency.slice(0,10)
+          homeCrypto.forEach(item => {
+            self.fetchCryptoNews(item.symbol);
+          });
+        } else {
+            setTimeout(checkCryptoList, 250);
+        }
       }
 
       setTimeout(checkCryptoList, 250);
@@ -588,6 +587,22 @@ h2 {
   }
 }
 
+.vue-rss-feed{
+  h1{display: none;}
+  .article{
+    padding: 0.75rem;
+    border-radius: 12px;
+    border: none;
+    box-shadow: 1px 3px 9px 1px rgb(218 226 239 / 55%);
+    img{border-radius: 12px;}
+    img + div {display: none;}
+    h3{
+      font-size: 14px;
+      font-weight: 700;
+    }
+  }
+}
+
 @media(max-width:991px){
   .content.container{
     padding: 1rem;
@@ -601,10 +616,13 @@ h2 {
   }
 }
 
+@media(max-width:768px){
+  .white-well{
+    padding: 20px 16px 24px;
+  }
+}
+
 @media(max-width: 400px){
-  /* .content.container{
-    padding: 0 0.5rem;
-  } */
   hr{
     margin-top: 0.5rem;
   }

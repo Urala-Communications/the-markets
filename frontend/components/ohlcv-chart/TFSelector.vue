@@ -40,7 +40,7 @@ export default {
     },
     data() {
         return {
-            selected: this.$props.charts.length > 4 ? 4 : 0
+            selected: this.$props.charts.length > 6 ? 6 : 0
         }
     }
 }
@@ -56,7 +56,7 @@ export default {
     padding: 5px;
     border-radius: 3px;
     @media (max-width: 768px) {
-        left: 0px;
+        left: 10px;
     }
 }
 .timeframe {

@@ -7,15 +7,15 @@
         no-body
       >
         <b-row>
-          <b-col class="pr-0">
+          <!-- <b-col class="pr-0">
             <b-embed
               type="iframe"
               aspect="16by9"
               :src="item.url"
               allowfullscreen
             ></b-embed>
-            <!-- <iframe width="560" height="315" :src="item.url" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> -->
-          </b-col>
+            <iframe width="560" height="315" :src="item.url" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> -->
+          <!-- </b-col>  -->
           <b-col class="d-flex align-items-center">
             <b-card-body class="pl-0 pb-0 pt-0">
               <b-card-text>
@@ -35,14 +35,14 @@
       target="_blank"
     >
       <b-card no-body>
-        <b-row v-if="item.symbol">
+        <b-row>
           <b-col class="d-flex align-items-center col-12">
             <b-card-body class="pr-0 pb-0 pt-0">
               <b-card-text>
                 <!-- <p v-if="item.source" class="category">{{ item.source }}</p> -->
                 <p class="card-text source">{{ item.source }} | {{ formatDate(item.date) }}</p>
                 <h5 class="card-title" v-snip="2">{{ item.title }}</h5>
-                <p class="card-text" v-snip="2">{{ item.description }}</p>
+                <p v-if="item.symbol" class="card-text" v-snip="2">{{ item.description }}</p>
                 <span>{{ item.time }}</span>
               </b-card-text>
             </b-card-body>
@@ -61,7 +61,7 @@
             <b-card-img :src="getThumb(item)" alt="image"></b-card-img>
           </b-col> -->
         </b-row>
-        <b-row v-else>
+        <!-- <b-row v-else>
           <b-col md="12">
             <b-card-body>
               <b-card-text>
@@ -71,7 +71,7 @@
               </b-card-text>
             </b-card-body>
           </b-col>
-        </b-row>
+        </b-row> -->
       </b-card>
     </a>
   </div>
@@ -131,15 +131,10 @@ export default {
       return require(`~/assets/news/${symbol.thumb}`)
     },
     formatDate(date){
-      // if(date.includes('ago')){
-      //   return date
-      // } else {
         let d = new Date(date)
         return d.toLocaleString('en-GB',{month:'long', year:'numeric', day:'numeric'});
-      // }
     }
   }
-  // mounted(){}
 }
 </script>
 
@@ -147,6 +142,7 @@ export default {
 
 .news{
   flex-direction: column;
+  a:last-of-type .card{border-bottom: none;}
 }
 
 .card {
@@ -159,7 +155,6 @@ export default {
   background: #ffffff;
   .row {overflow: hidden;}
   .card-img {
-
     margin-right: 0;
     border-radius: 18px;
     box-shadow: 0px 2.5px 9px 0 rgba(218, 226, 239, 0.5);
@@ -258,7 +253,7 @@ export default {
       .card-title{
         /* font-size: 12px; */
       }
-      .card-text .card-text{display: none !important;}
+      /* .card-text .card-text{display: none !important;} */
     }
   }
 }

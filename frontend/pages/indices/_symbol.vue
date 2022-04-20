@@ -34,7 +34,6 @@
 </template>
 
 <script>
-import { useQuery } from "@/services/graphql.js";
 import { indices } from "../../market.js";
 import Item from "~/components/Item.vue";
 export default {
@@ -66,6 +65,7 @@ export default {
       chartOptions: null,
       yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
       today: new Date(Date.now()).toLocaleDateString("fr-CA"),
+      stopRun: 0,
     };
   },
   head() {
@@ -88,12 +88,10 @@ export default {
         (item) => item.name.replace(/ /g, "-").toLowerCase() === this.symbol
       );
       this.$set(this.item, "name", i.name);
-
-      useQuery({
-        query: "finage.last",
-        variables: { suffix: "index", symbol: i.symbol },
-        axios: this.$axios,
-      })
+      this.$axios
+        .$get(
+          `https://api.finage.co.uk/last/index/${i.symbol}?apikey=${this.finageApiKey}`
+        )
         .then((response) => {
           this.item.price = response.price.toFixed(2);
           this.item.priceNumber = response.price;
@@ -109,11 +107,10 @@ export default {
         });
     },
     checkMarketStatus() {
-      useQuery({
-        query: "finage.marketStatus",
-        variables: {},
-        axios: this.$axios,
-      })
+      this.$axios
+        .$get(
+          `https://api.finage.co.uk/marketstatus?apikey=${this.finageApiKey}`
+        )
         .then((response) => {
           this.marketStatus = response.nasdaq;
         })
@@ -126,18 +123,10 @@ export default {
         (item) => item.name.replace(/ /g, "-").toLowerCase() === this.symbol
       );
       let last = new Date(Date.now() - 864e5 * 30).toLocaleDateString("fr-CA");
-
-      useQuery({
-        query: "finage.agg",
-        variables: {
-          suffix: "index",
-          symbol: i.symbol,
-          multiplier: "1day",
-          from: last,
-          to: this.today,
-        },
-        axios: this.$axios,
-      })
+      this.$axios
+        .$get(
+          `https://api.finage.co.uk/agg/index/${i.symbol}/1day/${last}/${this.today}?limit=1825&apikey=${this.finageApiKey}&sort=desc`
+        )
         .then((response) => {
           this.chartData = response.results
             .map((o) => {
@@ -159,18 +148,59 @@ export default {
           this.symbol = i.symbol;
           this.live = i.symbol;
           let last = this.chartData[this.chartData.length - 1];
-          this.open = last[0];
-          this.high = last[1];
-          this.low = last[2];
-          this.close = last[3];
-          this.volume = last[4];
+          this.open = last[1];
+          this.high = last[2];
+          this.low = last[3];
+          this.close = last[4];
+          this.volume = last[5];
           this.loading = false;
         })
         .catch((error) => {
           console.log(error);
         });
     },
+    fetchAllResursive(symbol, interval, range, lastdate) {
+      if (this.stopRun) {
+        let last = new Date(
+          Date.parse(lastdate) - 864e5 * 365 * 15
+        ).toLocaleDateString("fr-CA");
+        this.$axios
+          .$get(
+            `https://api.finage.co.uk/agg/index/${symbol}/${range}/${last}/${lastdate}?limit=3000&apikey=${this.finageApiKey}&sort=asc`
+          )
+          .then((response) => {
+            if (!response.results || response.results.length) {
+              this.chartData = response.results
+                .map((o) => {
+                  const [timestamp, openPrice, high, low, close, volume] = [
+                    new Date(o.t).getTime(),
+                    o.o,
+                    o.h,
+                    o.l,
+                    o.c,
+                    o.v,
+                  ];
+                  return [timestamp, openPrice, high, low, close, volume].map(
+                    (n) => Number(n)
+                  );
+                })
+                .sort((a, b) => {
+                  return a[0] - b[0];
+                })
+                .concat(this.chartData);
+              this.fetchAllResursive(symbol, interval, range, last);
+            } else {
+              this.$root.$emit("updatedInterval", { symbol, interval });
+            }
+          })
+          .catch((error) => {
+            this.$root.$emit("updatedInterval", { symbol, interval });
+            console.log(error);
+          });
+      }
+    },
     updateInterval(symbol, interval, text) {
+      this.stopRun = 0;
       if (symbol === this.live) {
         let range = interval;
         let last = this.yesterday;
@@ -223,43 +253,59 @@ export default {
             break;
           case "MAX":
             range = "1week";
-            last = new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString(
+            last = new Date(Date.now() - 864e5 * 365 * 15).toLocaleDateString(
               "fr-CA"
             );
           default:
             break;
         }
-
-        useQuery({
-          query: "finage.agg",
-          variables: {
-            suffix: "index",
-            symbol,
-            period: range,
-            from: last,
-            to: this.today,
-          },
-          axios: this.$axios,
-        })
+        this.$axios
+          .$get(
+            `https://api.finage.co.uk/agg/index/${symbol}/${range}/${last}/${this.today}?limit=3000&apikey=${this.finageApiKey}&sort=asc`
+          )
           .then((response) => {
-            this.chartData = response.results
-              .map((o) => {
-                const [timestamp, openPrice, high, low, close, volume] = [
-                  new Date(o.t).getTime(),
-                  o.o,
-                  o.h,
-                  o.l,
-                  o.c,
-                  o.v,
-                ];
-                return [timestamp, openPrice, high, low, close, volume].map(
-                  (n) => Number(n)
-                );
-              })
-              .sort((a, b) => {
-                return a[0] - b[0];
-              });
+            if (interval == "1d") {
+              let t = new Date();
+              this.chartData = response.results
+                .map((o) => {
+                  const [timestamp, openPrice, high, low, close, volume] = [
+                    (t = new Date(o.t)).setUTCHours(0, 0, 0, 0) && t.getTime(),
+                    o.o,
+                    o.h,
+                    o.l,
+                    o.c,
+                    o.v,
+                  ];
+                  return [timestamp, openPrice, high, low, close, volume].map(
+                    (n) => Number(n)
+                  );
+                })
+                .sort((a, b) => {
+                  return a[0] - b[0];
+                });
+            } else
+              this.chartData = response.results
+                .map((o) => {
+                  const [timestamp, openPrice, high, low, close, volume] = [
+                    new Date(o.t).getTime(),
+                    o.o,
+                    o.h,
+                    o.l,
+                    o.c,
+                    o.v,
+                  ];
+                  return [timestamp, openPrice, high, low, close, volume].map(
+                    (n) => Number(n)
+                  );
+                })
+                .sort((a, b) => {
+                  return a[0] - b[0];
+                });
             this.$root.$emit("updatedInterval", { symbol, interval });
+            if (interval === "MAX") {
+              this.stopRun = 1;
+              this.fetchAllResursive(symbol, interval, range, last);
+            }
           })
           .catch((error) => {
             console.log(error);
@@ -281,7 +327,7 @@ export default {
         this.loading = false;
       }
     });
-    this.$root.$on("updateTrade", ({ symbol, time, price, volume }) => {
+    this.$root.$on("updateTrade", ({ symbol, time, price, volumn }) => {
       if (symbol === this.live) {
         this.$set(this.item, "price", price);
       }

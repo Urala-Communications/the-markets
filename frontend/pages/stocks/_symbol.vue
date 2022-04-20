@@ -34,7 +34,6 @@
 </template>
 
 <script>
-import { useQuery } from "@/services/graphql.js";
 import { stocks } from "../../market.js";
 import Item from "~/components/Item.vue";
 export default {
@@ -67,6 +66,7 @@ export default {
       yesterday: new Date(Date.now() - 864e5).toLocaleDateString("fr-CA"),
       today: new Date(Date.now()).toLocaleDateString("fr-CA"),
       lastTradeDate: new Date(Date.now()).toLocaleDateString("fr-CA"),
+      stopRun: 0,
     };
   },
   head() {
@@ -89,12 +89,10 @@ export default {
         (item) => item.name.toLowerCase() === this.symbol
       );
       this.$set(this.item, "name", i.name);
-
-      useQuery({
-        query: "finage.detailStock",
-        variables: { symbol: i.symbol },
-        axios: this.$axios,
-      })
+      this.$axios
+        .$get(
+          `https://api.finage.co.uk/detail/stock/${i.symbol}?apikey=${this.finageApiKey}`
+        )
         .then((response) => {
           this.profile = response;
         })
@@ -106,12 +104,10 @@ export default {
       let i = this.stocks.find(
         (item) => item.name.toLowerCase() === this.symbol
       );
-
-      return useQuery({
-        query: "finage.last",
-        variables: { suffix: "stock", symbol: i.symbol },
-        axios: this.$axios,
-      })
+      return this.$axios
+        .$get(
+          `https://api.finage.co.uk/last/stock/${i.symbol}?apikey=${this.finageApiKey}`
+        )
         .then((response) => {
           this.item.price = response.ask.toFixed(2);
           this.$set(this.item, "icon", i.icon);
@@ -129,7 +125,10 @@ export default {
         });
     },
     checkMarketStatus() {
-      useQuery({ query: "finage.marketStatus", axios: this.$axios })
+      this.$axios
+        .$get(
+          `https://api.finage.co.uk/marketstatus?apikey=${this.finageApiKey}`
+        )
         .then((response) => {
           this.marketStatus = response.market;
         })
@@ -142,19 +141,10 @@ export default {
         (item) => item.name.toLowerCase() === this.symbol
       );
       let last = new Date(Date.now() - 864e5 * 30).toLocaleDateString("fr-CA");
-
-      useQuery({
-        query: "finage.agg",
-        variables: {
-          suffix: "stock",
-          symbol: i.symbol,
-          period: "1",
-          multiplier: "hour",
-          from: last,
-          to: this.lastTradeDate,
-        },
-        axios: this.$axios,
-      })
+      this.$axios
+        .$get(
+          `https://api.finage.co.uk/agg/stock/${i.symbol}/1/hour/${last}/${this.lastTradeDate}?limit=3000&apikey=${this.finageApiKey}&sort=desc`
+        )
         .then((response) => {
           this.chartData = response.results
             .map((o) => {
@@ -176,11 +166,11 @@ export default {
           this.symbol = i.symbol;
           this.live = i.symbol;
           let last = this.chartData[this.chartData.length - 1];
-          this.open = last[0];
-          this.high = last[1];
-          this.low = last[2];
-          this.close = last[3];
-          this.volume = last[4];
+          this.open = last[1];
+          this.high = last[2];
+          this.low = last[3];
+          this.close = last[4];
+          this.volume = last[5];
           this.loading = false;
         })
         .catch((error) => {
@@ -191,11 +181,10 @@ export default {
       let i = this.stocks.find(
         (item) => item.name.toLowerCase() === this.symbol
       );
-      useQuery({
-        query: "finage.news",
-        variables: { market: "market", symbol: i.symbol },
-        axios: this.$axios,
-      })
+      this.$axios
+        .$get(
+          `https://api.finage.co.uk/news/market/${i.symbol}?apikey=${this.finageApiKey}`
+        )
         .then((response) => {
           this.news = response.news;
           if (this.news.length > 16) {
@@ -206,8 +195,50 @@ export default {
           console.log(error);
         });
     },
+    fetchAllResursive(symbol, interval, text, lastdate) {
+      if (this.stopRun) {
+        let last = new Date(
+          Date.parse(lastdate) - 864e5 * 365 * 15
+        ).toLocaleDateString("fr-CA");
+        this.$axios
+          .$get(
+            `https://api.finage.co.uk/agg/stock/${symbol}/${text}/${last}/${lastdate}?limit=3000&apikey=${this.finageApiKey}&sort=desc`
+          )
+          .then((response) => {
+            if (response.results || response.results.length) {
+              this.chartData = response.results
+                .map((o) => {
+                  const [timestamp, openPrice, high, low, close, volume] = [
+                    o.t,
+                    o.o,
+                    o.h,
+                    o.l,
+                    o.c,
+                    o.v,
+                  ];
+                  return [timestamp, openPrice, high, low, close, volume].map(
+                    (n) => Number(n)
+                  );
+                })
+                .sort((a, b) => {
+                  return a[0] - b[0];
+                })
+                .concat(this.chartData);
+              this.fetchAllResursive(symbol, interval, text, last);
+            } else {
+              this.$root.$emit("updatedInterval", { symbol, interval });
+            }
+          })
+          .catch((error) => {
+            this.$root.$emit("updatedInterval", { symbol, interval });
+            console.log(error);
+          });
+      }
+    },
     updateInterval(symbol, interval, text) {
+      this.stopRun = 0;
       if (symbol === this.live) {
+        const now = Date.now();
         let last = this.yesterday;
         switch (interval) {
           case "1m":
@@ -216,64 +247,74 @@ export default {
             last = this.yesterday;
             break;
           case "30m":
-            last = new Date(Date.now() - 864e5 * 7).toLocaleDateString("fr-CA");
+            last = new Date(now - 864e5 * 7).toLocaleDateString("fr-CA");
             break;
           case "1h":
           case "4h":
-            last = new Date(Date.now() - 864e5 * 30).toLocaleDateString(
-              "fr-CA"
-            );
+            last = new Date(now - 864e5 * 30).toLocaleDateString("fr-CA");
             break;
           case "1d":
           case "1w":
-            last = new Date(Date.now() - 864e5 * 365).toLocaleDateString(
-              "fr-CA"
-            );
+            last = new Date(now - 864e5 * 365).toLocaleDateString("fr-CA");
             break;
           case "1M":
-            last = new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString(
-              "fr-CA"
-            );
+            last = new Date(now - 864e5 * 365 * 5).toLocaleDateString("fr-CA");
             break;
           case "MAX":
-            last = new Date(Date.now() - 864e5 * 365 * 5).toLocaleDateString(
-              "fr-CA"
-            );
+            last = new Date(now - 864e5 * 365 * 15).toLocaleDateString("fr-CA");
             text = "1/week";
             break;
           default:
             break;
         }
-        useQuery({
-          query: "finage.agg",
-          variables: {
-            suffix: "stock",
-            symbol,
-            period: text,
-            from: last,
-            to: this.lastTradeDate,
-          },
-          axios: this.$axios,
-        })
+        this.$axios
+          .$get(
+            `https://api.finage.co.uk/agg/stock/${symbol}/${text}/${last}/${this.lastTradeDate}?limit=3000&apikey=${this.finageApiKey}&sort=desc`
+          )
           .then((response) => {
-            this.chartData = response.results
-              .map((o) => {
-                const [timestamp, openPrice, high, low, close, volume] = [
-                  o.t,
-                  o.o,
-                  o.h,
-                  o.l,
-                  o.c,
-                  o.v,
-                ];
-                return [timestamp, openPrice, high, low, close, volume].map(
-                  (n) => Number(n)
-                );
-              })
-              .sort((a, b) => {
-                return a[0] - b[0];
-              });
+            if (interval == "1d") {
+              let t = new Date();
+              this.chartData = response.results
+                .map((o) => {
+                  const [timestamp, openPrice, high, low, close, volume] = [
+                    (t = new Date(o.t)).setUTCHours(0, 0, 0, 0) && t.getTime(),
+                    o.o,
+                    o.h,
+                    o.l,
+                    o.c,
+                    o.v,
+                  ];
+                  return [timestamp, openPrice, high, low, close, volume].map(
+                    (n) => Number(n)
+                  );
+                })
+                .sort((a, b) => {
+                  return a[0] - b[0];
+                });
+            } else
+              this.chartData = response.results
+                .map((o) => {
+                  const [timestamp, openPrice, high, low, close, volume] = [
+                    o.t,
+                    o.o,
+                    o.h,
+                    o.l,
+                    o.c,
+                    o.v,
+                  ];
+                  return [timestamp, openPrice, high, low, close, volume].map(
+                    (n) => Number(n)
+                  );
+                })
+                .sort((a, b) => {
+                  return a[0] - b[0];
+                });
+
             this.$root.$emit("updatedInterval", { symbol, interval });
+            if (interval === "MAX") {
+              this.stopRun = 1;
+              this.fetchAllResursive(symbol, interval, text, last);
+            }
           })
           .catch((error) => {
             console.log(error);
@@ -291,7 +332,7 @@ export default {
         this.$set(this.item, "icon", item.icon);
       }
     });
-    this.$root.$on("updateTrade", ({ symbol, time, price, volume }) => {
+    this.$root.$on("updateTrade", ({ symbol, time, price, volumn }) => {
       if (symbol === this.live) {
         this.$set(this.item, "price", price);
       }
