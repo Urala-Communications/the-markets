@@ -96,17 +96,21 @@ export default {
     return { symbol };
   },
   methods: {
-    fetchDetails() {
-      this.$axios
-        .$get(
-          `https://api.finage.co.uk/detail/cryptocurrency/${this.item.symbol}?apikey=${this.finageApiKey}`
-        )
-        .then((response) => {
-          this.profile = response;
-        })
-        .catch((error) => {
-          // console.log(error);
-        });
+    async fetchDetails() {
+      let i = this.cryptocurrency.find(
+        (item) => item.name.toLowerCase() === this.symbol.replace("-", " ")
+      );
+      if (i) {
+        this.$set(this.item, "icon", i.symbol);
+        this.$set(this.item, "name", i.name);
+      }
+      const res = await useQuery({
+        query: "finage.detailCrypto",
+        variables: { symbol: i.symbol },
+        axios: this.$axios,
+      });
+      if (!res) return;
+      this.profile = res;
     },
     checkBackground() {
       const self = this;
@@ -120,12 +124,11 @@ export default {
       });
     },
     fetchPrice() {
-      this.$axios
-        .$get(
-          `https://api.finage.co.uk/last/crypto/detailed/${
-            this.item.symbol.toUpperCase() + "USD"
-          }?apikey=${this.finageApiKey}`
-        )
+      useQuery({
+        query: "finage.detailCrypto",
+        variables: { suffix: "cryptocurrency", symbol: this.item.symbol },
+        axios: this.$axios,
+      })
         .then((response) => {
           this.open = response.open.toFixed(2);
           this.close = response.close.toFixed(2);
@@ -141,10 +144,10 @@ export default {
         });
     },
     checkMarketStatus() {
-      this.$axios
-        .$get(
-          `https://api.finage.co.uk/marketstatus?apikey=${this.finageApiKey}`
-        )
+      useQuery({
+        query: "finage.marketStatus",
+        axios: this.$axios,
+      })
         .then((response) => {
           this.marketStatus = response.currencies.crypto;
         })
