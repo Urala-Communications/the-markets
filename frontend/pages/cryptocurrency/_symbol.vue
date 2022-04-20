@@ -40,6 +40,7 @@
 <script>
 import { isArray } from "util";
 import Item from "~/components/Item.vue";
+import { useQuery } from "@/services/graphql.js";
 export default {
   components: {
     Item,
