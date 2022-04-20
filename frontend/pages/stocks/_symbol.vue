@@ -34,8 +34,9 @@
 </template>
 
 <script>
-import { stocks } from "../../market.js"import { useQuery } from "@/services/graphql.js";
-b
+import { stocks } from "../../market.js";
+import { useQuery } from "@/services/graphql.js";
+b;
 import Item from "~/components/Item.vue";
 export default {
   components: {
@@ -111,8 +112,7 @@ export default {
         variables: { suffix: "stock", symbol: i.symbol },
         axios: this.$axios,
       })
-        .t
-        .then((response) => {
+        .t.then((response) => {
           this.item.price = response.ask.toFixed(2);
           this.$set(this.item, "icon", i.icon);
           this.loading = false;
@@ -144,7 +144,7 @@ export default {
       let i = this.stocks.find(
         (item) => item.name.toLowerCase() === this.symbol
       );
-     useQuery({
+      useQuery({
         query: "finage.agg",
         variables: {
           suffix: "stock",
