@@ -41,6 +41,7 @@
 
 <script>
 import {bonds} from "./../../market.js";
+import {useQuery} from '@/services/graphql';
 import IndexList from './../../components/IndexList.vue'
 export default {
     components: {
@@ -59,7 +60,11 @@ export default {
     },
     methods: {
       fetchNews(symbol){
-        this.$axios.$get(`https://api.finage.co.uk/news/forex/${symbol}?apikey=${this.finageApiKey}`)
+        useQuery({
+          query: "finage.news",
+          variables: { market: "forex", symbol: symbol },
+          axios: this.$axios,
+        })
         .then(response => {
           if (response.news.length) {
             if(typeof response.news[0] !== 'undefined'){
@@ -80,7 +85,11 @@ export default {
         })
       },
       fetchBonds(index,symbol) {
-        this.$axios.$get(`https://api.finage.co.uk/bonds/us/rate/${symbol}?apikey=${this.finageApiKey}`)
+        useQuery({
+          query: "finage.bonds",
+          variables: { suffix: "us/rate", symbol },
+          axios: this.$axios,
+      })
         .then(response => {
           // console.log(response)
           let i = this.bonds.find( bond => bond.symbol === response.symbol );

@@ -6,6 +6,7 @@ const cmcApiKey = process.env.CMC_KEY;
 const ALGOLIA_APPID = process.env.ALGOLIA_APPID;
 const ALGOLIA_APIKEY = process.env.ALGOLIA_APIKEY;
 const ALGOLIA_INDEXNAME = process.env.ALGOLIA_INDEXNAME;
+const API_SERVER_KEY = process.env.API_SERVER_KEY;
 
 
 // const strapiBaseUri = process.env.STRAPI_URL || "http://localhost:1337";
@@ -24,7 +25,8 @@ export default {
     liveApiUrl,
     ALGOLIA_APPID,
     ALGOLIA_APIKEY,
-    ALGOLIA_INDEXNAME
+    ALGOLIA_INDEXNAME,
+    API_SERVER_KEY
   },
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
