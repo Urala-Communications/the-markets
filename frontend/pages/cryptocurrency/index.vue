@@ -126,6 +126,7 @@
 
 <script>
 import InfiniteLoading from 'vue-infinite-loading';
+import {useQuery} from "@/services/graphql";
 import { defi} from "./../../market.js";
 import IndexList from './../../components/IndexList.vue'
 const finageApiKey = process.env.finageApiKey;
@@ -159,7 +160,11 @@ export default {
     },
     methods: {
       fetchNews(symbol){
-        this.$axios.$get(`https://api.finage.co.uk/news/cryptocurrency/${symbol}?apikey=${finageApiKey}&limit=1`)
+        useQuery({
+          query: "finage.news",
+          variables: { market: "cryptocurrency", symbol },
+          axios: this.$axios,
+        })
         .then(response => {
           if(typeof response.news[0] !== 'undefined'){
             let index = this.newsData.findIndex(x => x.title === response.news[0].title);
@@ -180,7 +185,11 @@ export default {
         })
       },
       fetchCrypto(symbol) {
-        this.$axios.$get(`https://api.finage.co.uk/last/crypto/${symbol.toUpperCase()}USD?apikey=${finageApiKey}`)
+        useQuery({
+          query: "finage.last",
+          variables: { suffix: "crypto", symbol: `${symbol.toUpperCase()}USD` },
+          axios: this.$axios,
+        })
         .then(response => {
           let indexFound = this.cryptocurrency.findIndex(crypto => crypto.symbol.toUpperCase() === response.symbol.slice(0,-3));
           if (indexFound !== -1) {
@@ -192,7 +201,11 @@ export default {
         })
       },
       fetchDefi(symbol) {
-        this.$axios.$get(`https://api.finage.co.uk/last/crypto/${symbol}?apikey=${finageApiKey}`)
+        useQuery({
+          query: "finage.last",
+          variables: { suffix: "crypto", symbol, },
+          axios: this.$axios,
+        })
         .then(response => {
           let indexFound = this.defi.findIndex(d => d.symbol == response.symbol );
           if (indexFound !== -1) {

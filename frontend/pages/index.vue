@@ -266,10 +266,10 @@ export default {
       },
       fetchCurrency(symbol) {
         useQuery({
-        query: "finage.last",
-        variables: { suffix: "trade/forex", symbol },
-        axios: this.$axios,
-      })
+          query: "finage.last",
+          variables: { suffix: "trade/forex", symbol },
+          axios: this.$axios,
+        })
         .then(response => {
           let indexFound = this.currencies.findIndex(currency => currency.symbol === response.symbol  );
           let i = this.currencies[indexFound];
@@ -289,7 +289,7 @@ export default {
       fetchIndice(symbol) {
         useQuery({
           query: "finage.last",
-          variables: { suffix: "index", symbol: i.symbol },
+          variables: { suffix: "index", symbol },
           axios: this.$axios,
         })
         .then(response => {
