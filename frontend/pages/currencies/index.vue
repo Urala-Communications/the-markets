@@ -90,10 +90,10 @@ export default {
       },
       fetchCurrency(index, symbol) {
         useQuery({
-        query: "finage.last",
-        variables: { suffix: "trade/forex", symbol },
-        axios: this.$axios,
-      })
+          query: "finage.last",
+          variables: { suffix: "trade/forex", symbol },
+          axios: this.$axios,
+        })
         .then(response => {
           /* let indexFound = this.currencies.findIndex(currency => currency.symbol === response.symbol );
           let i = this.currencies[indexFound];

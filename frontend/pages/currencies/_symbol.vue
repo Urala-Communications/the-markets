@@ -190,7 +190,7 @@ export default {
           let filteredNews = response.news.filter((v,i,a)=>a.findIndex(t=>(t.title === v.title))===i); // filter duplicates from API - may need to also filter this.news on each fetch
           this.news = filteredNews;
           if(this.news.length > 10){
-            this.news.pop()
+            this.news.pop();
           }
         })
         .catch(error => {
@@ -200,10 +200,18 @@ export default {
       fetchAllResursive(symbol, interval, text, lastdate){
         if (this.stopRun) {
         let last =  new Date(Date.parse(lastdate) - 864e5 * 365 * 5 ).toLocaleDateString("fr-CA");
-        this.$axios
-          .$get(
-            `https://api.finage.co.uk/agg/forex/${symbol}/${text}/${last}/${lastdate}?limit=3000&apikey=${this.finageApiKey}&sort=desc`
-          )
+          useQuery({
+            query: "finage.agg",
+            variables: {
+              suffix: "forex",
+              symbol,
+              period: text.split("/")[0],
+              multiplier: text.split("/")[1],
+              from: last,
+              to: lastdate,
+            },
+            axios: this.$axios,
+          })
           .then((response) => {
             if (response.results || response.results.length) {
               this.chartData = response.results.map(o => {

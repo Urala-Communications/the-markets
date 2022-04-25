@@ -99,7 +99,11 @@ export default {
       fetchPrice() {
         let i = this.commodities.find( item => item.name.replace(/ /g, '-').toLowerCase() === this.symbol);
         let symbol = i.symbol.split(":")[0];
-        this.$axios.$get(`https://api.finage.co.uk/last/trade/forex/${symbol}?apikey=${this.finageApiKey}`)
+        useQuery({
+          query: "finage.last",
+          variables: { suffix: "trade/forex", symbol },
+          axios: this.$axios,
+        })
         .then(response => {          
           this.$set(this.item, 'icon', i.icon);
           this.$set(this.item, 'price', response.price.toFixed(2));
@@ -111,7 +115,14 @@ export default {
       },
       fetchNews(){
         let i = this.commodities.find(item => item.name.replace(/ /g, '-').toLowerCase() === this.symbol);
-        this.$axios.$get(`https://api.finage.co.uk/news/forex/${i.symbol}?apikey=${this.finageApiKey}`)
+        useQuery({
+          query: "finage.news",
+          variables: {
+            market: "forex",
+            symbol: i.symbol,
+          },
+          axios: this.$axios,
+        })
         .then(response => {
           let filteredNews = response.news.filter((v,i,a)=>a.findIndex(t=>(t.title === v.title))===i); // filter duplicates from API - may need to also filter this.news on each fetch
           this.news = filteredNews;
@@ -212,10 +223,18 @@ export default {
       fetchAllResursive(symbol, interval, text, lastdate){
         if (this.stopRun) {
           let last =  new Date(Date.parse(lastdate) - 864e5 * 365 * 5 ).toLocaleDateString("fr-CA");
-          this.$axios
-          .$get(
-            `https://api.finage.co.uk/agg/forex/${symbol}/${text}/${last}/${lastdate}?limit=3000&apikey=${this.finageApiKey}&sort=desc`
-          )
+          useQuery({
+            query: "finage.agg",
+            variables: {
+              suffix: "forex",
+              symbol,
+              period: text.split("/")[0],
+              multiplier: text.split("/")[1],
+              from: last,
+              to: lastdate,
+            },
+            axios: this.$axios,
+          })
           .then((response) => {
             if (response.results || response.results.length) {
               this.chartData = response.results.map(o => {

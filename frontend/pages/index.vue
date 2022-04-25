@@ -203,7 +203,7 @@ export default {
         })
       },
       // checkMarketStatus(){
-      //   this.$axios.$get(`https://api.finage.co.uk/marketstatus?apikey=${this.finageApiKey}`)
+      //   methods.fetchMarketStatus(this.$axios)
       //   .then(response => {
       //     console.log(response)
       //   })
