@@ -168,10 +168,17 @@ export default {
         if (this.stopRun) {
 
           let last =  new Date(Date.parse(lastdate) - 864e5 * 365 * 15 ).toLocaleDateString("fr-CA");
-          this.$axios
-          .$get(
-            `https://api.finage.co.uk/agg/stock/${symbol}/${text}/${last}/${lastdate}?limit=3000&apikey=${this.finageApiKey}&sort=desc`
-          )
+          useQuery({
+            query: "finage.agg",
+            variables: {
+              suffix: "stock",
+              symbol,
+              period: text,
+              from: last,
+              to: lastdate,
+            },
+            axios: this.$axios,
+          })
           .then((response) => {
             if (response.results || response.results.length) {
               this.chartData = response.results.map(o => {
