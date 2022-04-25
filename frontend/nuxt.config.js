@@ -9,6 +9,7 @@ const ALGOLIA_INDEXNAME = process.env.ALGOLIA_INDEXNAME;
 const API_SERVER_KEY = process.env.API_SERVER_KEY;
 
 
+
 // const strapiBaseUri = process.env.STRAPI_URL || "http://localhost:1337";
 // const strapiBaseUri = process.env.NODE_ENV === 'development' ? "http://localhost:1337" : "https://the-markets-cms.herokuapp.com";
 const strapiBaseUri = "https://the-markets-cms.herokuapp.com";
@@ -26,7 +27,7 @@ export default {
     ALGOLIA_APPID,
     ALGOLIA_APIKEY,
     ALGOLIA_INDEXNAME,
-    API_SERVER_KEY
+    API_SERVER_KEY,
   },
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {

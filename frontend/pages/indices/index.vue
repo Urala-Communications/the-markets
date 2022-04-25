@@ -48,6 +48,7 @@
 
 <script>
 import {indices} from "./../../market.js";
+import {useQuery} from "@/services/graphql.js";
 import IndexList from './../../components/IndexList.vue'
 export default {
     components: {
@@ -91,7 +92,14 @@ export default {
     },
     methods: {
       fetchIndice(symbol) {
-        this.$axios.$get(`https://api.finage.co.uk/last/index/${symbol}?apikey=${this.finageApiKey}`)
+        useQuery({
+          query: "finage.last",
+          variables: {
+            suffix: "index",
+            symbol,
+          },
+          axios: this.$axios,
+        })
         .then(response => {
           let indexFound = this.indices.findIndex( indice => indice.symbol === response.symbol );
           let i = this.indices[indexFound];
@@ -101,7 +109,17 @@ export default {
           this.$root.$emit('updateIndice', i);
         })
         .then(() => {
-          this.$axios.$get(`https://api.finage.co.uk/agg/index/${symbol}/1day/2021-01-01/${this.today}?limit=1825&apikey=${this.finageApiKey}`)
+          useQuery({
+            query: "finage.agg",
+            variables: {
+              suffix: "index",
+              symbol,
+              period: "1day",
+              from: "2021-01-01",
+              to: this.today,
+            },
+            axios: this.$axios,
+          })
           .then(response => {
             let indexFound = this.indices.findIndex( indice => indice.symbol === response.symbol );
             let i = this.indices[indexFound];

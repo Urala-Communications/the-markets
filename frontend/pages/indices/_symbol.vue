@@ -24,6 +24,7 @@
 
 <script>
 import {indices} from "../../market.js";
+import {useQuery} from "@/services/graphql.js";
 import Item from '~/components/Item.vue'
 export default {
     components: {
@@ -70,12 +71,16 @@ export default {
       fetchPrice() {
         let i = this.indices.find( item => item.name.replace(/ /g, '-').toLowerCase() === this.symbol);
         this.$set(this.item, 'name', i.name);
-        this.$axios.$get(`https://api.finage.co.uk/last/index/${i.symbol}?apikey=${this.finageApiKey}`)
+        useQuery({
+          query: "finage.last",
+          variables: { suffix: "index", symbol: i.symbol },
+          axios: this.$axios,
+        })
         .then(response => {
-          this.item.price = response.price.toFixed(2);
-          this.item.priceNumber = response.price;
+          this.item.price = response?.price.toFixed(2);
+          this.item.priceNumber = response?.price;
           this.$set(this.item, 'icon', i.icon);
-          this.$set(this.item, 'price', i.price);
+          this.$set(this.item, 'price', i?.price);
           this.loading = false;
         })
         .then(() => {
@@ -86,7 +91,11 @@ export default {
         })
       },
       checkMarketStatus(){
-        this.$axios.$get(`https://api.finage.co.uk/marketstatus?apikey=${this.finageApiKey}`)
+        useQuery({
+        query: "finage.marketStatus",
+        variables: {},
+        axios: this.$axios,
+      })
         .then(response => {
           this.marketStatus = response.nasdaq;
         })
@@ -97,7 +106,17 @@ export default {
       fetchAggregates(){
         let i = this.indices.find( item => item.name.replace(/ /g, '-').toLowerCase() === this.symbol);
         let last = new Date(Date.now() - 864e5 * 30).toLocaleDateString("fr-CA");
-        this.$axios.$get(`https://api.finage.co.uk/agg/index/${i.symbol}/1day/${last}/${this.today}?limit=1825&apikey=${this.finageApiKey}&sort=desc`)
+        useQuery({
+          query: "finage.agg",
+          variables: {
+            suffix: "index",
+            symbol: i.symbol,
+            multiplier: "1day",
+            from: last,
+            to: this.today,
+          },
+          axios: this.$axios,
+        })
         .then(response => {
 
           this.chartData = response.results.map(o => {
@@ -125,10 +144,17 @@ export default {
       fetchAllResursive(symbol, interval, range, lastdate){
         if (this.stopRun) {
           let last =  new Date(Date.parse(lastdate) - 864e5 * 365 * 15 ).toLocaleDateString("fr-CA");
-          this.$axios
-          .$get(
-            `https://api.finage.co.uk/agg/index/${symbol}/${range}/${last}/${lastdate}?limit=3000&apikey=${this.finageApiKey}&sort=asc`
-          )
+          useQuery({
+            query: "finage.agg",
+            variables: {
+              suffix: "index",
+              symbol,
+              period: range,
+              from: last,
+              to: this.today,
+            },
+            axios: this.$axios,
+          })
           .then((response) => {
             if (!response.results || response.results.length) {
               this.chartData = response.results.map(o => {
@@ -198,14 +224,22 @@ export default {
             default:
               break;
           }
-          this.$axios
-          .$get(
-            `https://api.finage.co.uk/agg/index/${symbol}/${range}/${last}/${this.today}?limit=3000&apikey=${this.finageApiKey}&sort=asc`
-          )
+          useQuery({
+          query: "finage.agg",
+          variables: {
+            suffix: "index",
+            symbol,
+            period: range,
+            from: last,
+            to: this.today,
+          },
+          axios: this.$axios,
+        })
           .then((response) => {
             if (interval=='1d') {
               let t = new Date();
               this.chartData = response.results.map(o => {
+                console.log({o})
                 const [timestamp, openPrice, high, low, close, volume] = [((t=new Date(o.t)).setUTCHours(0,0,0,0)&&t.getTime()), o.o, o.h, o.l, o.c, o.v];
                 return [timestamp, openPrice, high, low, close, volume].map(n =>
                   Number(n)

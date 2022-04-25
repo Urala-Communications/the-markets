@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import {useQuery} from "@/services/graphql.js";
 import Item from "~/components/Item.vue";
 export default {
   components: {
@@ -84,10 +85,11 @@ export default {
   },
   methods: {
     fetchDetails() {
-      this.$axios
-        .$get(
-          `https://api.finage.co.uk/detail/cryptocurrency/${this.item.symbol}?apikey=${this.finageApiKey}`
-        )
+      useQuery({
+        query: "finage.detailCrypto",
+        variables: { symbol: this.item.symbol },
+        axios: this.$axios,
+      })
         .then((response) => {
           this.profile = response;
         })
@@ -104,10 +106,11 @@ export default {
       });
     },
     fetchPrice() {
-      this.$axios
-        .$get(
-          `https://api.finage.co.uk/last/crypto/detailed/${this.item.symbol.toUpperCase() + "USD"}?apikey=${this.finageApiKey}`
-        )
+      useQuery({
+        query: "finage.detailCrypto",
+        variables: { suffix: "cryptocurrency", symbol: this.item.symbol },
+        axios: this.$axios,
+      })
         .then((response) => {
           this.open = response.open.toFixed(2);
           this.close = response.close.toFixed(2);
@@ -123,10 +126,10 @@ export default {
         });
     },
     checkMarketStatus() {
-      this.$axios
-        .$get(
-          `https://api.finage.co.uk/marketstatus?apikey=${this.finageApiKey}`
-        )
+        useQuery({
+          query: "finage.marketStatus",
+          axios: this.$axios,
+        })
         .then((response) => {
           this.marketStatus = response.currencies.crypto;
         })

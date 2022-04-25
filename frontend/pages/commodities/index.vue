@@ -40,6 +40,7 @@
 </template>
 
 <script>
+import {useQuery} from '@/services/graphql.js';
 import {commodities} from "./../../market.js";
 export default {
     components: {
@@ -59,7 +60,11 @@ export default {
     },
     methods: {
       fetchNews(symbol){
-        this.$axios.$get(`https://api.finage.co.uk/news/forex/${symbol}?apikey=${this.finageApiKey}`)
+        useQuery({
+          query: "finage.news",
+          variables: { market: "forex", symbol },
+          axios: this.$axios,
+        })
         .then(response => {
           if (response.news.length) {
             if(typeof response.news[0] !== 'undefined'){

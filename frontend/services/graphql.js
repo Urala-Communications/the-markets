@@ -12,8 +12,8 @@
    return axios({
      url:
        process.env.NODE_ENV !== "production"
-         ? "http://localhost:4000/"
-         : "https://us-central1-markets-data-node.cloudfunctions.net/graphql",
+         ? "http://localhost:5000/markets-data-node/us-central1/graphql"
+         : process.env.API_SERVER_URL,
      method: "post",
      headers: {
        "Content-Type": "application/json",

@@ -37,6 +37,7 @@
 </template>
 
 <script>
+import { useQuery } from "@/services/graphql.js";
 import {rising} from "../market.js";
   import IndexList from '../components/IndexList.vue'
   export default {
@@ -56,7 +57,11 @@ import {rising} from "../market.js";
     },
     methods: {
       fetchNews(symbol){
-        this.$axios.$get(`https://api.finage.co.uk/news/market/${symbol}?apikey=${this.finageApiKey}`)
+        useQuery({
+          query: "finage.news",
+          variables: { market: "market", symbol },
+          axios: this.$axios,
+        })
         .then(response => {
           if(typeof response[0] !== 'undefined'){
             let index = this.newsData.findIndex(x => x.title === response[0].title);

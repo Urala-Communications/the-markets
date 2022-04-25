@@ -24,6 +24,7 @@
 
 <script>
 import {commodities} from "../../market.js";
+import {useQuery, methods} from "@/services/graphql.js"; 
 import moment from 'moment';
 import Item from '~/components/Item.vue'
 export default {
@@ -76,17 +77,24 @@ export default {
           this.$set(this.item, 'name', i.name);
         }
         let symbol = i.symbol.split(":")[0];
-        this.$axios.$get(`https://api.finage.co.uk/agg/forex/prev-close/${symbol}?apikey=${this.finageApiKey}`)
-          .then(response => {
-            this.open = response.results[0].o;
-            this.high = response.results[0].h;
-            this.low = response.results[0].l;
-            this.close = response.results[0].c;
-            this.volume = response.results[0].v;
-          })
-          .catch(error => {
-            console.log(error);
-          })
+        useQuery({
+          query: "finage.agg",
+          variables: {
+            suffix: "forex/prev-close",
+            symbol,
+          },
+          axios: this.$axios,
+        })
+        .then(response => {
+          this.open = response.results[0].o;
+          this.high = response.results[0].h;
+          this.low = response.results[0].l;
+          this.close = response.results[0].c;
+          this.volume = response.results[0].v;
+        })
+        .catch(error => {
+          console.log(error);
+        })
       },
       fetchPrice() {
         let i = this.commodities.find( item => item.name.replace(/ /g, '-').toLowerCase() === this.symbol);
@@ -116,7 +124,10 @@ export default {
         })
       },
       checkMarketStatus(){
-        this.$axios.$get(`https://api.finage.co.uk/marketstatus?apikey=${this.finageApiKey}`)
+        useQuery({
+          query: "finage.marketStatus",
+          axios: this.$axios,
+        })
         .then(response => {
           this.marketStatus = response.currencies.fx;
         })
@@ -128,7 +139,18 @@ export default {
         let i = this.commodities.find( item => item.name.replace(/ /g, '-').toLowerCase() === this.symbol);
         let last = new Date(Date.now() - 864e5 * 30).toLocaleDateString("fr-CA");
           
-        this.$axios.$get(`https://api.finage.co.uk/agg/forex/${i.symbol.split(":")[0]}/1/hour/${last}/${this.today}?limit=1825&apikey=${this.finageApiKey}&sort=desc`)
+        useQuery({
+          query: "finage.agg",
+          variables: {
+            suffix: "forex",
+            symbol: i.symbol.split(":")[0],
+            period: "1",
+            multiplier: "hour",
+            from: last,
+            to: this.today,
+          },
+          axios: this.$axios,
+        })
         .then(response => {
           if (response.totalResults) {
             this.chartData = response.results.map(o => {
@@ -247,10 +269,21 @@ export default {
             default:
               break;
           }
-          this.$axios
-          .$get(
-            `https://api.finage.co.uk/agg/forex/${symbol}/${text}/${last}/${this.today}?limit=3000&apikey=${this.finageApiKey}&sort=desc`
-          )
+
+          const [period, multiplier] = text.split("/");
+
+          useQuery({
+            query: "finage.agg",
+            variables: {
+              suffix: "forex",
+              symbol,
+              period,
+              multiplier,
+              from: last,
+              to: this.today,
+            },
+            axios: this.$axios,
+          })
           .then((response) => {
             if (response.totalResults) {
               this.chartData = response.results.map(o => {
