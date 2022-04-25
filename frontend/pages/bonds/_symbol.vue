@@ -24,6 +24,7 @@
 
 <script>
 import {bonds} from "../../market.js";
+import {useQuery, methods} from '@/services/graphql';
 import Item from '~/components/Item.vue'
 export default {
     components: {
@@ -66,7 +67,17 @@ export default {
     methods: {
       fetchDetails() {
         let itemSymbol = this.symbol.replace('-', '').toUpperCase();
-        this.$axios.$get(` https://api.finage.co.uk/agg/index/${itemSymbol}/1day/2021-02-05/2021-03-02?apikey=${this.finageApiKey}`)
+      useQuery({
+        query: "finage.agg",
+        variables: {
+          suffix: "index",
+          symbol: itemSymbol,
+          period: "1day",
+          from: "2021-02-05",
+          to: "2021-03-02",
+        },
+        axios: this.$axios,
+      })
         .then(response => {
             this.open = response.results[0].o;
             this.high = response.results[0].h;
@@ -88,7 +99,12 @@ export default {
         // };
         let i = this.bonds.find(item => item.name.toLowerCase() === this.symbol.replace(/-/g, ' '));
         this.$set(this.item, 'name', i.name);
-        this.$axios.$get(`https://api.finage.co.uk/bonds/us/rate/${i.symbol}?apikey=${this.finageApiKey}`)
+
+        useQuery({
+        query: "finage.bonds",
+        variables: { suffix: "us/rate", symbol: i.symbol },
+        axios: this.$axios,
+      })
         .then(response => {
           // console.log("Price")
           // console.log(response)
@@ -101,7 +117,7 @@ export default {
         })
       },
       checkMarketStatus(){
-        this.$axios.$get(`https://api.finage.co.uk/marketstatus?apikey=${this.finageApiKey}`)
+        methods.fetchMarketStatus(this.$axios)
         .then(response => {
           this.marketStatus = response.nasdaq;
         })
@@ -111,7 +127,17 @@ export default {
       },
       fetchAggregates(){
         let i = this.bonds.find(item => item.name.toLowerCase() === this.symbol.replace(/-/g, ' '));
-        this.$axios.$get(`https://api.finage.co.uk/agg/index/${i.symbol}/1day/2021-01-01/${this.yesterday}?limit=1825&apikey=${this.finageApiKey}`)
+        useQuery({
+        query: "finage.agg",
+        variables: {
+          suffix: "index",
+          symbol: i.symbol,
+          period: "1day",
+          from: "2021-02-05",
+          to: this.yesterday,
+        },
+        axios: this.$axios,
+      })
           .then(response => {
             if (response.totalResults) {
               this.chartData = response.results.map(o => {
@@ -198,10 +224,17 @@ export default {
               break;
           }
 
-          this.$axios
-          .$get(
-            `https://api.finage.co.uk/agg/index/${i.symbol}/${text}/${last}/${this.yesterday}?limit=3000&apikey=${this.finageApiKey}&sort=desc`
-          )
+          useQuery({
+           query: "finage.agg",
+          variables: {
+            suffix: "index",
+            symbol: i.symbol,
+            period: "1day",
+            from: "2021-02-05",
+            to: this.yesterday,
+          },
+          axios: this.$axios, 
+          })
           .then((response) => {
 
             this.chartData = response.results.map(o => {
@@ -221,7 +254,11 @@ export default {
       },
       fetchNews(){
         let i = this.bonds.find(item => item.name.toLowerCase() === this.symbol.replace(/-/g, ' '));
-        this.$axios.$get(`https://api.finage.co.uk/news/forex/${i.symbol}?apikey=${this.finageApiKey}`)
+        useQuery({
+          query: "finage.news",
+          variables: { market: "forex", symbol: i.symbol },
+          axios: this.$axios,
+        })
         .then(response => {
           let filteredNews = response.news.filter((v,i,a)=>a.findIndex(t=>(t.title === v.title))===i); // filter duplicates from API - may need to also filter this.news on each fetch
           console.log('NEWS')

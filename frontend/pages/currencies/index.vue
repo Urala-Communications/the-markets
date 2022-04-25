@@ -41,6 +41,7 @@
 
 <script>
 import {currencies} from "./../../market.js";
+import {useQuery} from "@/services/graphql";
 import IndexList from './../../components/IndexList.vue'
 export default {
     components: {
@@ -61,7 +62,11 @@ export default {
     },
     methods: {
       fetchNews(symbol){
-        this.$axios.$get(`https://api.finage.co.uk/news/forex/${symbol}?apikey=${this.finageApiKey}`)
+        useQuery({
+        query: "finage.news",
+        variables: { market: "forex", symbol },
+        axios: this.$axios,
+      })
         .then(response => {
           if (response.news.length) {
             if(typeof response.news[0] !== 'undefined'&& this.newsData.length > 0){
@@ -84,7 +89,11 @@ export default {
         })
       },
       fetchCurrency(index, symbol) {
-        this.$axios.$get(`https://api.finage.co.uk/last/trade/forex/${symbol}?apikey=${this.finageApiKey}`)
+        useQuery({
+          query: "finage.last",
+          variables: { suffix: "trade/forex", symbol },
+          axios: this.$axios,
+        })
         .then(response => {
           /* let indexFound = this.currencies.findIndex(currency => currency.symbol === response.symbol );
           let i = this.currencies[indexFound];

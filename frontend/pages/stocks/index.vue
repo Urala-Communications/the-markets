@@ -41,6 +41,7 @@
 
 <script>
 import {stocks} from "./../../market.js";
+import {useQuery} from "@/services/graphql.js";
 import IndexList from './../../components/IndexList.vue'
 export default {
     components: {
@@ -61,7 +62,14 @@ export default {
     },
     methods: {
       fetchNews(symbol){
-        this.$axios.$get(`https://api.finage.co.uk/news/market/${symbol}?apikey=${this.finageApiKey}`)
+        useQuery({
+        query: "finage.news",
+        variables: {
+          market: "market",
+          symbol,
+        },
+        axios: this.$axios,
+      })
         .then(response => {
           if (response.news.length) {
             if(typeof response.news[0] !== 'undefined'){
@@ -85,7 +93,14 @@ export default {
         })
       },
       fetchStocks() {
-        this.$axios.$get(`https://api.finage.co.uk/last/stocks/?symbols=${stocks.map(s => s.symbol).join(",")}&apikey=${this.finageApiKey}`)
+        useQuery({
+          query: "finage.lastMulti",
+          variables: {
+            suffix: "stocks/",
+            symbols: stocks.map((s) => s.symbol).join(","),
+          },
+          axios: this.$axios,
+        })
         .then(response => {
           response.forEach(item => {
             const indexFound = this.stocks.findIndex( stock => stock.symbol === item.symbol );
@@ -98,7 +113,18 @@ export default {
         })
         .then(() => {
           this.stocks.forEach(item => {
-            this.$axios.$get(`https://api.finage.co.uk/agg/stock/${item.symbol}/1/day/2021-01-01/${this.today}?limit=1825&apikey=${this.finageApiKey}`)
+            useQuery({
+              query: "finage.agg",
+              variables: {
+                suffix: "stock",
+                symbol: item.symbol,
+                period: "1",
+                multiplier: "day",
+                from: "2021-01-01",
+                to: this.today,
+              },
+              axios: this.$axios,
+            })
             .then(response => {
               const indexFound = this.stocks.findIndex( stock => stock.symbol === response.symbol );
               let i = this.stocks[indexFound];
