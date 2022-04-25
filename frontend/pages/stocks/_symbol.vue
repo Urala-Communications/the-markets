@@ -77,9 +77,9 @@ export default {
           variables: { symbol: i.symbol },
           axios: this.$axios,
         })
-          .catch(error => {
-            console.log(error);
-          })
+        .then(response => {
+          this.profile = response;
+        })
       },
       async fetchPrice() {
         let i = this.stocks.find(item => item.name.toLowerCase() === this.symbol);
@@ -92,8 +92,8 @@ export default {
           this.item.price = response.ask.toFixed(2);
           this.$set(this.item, 'icon', i.icon);
           this.loading = false;
-          this.lastTradeDate = new Date(Number(response.timestamp)).toLocaleDateString("fr-CA");
-          this.yesterday = new Date(Number(response.timestamp) - 864e5 ).toLocaleDateString("fr-CA");
+          this.lastTradeDate = new Date(Number(response.t)).toLocaleDateString("fr-CA");
+          this.yesterday = new Date(Number(response.t) - 864e5 ).toLocaleDateString("fr-CA");
           return response;
         })
         .catch(error => {
@@ -124,28 +124,28 @@ export default {
           },
           axios: this.$axios,
         })
-          .then(response => {
-            this.chartData = response.results.map(o => {
-              const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
-              return [timestamp, openPrice, high, low, close, volume].map(n =>
-                Number(n)
-              );
-            }).sort((a, b) => {
-              return a[0] - b[0];
-            });
-            this.symbol = i.symbol;
-            this.live = i.symbol;
-            let last = this.chartData[this.chartData.length - 1];
-            this.open = last[1];
-            this.high = last[2]
-            this.low = last[3];
-            this.close = last[4];
-            this.volume = last[5];
-            this.loading = false;
-          })
-          .catch(error => {
-            console.log(error);
-          })
+        .then(response => {
+          this.chartData = response.results.map(o => {
+            const [timestamp, openPrice, high, low, close, volume] = [o.t, o.o, o.h, o.l, o.c, o.v];
+            return [timestamp, openPrice, high, low, close, volume].map(n =>
+              Number(n)
+            );
+          }).sort((a, b) => {
+            return a[0] - b[0];
+          });
+          this.symbol = i.symbol;
+          this.live = i.symbol;
+          let last = this.chartData[this.chartData.length - 1];
+          this.open = last[1];
+          this.high = last[2]
+          this.low = last[3];
+          this.close = last[4];
+          this.volume = last[5];
+          this.loading = false;
+        })
+        .catch(error => {
+          console.log(error);
+        })
       },
       fetchNews(){
         let i = this.stocks.find( item => item.name.toLowerCase() === this.symbol);
