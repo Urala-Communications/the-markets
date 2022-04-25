@@ -196,10 +196,18 @@ export default {
         let last = new Date(
           Date.parse(lastdate) - 864e5 * 365 * 5
         ).toLocaleDateString("fr-CA");
-        this.$axios
-          .$get(
-            `https://api.finage.co.uk/agg/crypto/${symbol.slice(0,-1)}/1/week/${last}/${lastdate}?apikey=${this.finageApiKey}`
-          )
+          useQuery({
+            query: 'finage.agg',
+            variables: {
+              suffix: 'crypto',
+              symbol:symbol.slice(0,-1),
+              period: '1',
+              multiplier: 'week',
+              from: last,
+              to: lastdate,
+            },
+            axios: this.$axios,
+          })
           .then((response) => {
             if (response.results) {
               this.chartData = response.results
@@ -281,10 +289,18 @@ export default {
             });
         } else {
           this.stopRun = 1;
-          this.$axios
-            .$get(
-              `https://api.finage.co.uk/agg/crypto/${symbol.slice(0, -1)}/1/week/${this.fiveYearsAgo}/${this.today}?apikey=${this.finageApiKey}`
-            )
+          useQuery({
+            query: "finage.agg",
+            variables: {
+              suffix: "crypto",
+              symbol: symbol.slice(0, -1),
+              period: "1",
+              multiplier: "week",
+              from: this.fiveYearsAgo,
+              to: this.today,
+            },
+            axios: this.$axios,
+          })
             .then((response) => {
               if (response.results) {
                 this.chartData = response.results.map((o) => {
@@ -375,7 +391,18 @@ export default {
           break;
       }
       try {
-        let res = await this.$axios.$get(`https://api.finage.co.uk/agg/crypto/${symbol}/${text}/${last}/${this.today}?apikey=${this.finageApiKey}`);
+        let res = await useQuery({
+          query: "finage.agg",
+          variables: {
+            suffix: "crypto",
+            symbol,
+            period: text.split("/")[0],
+            multiplier: text.split("/")[1],
+            from: last,
+            to: this.today,
+          },
+          axios: this.$axios,
+        })
         // console.log("finage res",res)
         if (res.results) {
           this.chartData = res.results.map((o) => {
@@ -442,10 +469,11 @@ export default {
       }
     },
     fetchNews() {
-      this.$axios
-        .$get(
-          `https://api.finage.co.uk/news/cryptocurrency/${this.item.symbol}?apikey=${this.finageApiKey}`
-        )
+      useQuery({
+          query: "finage.news",
+          variables: { market: "cryptocurrency", symbol: this.item.symbol },
+          axios: this.$axios,
+        })
         .then((response) => {
           // filter matching articles
           // let index = newsfeed.findIndex(x => x.title === response.news[0].title);
