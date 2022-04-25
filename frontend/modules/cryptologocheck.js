@@ -79,7 +79,7 @@ module.exports = function() {
 
         let topcoins = await getTopCoins();
 
-        if (topcoins.length) {
+        if (topcoins){
             for (let index = 0; index < topcoins.length; index++) {
                 const e = topcoins[index];
 
